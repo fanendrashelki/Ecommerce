@@ -10,7 +10,7 @@ import VerifyOtp from "./pages/auth/verifyOtp";
 import ForgetPassword from "./pages/auth/forget-password";
 import ResetPassword from "./pages/auth/reset-password";
 import axiosInstance from "./utils/axiosInstance";
-import Tables from "./pages/dashboard/tables";
+
 
 export const myContext = createContext();
 
