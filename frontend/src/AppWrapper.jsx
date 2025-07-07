@@ -21,7 +21,7 @@ import Wishlist from "./Pages/Wishlist";
 import Orders from "./components/Orders/Orders";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "./utils/axiosInstance";
-import Pageloader from "./utils/pageloader";
+import Pageloader from "./utils/Pageloader";
 import PrivateRoute from "./PrivateRoute";
 import MobileNav from "./components/Header/Navigation/MobileNav";
 
