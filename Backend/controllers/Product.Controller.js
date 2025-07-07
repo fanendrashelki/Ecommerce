@@ -1,6 +1,7 @@
 import ProductModel from "../models/product.model.js";
 import asyncHandler from "../utils/AsyncHandler.js";
-import ErrorHandle from "../../../travel_story/backend/utils/errorhandler.js";
+
+import ErrorHandle from "../utils/ErrorHandler.js";
 import { cloudinary } from "../config/cloudinary.js";
 
 const parseSize = (size) => {

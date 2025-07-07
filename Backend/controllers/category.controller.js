@@ -1,7 +1,6 @@
 import Category from "../models/Category.model.js";
 import asyncHandler from "../utils/AsyncHandler.js";
-
-import ErrorHandle from "../../../travel_story/backend/utils/errorhandler.js";
+import ErrorHandle from "../utils/ErrorHandler.js";
 import { cloudinary } from "../config/cloudinary.js";
 
 //======================= Create Category ===========================
