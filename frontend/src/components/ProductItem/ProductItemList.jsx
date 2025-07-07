@@ -1,5 +1,5 @@
-import img from "../../assets/i-phone.png";
-import img2 from "../../assets/i-phone-2.jpeg";
+import img from "../../assets/i-Phone.png";
+import img2 from "../../assets/i-Phone-2.jpeg";
 import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
