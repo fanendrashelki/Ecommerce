@@ -6,7 +6,7 @@ import { SignIn } from "@/pages/auth";
 
 
 import { Toaster } from "react-hot-toast";
-import VerifyOtp from "./pages/auth/VerifyOtp";
+import VerifyOtp from "./pages/auth/verifyOtp";
 import ForgetPassword from "./pages/auth/forget-password";
 import ResetPassword from "./pages/auth/reset-password";
 import axiosInstance from "./utils/axiosInstance";
