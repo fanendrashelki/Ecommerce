@@ -19,14 +19,12 @@ import alertBox from "../../utils/toster";
 import { Toaster } from "react-hot-toast";
 import imageCompression from "browser-image-compression";
 
-
 export function Profile() {
   const context = useContext(myContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileImg, setProfileImg] = useState(null);
-  const [compressedFile, setCompressedFile] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [profile, setProfile] = useState({
     name: "",
@@ -52,53 +50,46 @@ export function Profile() {
     }
   }, [context.User]);
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-const handleImageChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    try {
+      setLoading(true);
 
-  try {
-    setLoading(true);
+      const options = {
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 600,
+        useWebWorker: true,
+      };
 
-    // ✅ Compress the image before preview/upload
-    const options = {
-      maxSizeMB: 0.5,              // Reduce to ~500KB
-      maxWidthOrHeight: 800,      // Resize if large
-      useWebWorker: true,
-    };
+      const compressedFile = await imageCompression(file, options);
+      const previewUrl = URL.createObjectURL(compressedFile);
+      setProfileImg(previewUrl);
 
-    const compressedFile = await imageCompression(file, options);
+      const formData = new FormData();
+      formData.append("image", compressedFile);
+      const token = localStorage.getItem("token");
 
-    // ✅ Set preview using compressed image
-    const previewUrl = URL.createObjectURL(compressedFile);
-    setProfileImg(previewUrl);
+      const res = await axiosInstance.post("/user/profile-image", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    // ✅ Upload compressed image
-    const formData = new FormData();
-    formData.append("image", compressedFile);
-    const token = localStorage.getItem("token");
+      if (res?.data?.error) {
+        alertBox("error", res.data.message);
+      } else {
+        setProfileImg(res?.data?.imageUrl);
+        alertBox("success", "Avatar updated successfully");
+      }
 
-    const res = await axiosInstance.post("/user/profile-image", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (res?.data?.error) {
-      alertBox("error", res.data.message);
-    } else {
-      setProfileImg(res?.data?.imageUrl);
-      alertBox("success", "Avatar updated successfully");
+    } catch (err) {
+      alertBox("error", err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
-
-  } catch (err) {
-    alertBox("error", err.response?.data?.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-    window.location.reload();
-  }
-};
-
+  };
 
   const handleOpen = () => {
     setEditedProfile({ ...profile });
@@ -149,17 +140,15 @@ const handleImageChange = async (e) => {
         alertBox("error", res.data.message);
       } else {
         alertBox("success", res.data?.message);
+        setProfile(editedProfile);
       }
     } catch (err) {
       alertBox("error", err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
       setOpenDialog(false);
-      window.location.reload();
     }
   };
-
-  
 
   return (
     <>
@@ -176,7 +165,6 @@ const handleImageChange = async (e) => {
             )}
             <input
               accept="image/*"
-            
               capture="environment"
               type="file"
               id="profile-image"
