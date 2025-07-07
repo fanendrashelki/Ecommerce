@@ -9,57 +9,53 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import alertBox from "../../utils/toster";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/24/solid";
-import { LiaUserEditSolid } from "react-icons/lia";
 import { useContext, useEffect, useState } from "react";
 import { Avatar, CircularProgress, IconButton } from "@mui/material";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { LiaUserEditSolid } from "react-icons/lia";
 import axiosInstance from "../../utils/axiosInstance";
 import { myContext } from "../../App";
+import alertBox from "../../utils/toster";
 import { Toaster } from "react-hot-toast";
 
 export function Profile() {
-    
   const context = useContext(myContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [profileImg, setProfileImg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-   const [profile, setProfile] = useState({ name: "",
+  const [profile, setProfile] = useState({
+    name: "",
     email: "",
-    mobile: "",});
+    mobile: "",
+    location: "",
+  });
   const [passwordFields, setPasswordFields] = useState({
     newPassword: "",
     confirmPassword: "",
   });
   const [editedProfile, setEditedProfile] = useState({ ...profile });
 
-
-   useEffect(() => {
+  useEffect(() => {
     setProfileImg(context.User?.avatar);
-     if (context.User) {
+    if (context.User) {
       setProfile({
-        name:context.User.name || "",
-        email:context.User.email || "",
-        mobile:context.User.mobile || "",
-      })}
-  }, [context.User?.avatar]);
+        name: context.User.name || "",
+        email: context.User.email || "",
+        mobile: context.User.mobile || "",
+        location: context.User.location || "",
+      });
+    }
+  }, [context.User]);
 
-  
-// image update
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setProfileImg(URL.createObjectURL(file)); // Temporary preview
-
+    setProfileImg(URL.createObjectURL(file));
     try {
       setLoading(true);
-
       const formData = new FormData();
       formData.append("image", file);
       const token = localStorage.getItem("token");
@@ -71,15 +67,13 @@ export function Profile() {
       });
 
       if (res?.data?.error) {
-       alertBox("error", res.data.message);
+        alertBox("error", res.data.message);
       } else {
-        const url = res?.data?.imageUrl;
-        setProfileImg(url);
-       alertBox("success", "Avatar updated successfully");
+        setProfileImg(res?.data?.imageUrl);
+        alertBox("success", "Avatar updated successfully");
       }
     } catch (err) {
-      const message = err.response?.data?.message || "Something went wrong";
-     alertBox("error", message);
+      alertBox("error", err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
       window.location.reload();
@@ -91,44 +85,39 @@ export function Profile() {
     setOpenDialog(true);
   };
 
- 
-
   const handleChange = (e) => {
     setEditedProfile({ ...editedProfile, [e.target.name]: e.target.value });
   };
 
   const handlePasswordChange = (e) => {
     setPasswordFields({ ...passwordFields, [e.target.name]: e.target.value });
-   
   };
 
-  
-
-// update profile
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     if (!editedProfile.name.trim()) {
-     alertBox("error", "Name is required");
+      alertBox("error", "Name is required");
       setLoading(false);
       return;
     } else if (editedProfile.name.length < 2) {
-     alertBox("error", "Name must be at least 2 characters");
+      alertBox("error", "Name must be at least 2 characters");
       setLoading(false);
       return;
     }
 
     if (!editedProfile.mobile) {
-     alertBox("error", "mobile number is required");
+      alertBox("error", "Mobile number is required");
       setLoading(false);
       return;
     } else if (!/^\d{10}$/.test(editedProfile.mobile)) {
-     alertBox("error", "mobile must be a valid 10-digit number");
+      alertBox("error", "Mobile must be a valid 10-digit number");
       setLoading(false);
       return;
     }
+
     try {
-   
       const token = localStorage.getItem("token");
       const res = await axiosInstance.put("/user/update-profile", editedProfile, {
         headers: {
@@ -137,170 +126,154 @@ export function Profile() {
       });
 
       if (res?.data?.error) {
-       alertBox("error", res.data.message);
-      } else {  
-       alertBox("success", res.data?.message);
+        alertBox("error", res.data.message);
+      } else {
+        alertBox("success", res.data?.message);
       }
     } catch (err) {
-      const message = err.response?.data?.message || "Something went wrong";
-     alertBox("error", message);
-      console.error("Login error:", err);
+      alertBox("error", err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
-      setOpenDialog(false)
+      setOpenDialog(false);
       window.location.reload();
-     
     }
   };
 
   return (
     <>
-      <Card className="mx-3 mt-10 mb-6 border border-blue-gray-100 lg:mx-4 shadow-xl">
-        <CardBody className="p-8">
-          <div className="relative group w-[100px] h-[100px] flex items-center justify-center">
-          {loading ? (
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="span"
-              className="bg-white myShadow w-[100px] h-[100px] rounded-full flex items-center justify-center"
-            >
-              <CircularProgress className="text-gray-500" color="inherit" />
-            </IconButton>
-          ) : (
-            <Avatar
-              alt="User Avatar"
-              src={profileImg}
-              sx={{ width: 100, height: 100 }}
-              className="w-[100px] h-[100px] myShadow"
-            />
-          )}
-          <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
-          <input
-            accept="image/*"
-            type="file"
-            id="profile-image"
-            hidden
-            onChange={handleImageChange}
-          />
-          <label htmlFor="profile-image">
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 cursor-pointer">
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="span"
-                className="bg-white shadow w-[100px] h-[100px] rounded-full flex items-center justify-center"
-              >
-                <LiaUserEditSolid className="text-[40px] text-white" />
+      <Card className="mx-2 my-6 border border-blue-gray-100 shadow-md lg:mx-4">
+        <CardBody className="p-4 sm:p-6">
+          {/* Avatar */}
+          <div className="relative group w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto sm:mx-0 flex items-center justify-center">
+            {loading ? (
+              <IconButton className="bg-white w-full h-full rounded-full">
+                <CircularProgress color="inherit" />
               </IconButton>
-            </div>
-          </label>
+            ) : (
+              <Avatar src={profileImg} className="!w-24 !h-24 !sm:w-28 !sm:h-28 !md:w-32 !md:h-32 rounded-full" />
+            )}
+            <input
+              accept="image/*"
+              type="file"
+              id="profile-image"
+              hidden
+              onChange={handleImageChange}
+            />
+            <label htmlFor="profile-image">
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 rounded-full cursor-pointer flex items-center justify-center transition-opacity duration-300">
+                <LiaUserEditSolid className="text-white text-3xl" />
+              </div>
+            </label>
           </div>
 
-          <div className="mt-10 grid gap-4">
-            <div className="flex items-center justify-between mb-4">
-              <Typography variant="h5" color="blue-gray">
-                Profile Information
-              </Typography>
-              <div className="flex items-center gap-4">
-            <Button color="black"   onClick={handleOpen}>
+          {/* Profile Info */}
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <Typography variant="h5" color="blue-gray">
+              Profile Information
+            </Typography>
+            <div className="mt-4 sm:mt-0 flex gap-3 flex-wrap">
+              <Button size="sm" color="black" onClick={handleOpen}>
                 Edit
               </Button>
-               <Button onClick={() => setOpenPasswordDialog(true)} >
-              Change Password
-            </Button>
-              </div>
-              
+              <Button size="sm" color="black" onClick={() => setOpenPasswordDialog(true)}>
+                Change Password
+              </Button>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Typography className="text-sm text-blue-gray-700">Name</Typography>
-                <Typography className="font-medium">{profile.name}</Typography>
-              </div>
-              <div>
-                <Typography className="text-sm text-blue-gray-700">Email</Typography>
-                <Typography className="font-medium">{profile.email}</Typography>
-              </div>
-              <div>
-                <Typography className="text-sm text-blue-gray-700">Mobile</Typography>
-                <Typography className="font-medium">{profile.mobile}</Typography>
-              </div>
-              <div>
-                <Typography className="text-sm text-blue-gray-700">Location</Typography>
-                <Typography className="font-medium">{profile.location}</Typography>
-              </div>
+          {/* Data Grid */}
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Typography className="text-sm text-blue-gray-700">Name</Typography>
+              <Typography className="font-medium">{profile.name}</Typography>
+            </div>
+            <div>
+              <Typography className="text-sm text-blue-gray-700">Email</Typography>
+              <Typography className="font-medium">{profile.email}</Typography>
+            </div>
+            <div>
+              <Typography className="text-sm text-blue-gray-700">Mobile</Typography>
+              <Typography className="font-medium">{profile.mobile}</Typography>
+            </div>
+            <div>
+              <Typography className="text-sm text-blue-gray-700">Location</Typography>
+              <Typography className="font-medium">{profile.location}</Typography>
             </div>
           </div>
         </CardBody>
       </Card>
 
-      {/* Profile Update Dialog */}
+      {/* Update Profile Dialog */}
       <Dialog open={openDialog} handler={setOpenDialog} size="md">
         <DialogHeader>Update Profile</DialogHeader>
-         <form onSubmit={handleSubmit}>
-        <DialogBody>
-         
-            <div className="grid gap-6">
-              <Input label="Name" name="name"  value={editedProfile.name} onChange={handleChange} />
-            <Input label="Email" name="email" disabled value={editedProfile.email} onChange={handleChange} />
-            <Input label="Mobile" name="mobile" value={editedProfile.mobile} onChange={handleChange} />
-            <Input label="Location" name="location" value={editedProfile.location} onChange={handleChange} />
-           
-          </div>
-          
-          
-        </DialogBody>
-        <DialogFooter>
-          <Button color="black" onClick={() => setOpenDialog(false)}>
-            Cancel
-          </Button>
-          <Button color="black"  type="submit" className="ml-2">
-            Save
-          </Button>
-        </DialogFooter>
+        <form onSubmit={handleSubmit}>
+          <DialogBody className="grid gap-4">
+            <Input label="Name" name="name" value={editedProfile.name} onChange={handleChange} />
+            <Input
+              label="Email"
+              name="email"
+              value={editedProfile.email}
+              onChange={handleChange}
+              disabled
+            />
+            <Input
+              label="Mobile"
+              name="mobile"
+              value={editedProfile.mobile}
+              onChange={handleChange}
+            />
+            <Input
+              label="Location"
+              name="location"
+              value={editedProfile.location}
+              onChange={handleChange}
+            />
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="text" color="black" onClick={() => setOpenDialog(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" color="black" className="ml-2">
+              Save
+            </Button>
+          </DialogFooter>
         </form>
-        <Toaster/>
+        <Toaster />
       </Dialog>
 
-      {/* Password Change Dialog */}
+      {/* Change Password Dialog */}
       <Dialog open={openPasswordDialog} handler={setOpenPasswordDialog} size="sm">
         <DialogHeader>Change Password</DialogHeader>
-        <DialogBody>
-          <div className="grid gap-4">
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                label="New Password"
-                name="newPassword"
-                value={passwordFields.newPassword}
-                onChange={handlePasswordChange}
-              />
-              <IconButton
-                size="small"
-                className="!absolute right-2 top-2 z-10"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeIcon className="h-4 w-4" /> : <EyeSlashIcon className="h-4 w-4" />}
-              </IconButton>
-            </div>
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                label="Confirm Password"
-                name="confirmPassword"
-                value={passwordFields.confirmPassword}
-                onChange={handlePasswordChange}
-              />
-            </div>
-            
+        <DialogBody className="grid gap-4">
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              label="New Password"
+              name="newPassword"
+              value={passwordFields.newPassword}
+              onChange={handlePasswordChange}
+            />
+            <IconButton
+              size="small"
+              className="!absolute right-2 top-2"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeIcon className="h-4 w-4" /> : <EyeSlashIcon className="h-4 w-4" />}
+            </IconButton>
           </div>
+          <Input
+            type={showPassword ? "text" : "password"}
+            label="Confirm Password"
+            name="confirmPassword"
+            value={passwordFields.confirmPassword}
+            onChange={handlePasswordChange}
+          />
         </DialogBody>
         <DialogFooter>
-          <Button color="black" onClick={() => setOpenPasswordDialog(false)}>
+          <Button variant="text" color="black" onClick={() => setOpenPasswordDialog(false)}>
             Cancel
           </Button>
-          <Button color="black" type="submit" className="ml-2">
+          <Button type="submit" color="black" className="ml-2">
             Save
           </Button>
         </DialogFooter>

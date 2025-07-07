@@ -25,8 +25,6 @@ const User = () => {
       });
 
       const response = res.data?.user.filter((item) => item.role === "User");
-      console.log(response);
-
       setUsers(response || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
@@ -42,10 +40,10 @@ const User = () => {
 
   return (
     <div className="mt-5 mb-8 flex flex-col gap-6">
-      {skeletonloading ? (
+      {skeletonloading && users.length !== 0 ? (
         <div
           role="status"
-          className=" p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-900 md:p-6 dark:border-gray-900"
+          className="p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-900 md:p-6 dark:border-gray-900"
         >
           {users.map((item, index) => (
             <div key={index} className="flex items-center justify-between mb-2">
@@ -56,6 +54,18 @@ const User = () => {
               <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-900 w-12"></div>
             </div>
           ))}
+        </div>
+      ) : users.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-gray-600 py-10">
+          <img
+            src="https://www.svgrepo.com/show/87468/empty-box.svg"
+            alt="No Banners"
+            className="w-24 h-24 mb-4 opacity-70"
+          />
+          <h2 className="text-xl font-semibold">No User Found</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Please check back later or add a new User.
+          </p>
         </div>
       ) : (
         <Card>
@@ -80,18 +90,10 @@ const User = () => {
               </thead>
 
               <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="5" className="py-10 text-center">
-                      <Typography>Loading...</Typography>
-                    </td>
-                  </tr>
-                ) : users.length > 0 ? (
+                {users.length > 0 &&
                   users.map((user, key) => {
                     const className = `py-3 px-5 ${
-                      key === users.length - 1
-                        ? ""
-                        : "border-b border-blue-gray-50"
+                      key === users.length - 1 ? "" : "border-b border-blue-gray-50"
                     }`;
 
                     return (
@@ -100,10 +102,7 @@ const User = () => {
                           <div className="flex items-center gap-4">
                             {user.avatar ? (
                               <Avatar
-                                src={
-                                  user.avatar ||
-                                  "https://via.placeholder.com/40"
-                                }
+                                src={user.avatar || "https://via.placeholder.com/40"}
                                 alt={user.name}
                                 size="sm"
                                 variant="rounded"
@@ -148,24 +147,7 @@ const User = () => {
                         </td>
                       </tr>
                     );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="py-10">
-                      <div className="flex flex-col items-center justify-center text-gray-600">
-                        <img
-                          src="https://www.svgrepo.com/show/87468/empty-box.svg"
-                          alt="No Users"
-                          className="w-24 h-24 mb-4 opacity-70"
-                        />
-                        <h2 className="text-xl font-semibold">
-                          {" "}
-                          User Not Found
-                        </h2>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                  })}
               </tbody>
             </table>
           </CardBody>
