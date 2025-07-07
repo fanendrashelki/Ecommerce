@@ -17,13 +17,16 @@ import axiosInstance from "../../utils/axiosInstance";
 import { myContext } from "../../App";
 import alertBox from "../../utils/toster";
 import { Toaster } from "react-hot-toast";
+import imageCompression from "browser-image-compression";
+
 
 export function Profile() {
   const context = useContext(myContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [profileImg, setProfileImg] = useState("");
+  const [profileImg, setProfileImg] = useState(null);
+  const [compressedFile, setCompressedFile] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [profile, setProfile] = useState({
     name: "",
@@ -49,36 +52,53 @@ export function Profile() {
     }
   }, [context.User]);
 
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    setProfileImg(URL.createObjectURL(file));
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("image", file);
-      const token = localStorage.getItem("token");
+const handleImageChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-      const res = await axiosInstance.post("/user/profile-image", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    setLoading(true);
 
-      if (res?.data?.error) {
-        alertBox("error", res.data.message);
-      } else {
-        setProfileImg(res?.data?.imageUrl);
-        alertBox("success", "Avatar updated successfully");
-      }
-    } catch (err) {
-      alertBox("error", err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-      window.location.reload();
+    // ✅ Compress the image before preview/upload
+    const options = {
+      maxSizeMB: 0.5,              // Reduce to ~500KB
+      maxWidthOrHeight: 800,      // Resize if large
+      useWebWorker: true,
+    };
+
+    const compressedFile = await imageCompression(file, options);
+
+    // ✅ Set preview using compressed image
+    const previewUrl = URL.createObjectURL(compressedFile);
+    setProfileImg(previewUrl);
+
+    // ✅ Upload compressed image
+    const formData = new FormData();
+    formData.append("image", compressedFile);
+    const token = localStorage.getItem("token");
+
+    const res = await axiosInstance.post("/user/profile-image", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res?.data?.error) {
+      alertBox("error", res.data.message);
+    } else {
+      setProfileImg(res?.data?.imageUrl);
+      alertBox("success", "Avatar updated successfully");
     }
-  };
+
+  } catch (err) {
+    alertBox("error", err.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+    window.location.reload();
+  }
+};
+
 
   const handleOpen = () => {
     setEditedProfile({ ...profile });
@@ -139,6 +159,8 @@ export function Profile() {
     }
   };
 
+  
+
   return (
     <>
       <Card className="mx-2 my-6 border border-blue-gray-100 shadow-md lg:mx-4">
@@ -155,7 +177,7 @@ export function Profile() {
             <input
               accept="image/*"
             
-  capture="environment"
+              capture="environment"
               type="file"
               id="profile-image"
               hidden
