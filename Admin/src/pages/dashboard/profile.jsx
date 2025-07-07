@@ -171,7 +171,7 @@ export function Profile() {
             )}
             <input
               accept="image/*"
-              capture="environment"
+              capture
               type="file"
               id="profile-image"
               hidden

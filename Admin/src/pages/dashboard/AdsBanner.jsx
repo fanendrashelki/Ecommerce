@@ -246,7 +246,7 @@ function AdsBanner() {
                   id="dropzone-file"
                   type="file"
                   accept="image/*"
-                  capture="environment"
+
                   className="hidden"
                   onChange={(e) => setSelectedFile(e.target.files[0])}
                 />
