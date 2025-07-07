@@ -26,6 +26,9 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
+app.get("/", (req, res) => {
+  res.json({ message: "server is running" });
+});
 app.use("/api/user", userRoute);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/product", productRoutes);
