@@ -9,7 +9,7 @@ import ProductManager from "./pages/dashboard/ProductManager";
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import Category from "./pages/dashboard/Category";
 import Subcategory from "./pages/dashboard/Subcategory";
-import Test from "./pages/dashboard/test";
+
 import { TfiLayoutSliderAlt } from "react-icons/tfi";
 import Banner from "./pages/dashboard/Banner";
 import AdsBanner from "./pages/dashboard/AdsBanner";
@@ -75,12 +75,7 @@ export const routes = [
         path: "/AdsBanner",
         element: <AdsBanner/>,
       },
-      {
-        icon: <UserCircleIcon className={iconClass} />,
-        name: "test",
-        path: "/test",
-        element: <Test/>,
-      },
+      
     ],
   },
 ];
