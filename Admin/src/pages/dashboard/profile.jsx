@@ -37,8 +37,9 @@ export function Profile() {
     confirmPassword: "",
   });
   const [editedProfile, setEditedProfile] = useState({ ...profile });
-
+  const [skeletonloading, setSkeletonLoading] = useState(false);
   useEffect(() => {
+    setSkeletonLoading(true)
     setProfileImg(context.User?.avatar);
     if (context.User) {
       setProfile({
@@ -48,6 +49,10 @@ export function Profile() {
         location: context.User.location || "",
       });
     }
+    setTimeout(() => {
+        setSkeletonLoading(false)
+    }, 2000);
+    
   }, [context.User]);
 
   const handleImageChange = async (e) => {
@@ -152,7 +157,43 @@ export function Profile() {
 
   return (
     <>
-      <Card className="mx-2 my-6 border border-blue-gray-100 shadow-md lg:mx-4">
+
+    {
+      skeletonloading ? (
+      <div className="mx-4 my-10 p-7  bg-white rounded-lg shadow animate-pulse ">
+  <div className="flex items-center space-x-6">
+    <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
+    <div className="flex-1">
+      <div className="w-48 h-6 bg-gray-300 rounded mb-2"></div>
+      <div className="w-36 h-4 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div>
+      <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
+      <div className="w-48 h-6 bg-gray-200 rounded"></div>
+    </div>
+    <div>
+      <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
+      <div className="w-60 h-6 bg-gray-200 rounded"></div>
+    </div>
+    <div>
+      <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
+      <div className="w-40 h-6 bg-gray-200 rounded"></div>
+    </div>
+    <div>
+      <div className="w-32 h-4 bg-gray-300 rounded mb-2"></div>
+      <div className="w-36 h-6 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+
+  <div className="flex space-x-4 mt-6">
+    <div className="w-24 h-10 bg-gray-300 rounded-lg"></div>
+    <div className="w-40 h-10 bg-gray-300 rounded-lg"></div>
+  </div>
+</div>
+):(<Card className="mx-2 my-6 border border-blue-gray-100 shadow-md lg:mx-4">
         <CardBody className="p-4 sm:p-6">
           {/* Avatar */}
           <div className="relative group w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto sm:mx-0 flex items-center justify-center">
@@ -213,7 +254,9 @@ export function Profile() {
             </div>
           </div>
         </CardBody>
-      </Card>
+      </Card>)
+    }
+      
 
       {/* Update Profile Dialog */}
       <Dialog open={openDialog} handler={setOpenDialog} size="md">
