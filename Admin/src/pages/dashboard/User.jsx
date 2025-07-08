@@ -30,7 +30,9 @@ const User = () => {
       console.error("Failed to fetch users:", error);
     } finally {
       setLoading(false);
-      setSkeletonLoading(false);
+      setTimeout(() => {
+         setSkeletonLoading(false)
+      }, 2000);
     }
   };
 
@@ -40,21 +42,22 @@ const User = () => {
 
   return (
     <div className="mt-5 mb-8 flex flex-col gap-6">
-      {skeletonloading && users.length !== 0 ? (
+      {skeletonloading  ? (
         <div
           role="status"
-          className="p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-900 md:p-6 dark:border-gray-900"
+          className="p-4 space-y-4 border rounded shadow animate-pulse"
         >
-          {users.map((item, index) => (
-            <div key={index} className="flex items-center justify-between mb-2">
+          {Array.from({ length: users.length || 10 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between">
               <div>
-                <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-800 w-24 mb-2.5"></div>
-                <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-900"></div>
+                <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>
+                <div className="w-32 h-2 bg-gray-200 rounded"></div>
               </div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-900 w-12"></div>
+              <div className="h-2.5 bg-gray-300 rounded w-12"></div>
             </div>
           ))}
         </div>
+        
       ) : users.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-gray-600 py-10">
           <img

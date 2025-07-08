@@ -120,7 +120,10 @@ const CategoryTable = () => {
     } catch (err) {
       console.error("Fetch failed:", err);
     } finally {
-      setSkeletonLoading(false);
+
+      setTimeout(() => {
+         setSkeletonLoading(false)
+      }, 2000);
     }
   };
 
@@ -193,7 +196,7 @@ const CategoryTable = () => {
 
       {skeletonloading ? (
         <div role="status" className="p-4 space-y-4 border rounded shadow animate-pulse">
-          {Array.from({ length: current.length }).map((_, i) => (
+          {Array.from({ length: current.length || 10 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between">
               <div>
                 <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>

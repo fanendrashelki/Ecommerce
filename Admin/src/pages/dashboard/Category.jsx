@@ -41,7 +41,9 @@ const Category = () => {
       setCategories(res.data?.data || []);
     } catch (error) {
       console.error("Fetch failed:", error);
-    }finally{ setSkeletonLoading(false)}
+    }finally{setTimeout(() => {
+         setSkeletonLoading(false)
+      }, 2000)}
   };
 
   useEffect(() => {
@@ -195,21 +197,20 @@ const Category = () => {
       {/* Table */}
 
       {
-        skeletonloading?
-<div role="status" className=" p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-900 md:p-6 dark:border-gray-900">
-    {currentItems.map((item, index) => (
-  <div key={index} className="flex items-center justify-between mb-2">
-    <div>
-      <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-800 w-24 mb-2.5"></div>
-      <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-900"></div>
-    </div>
-    <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-900 w-12"></div>
-  </div>
-))}
-</div>
-:
-      
-      <Card>
+        skeletonloading?(<div
+          role="status"
+          className="p-4 space-y-4 border rounded shadow animate-pulse"
+        >
+          {Array.from({ length: currentItems.length || 10 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between">
+              <div>
+                <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>
+                <div className="w-32 h-2 bg-gray-200 rounded"></div>
+              </div>
+              <div className="h-2.5 bg-gray-300 rounded w-12"></div>
+            </div>
+          ))}
+        </div>):(currentItems.length>0?(<Card>
         <CardBody className="px-0 pt-0 pb-2">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] table-auto">
@@ -231,7 +232,7 @@ const Category = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.length > 0 ? (
+                {
                   currentItems.map((cat, idx) => {
                     const className = `py-3 px-5 ${
                       idx === currentItems.length - 1
@@ -292,25 +293,7 @@ const Category = () => {
                       </tr>
                     );
                   })
-                ) : (
-                  <tr>
-                    <td colSpan="2" className="py-10 text-center">
-                      <div className="text-gray-600">
-                        <img
-                          src="https://www.svgrepo.com/show/87468/empty-box.svg"
-                          alt="Empty"
-                          className="w-24 h-24 mx-auto mb-4 opacity-70"
-                        />
-                        <h2 className="text-xl font-semibold">
-                          No Categories Found
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                          Please add some categories.
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+               }
               </tbody>
             </table>
           </div>
@@ -352,7 +335,19 @@ const Category = () => {
             </div>
           )}
         </CardBody>
-      </Card>
+      </Card>):( <div className="flex flex-col items-center justify-center text-gray-600 py-10">
+          <img
+            src="https://www.svgrepo.com/show/87468/empty-box.svg"
+            alt="No Banners"
+            className="w-24 h-24 mb-4 opacity-70"
+          />
+          <h2 className="text-xl font-semibold">No Category Found</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Please check back later or add a new Category.
+          </p>
+        </div>))
+      
+      
 }
       {/* Dialog */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
