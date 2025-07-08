@@ -341,30 +341,6 @@ export function Sidenav({ brandImg, brandName }) {
                 )}
               </NavLink>
             </li>
-
-            <li>
-              <NavLink to="/dashboard/test">
-                {({ isActive }) => (
-                  <Button
-                    variant={isActive ? "gradient" : "text"}
-                    color={
-                      isActive
-                        ? sidenavColor
-                        : sidenavType === "gray"
-                        ? "white"
-                        : "blue-gray"
-                    }
-                    className="flex items-center gap-4 px-4 capitalize"
-                    fullWidth
-                  >
-                    <TableCellsIcon className="h-5 w-5" />
-                    <Typography color="inherit" className="font-medium capitalize">
-                      Test
-                    </Typography>
-                  </Button>
-                )}
-              </NavLink>
-            </li>
           </ul>
         </div>
       </aside>

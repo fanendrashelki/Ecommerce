@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { IconButton } from "@material-tailwind/react";
+
 import {
   Sidenav,
   DashboardNavbar,
@@ -34,9 +33,7 @@ export function Dashboard() {
               ))
           )}
         </Routes>
-        {/* <div className="text-blue-gray-600">
-          <Footer />
-        </div> */}
+       
       </div>
     </div>
   );
