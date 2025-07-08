@@ -31,7 +31,12 @@ export function Sidenav({ brandImg, brandName }) {
     white: "bg-white shadow-sm",
   };
 
-  // Disable background scroll when sidenav is open on mobile
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1280) {
+      setOpenSidenav(dispatch, false);
+    }
+  };
+
   useEffect(() => {
     document.body.style.overflow = openSidenav ? "hidden" : "auto";
     return () => {
@@ -41,7 +46,6 @@ export function Sidenav({ brandImg, brandName }) {
 
   return (
     <>
-      {/* Backdrop for mobile */}
       {openSidenav && (
         <div
           className="fixed inset-0 z-40 bg-black bg-opacity-50 xl:hidden"
@@ -54,7 +58,6 @@ export function Sidenav({ brandImg, brandName }) {
           openSidenav ? "translate-x-0" : "-translate-x-full"
         } fixed inset-y-0 left-0 z-50 h-full w-72 rounded-r-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 overflow-y-auto`}
       >
-        {/* Close Button */}
         <div className="relative">
           <IconButton
             variant="text"
@@ -87,7 +90,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/home">
+              <NavLink to="/dashboard/home" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -111,7 +114,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/Banner">
+              <NavLink to="/dashboard/Banner" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -135,7 +138,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/AdsBanner">
+              <NavLink to="/dashboard/AdsBanner" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -159,7 +162,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/profile">
+              <NavLink to="/dashboard/profile" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -220,7 +223,7 @@ export function Sidenav({ brandImg, brandName }) {
               {categoryOpen && (
                 <ul className="ml-8 mt-1 flex flex-col gap-1">
                   <li>
-                    <NavLink to="/dashboard/category">
+                    <NavLink to="/dashboard/category" onClick={handleLinkClick}>
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
@@ -243,7 +246,7 @@ export function Sidenav({ brandImg, brandName }) {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink to="/dashboard/subcategory">
+                    <NavLink to="/dashboard/subcategory" onClick={handleLinkClick}>
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "gradient" : "text"}
@@ -269,9 +272,8 @@ export function Sidenav({ brandImg, brandName }) {
               )}
             </li>
 
-            {/* Other Links */}
             <li>
-              <NavLink to="/dashboard/product">
+              <NavLink to="/dashboard/product" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -295,7 +297,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/user">
+              <NavLink to="/dashboard/user" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
@@ -319,7 +321,7 @@ export function Sidenav({ brandImg, brandName }) {
             </li>
 
             <li>
-              <NavLink to="/dashboard/tables">
+              <NavLink to="/dashboard/tables" onClick={handleLinkClick}>
                 {({ isActive }) => (
                   <Button
                     variant={isActive ? "gradient" : "text"}
