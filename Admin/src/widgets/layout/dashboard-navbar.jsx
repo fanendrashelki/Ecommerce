@@ -12,12 +12,12 @@ import {
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
-  Cog6ToothIcon,
+
   Bars3Icon,
 } from "@heroicons/react/24/solid";
 import {
   useMaterialTailwindController,
-  setOpenConfigurator,
+ 
   setOpenSidenav,
 } from "@/context";
 import { useContext } from "react";
@@ -120,7 +120,7 @@ export function DashboardNavbar() {
                     <img
                       src={context.User.avatar}
                       alt={`${context.User.name || "User"} avatar`}
-                      className="h-10 w-10 rounded-full object-cover"
+                      className="h-10 w-10 rounded-full object-cover cursor-pointer"
                     />
                   ) : ( <IconButton variant="text" color="blue-gray" className="flex items-center gap-2 p-2">
                     <UserCircleIcon className="h-10 w-10 text-blue-gray-500" /> 
@@ -146,13 +146,7 @@ export function DashboardNavbar() {
               </MenuList>
             </Menu>
           
-          <IconButton
-            variant="text"
-            color="blue-gray"
-            onClick={() => setOpenConfigurator(dispatch, true)}
-          >
-            <Cog6ToothIcon className="h-8 w-8 text-blue-gray-500" />
-          </IconButton>
+         
           
         </div>
       </div>
