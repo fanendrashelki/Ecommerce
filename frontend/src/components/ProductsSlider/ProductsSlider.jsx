@@ -1,5 +1,3 @@
-import React from "react";
-import { Link } from "react-router-dom";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import ProductItem from "../ProductItem/ProductItem";
 
-const ProductsSlider = ({ items, productByCat }) => {
+const ProductsSlider = ({ items, productByCat, skeletonloading }) => {
   return (
     <div className="productdSlider py-3">
       <Swiper
@@ -54,7 +52,7 @@ const ProductsSlider = ({ items, productByCat }) => {
         {(Array.isArray(productByCat) ? productByCat : []).map(
           (item, index) => (
             <SwiperSlide key={index}>
-              <ProductItem product={item} />
+              <ProductItem product={item} skeletonloading={skeletonloading} />
             </SwiperSlide>
           )
         )}

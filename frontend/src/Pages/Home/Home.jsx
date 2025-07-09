@@ -29,7 +29,9 @@ const Home = () => {
   const [value, setValue] = useState("");
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
+  const [skeletonloading, setSkeletonLoading] = useState(false);
   const handleChange = async (event, catId) => {
+    setSkeletonLoading(true);
     try {
       const res = await axiosInstance.get(
         `/product/getProductBycatId/${catId}`
@@ -39,6 +41,9 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 2000);
       setValue(catId);
     }
   };
@@ -52,12 +57,15 @@ const Home = () => {
         if (categories && categories.length > 0) {
           setCatList(categories);
           setValue(categories[0]._id);
-
+          setSkeletonLoading(true);
           // Fetch default products
           const productRes = await axiosInstance.get(
             `/product/getProductBycatId/${categories[0]._id}`
           );
           setProductByCat(productRes.data?.products);
+          setTimeout(() => {
+            setSkeletonLoading(false);
+          }, 2000);
         }
       } catch (error) {
         console.error("Error fetching category or products:", error);
@@ -110,7 +118,11 @@ const Home = () => {
 
           {/* Product slider section */}
           <div className="mt-6">
-            <ProductsSlider items={6} productByCat={productByCat} />
+            <ProductsSlider
+              items={6}
+              productByCat={productByCat}
+              skeletonloading={skeletonloading}
+            />
           </div>
         </div>
       </section>
