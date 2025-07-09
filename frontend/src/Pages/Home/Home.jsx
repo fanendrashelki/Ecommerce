@@ -110,7 +110,10 @@ const Home = () => {
 
           {/* Product slider section */}
           <div className="mt-6">
-            <ProductsSlider items={6} productByCat={productByCat} />
+            <ProductsSlider
+              items={productByCat.length}
+              productByCat={productByCat}
+            />
           </div>
         </div>
       </section>
