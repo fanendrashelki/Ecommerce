@@ -1,20 +1,28 @@
 import React from "react";
+import { Link } from "react-router-dom";
+// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+
+// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+
+// import required modules
+import { Navigation } from "swiper/modules";
 import ProductItem from "../ProductItem/ProductItem";
 
-const ProductsSlider = ({ items = 6, productByCat = [] }) => {
-  const shouldLoop = productByCat.length >= items;
-
+const ProductsSlider = ({ items, productByCat }) => {
   return (
-    <div className="productSlider py-3">
+    <div className="productdSlider py-3">
       <Swiper
-        loop={shouldLoop}
-        navigation={true}
+        loop={true}
         slidesPerView={items}
         spaceBetween={10}
+        navigation={true}
+        centeredSlides={false}
+        pagination={{
+          clickable: true,
+        }}
         modules={[Navigation]}
         className="mySwiper"
         breakpoints={{
@@ -39,16 +47,18 @@ const ProductsSlider = ({ items = 6, productByCat = [] }) => {
             spaceBetween: 10,
           },
           1280: {
-            slidesPerView: items,
+            slidesPerView: items || 6,
             spaceBetween: 10,
           },
         }}
       >
-        {productByCat.map((item, index) => (
-          <SwiperSlide key={item.id || index}>
-            <ProductItem product={item} />
-          </SwiperSlide>
-        ))}
+        {(Array.isArray(productByCat) ? productByCat : []).map(
+          (item, index) => (
+            <SwiperSlide key={index}>
+              <ProductItem product={item} />
+            </SwiperSlide>
+          )
+        )}
       </Swiper>
     </div>
   );
