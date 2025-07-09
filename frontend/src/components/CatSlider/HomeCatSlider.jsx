@@ -26,7 +26,7 @@ const HomeCatSlider = () => {
     <div className="homecatslider py-6 bg-gray-100">
       <div className="px-3 sm:px-6 md:px-12 lg:px-20">
         <Swiper
-          loop={true}
+          loop={catList.length >= 8}
           navigation={true}
           centeredSlides={false}
           spaceBetween={10}

@@ -15,7 +15,6 @@ const ProductsSlider = ({ items, productByCat }) => {
   return (
     <div className="productdSlider py-3">
       <Swiper
-        loop={true}
         slidesPerView={items}
         spaceBetween={10}
         navigation={true}
