@@ -1,23 +1,33 @@
 import React from "react";
+import { Link } from "react-router-dom";
+// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+
+// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 
+// import required modules
+import { Navigation } from "swiper/modules";
 import ProductItem from "../ProductItem/ProductItem";
 
-const ProductsSlider = ({ items = 6, productByCat = [] }) => {
+const ProductsSlider = ({ items, productByCat }) => {
   return (
-    <div className="productSlider py-3 px-2 sm:px-4">
+    <div className="productdSlider py-3">
       <Swiper
-        navigation
-        spaceBetween={12}
+        slidesPerView={items}
+        spaceBetween={10}
+        navigation={true}
+        centeredSlides={false}
+        pagination={{
+          clickable: true,
+        }}
         modules={[Navigation]}
         className="mySwiper"
         breakpoints={{
-          0: {
+          320: {
             slidesPerView: 1.2,
-            spaceBetween: 8,
+            spaceBetween: 10,
           },
           480: {
             slidesPerView: 2,
@@ -25,27 +35,29 @@ const ProductsSlider = ({ items = 6, productByCat = [] }) => {
           },
           640: {
             slidesPerView: 2.5,
-            spaceBetween: 12,
+            spaceBetween: 10,
           },
           768: {
             slidesPerView: 3,
-            spaceBetween: 14,
+            spaceBetween: 10,
           },
           1024: {
             slidesPerView: 4,
-            spaceBetween: 16,
+            spaceBetween: 10,
           },
           1280: {
-            slidesPerView: items,
-            spaceBetween: 20,
+            slidesPerView: items || 6,
+            spaceBetween: 10,
           },
         }}
       >
-        {productByCat.map((item, index) => (
-          <SwiperSlide key={index}>
-            <ProductItem product={item} />
-          </SwiperSlide>
-        ))}
+        {(Array.isArray(productByCat) ? productByCat : []).map(
+          (item, index) => (
+            <SwiperSlide key={index}>
+              <ProductItem product={item} />
+            </SwiperSlide>
+          )
+        )}
       </Swiper>
     </div>
   );
