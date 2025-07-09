@@ -24,13 +24,13 @@ const ProductItem = ({ product }) => {
                 <img
                   src={product?.images?.[0]?.url || ""}
                   alt={product.name}
-                  className="w-full h-full object-fill  transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-fill rounded-lg  transition-transform duration-500 group-hover:scale-105"
                 />
                 {product?.images?.[1]?.url && (
                   <img
                     src={product.images[1].url}
                     alt="Hover"
-                    className="w-full h-full object-fill absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                    className="w-full h-full object-fill rounded-lg absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                   />
                 )}
               </div>
