@@ -30,8 +30,11 @@ const Home = () => {
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
   const [skeletonloading, setSkeletonLoading] = useState(false);
+  console.log(productByCat);
+
   const handleChange = async (event, catId) => {
     setSkeletonLoading(true);
+    setProductByCat([]);
     try {
       const res = await axiosInstance.get(
         `/product/getProductBycatId/${catId}`
@@ -117,13 +120,31 @@ const Home = () => {
           </div>
 
           {/* Product slider section */}
-          <div className="mt-6">
-            <ProductsSlider
-              items={6}
-              productByCat={productByCat}
-              skeletonloading={skeletonloading}
-            />
-          </div>
+
+          {productByCat.length > 0 ? (
+            <div className="mt-6">
+              <ProductsSlider
+                items={6}
+                productByCat={productByCat}
+                skeletonloading={skeletonloading}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" // You can replace this with your own image URL
+                alt="No products"
+                className="w-24 h-24 opacity-60"
+              />
+              <p className="text-lg text-gray-600 font-medium">
+                No product data available
+              </p>
+              <p className="text-sm text-gray-400 text-center">
+                We couldn’t find any products in this category. Try browsing
+                other categories or check back later.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
