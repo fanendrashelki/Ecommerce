@@ -2,12 +2,7 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import { IoCloseSharp } from "react-icons/io5";
-import { Button } from "@mui/material";
-import { FaRegPlusSquare } from "react-icons/fa";
-import { FaRegMinusSquare } from "react-icons/fa";
 import "../Navigation/style.css";
-
-import { useState } from "react";
 import CategoryCollapse from "../../categoryCollapse/CategoryCollapse";
 
 import logo from "../../../assets/logo.png";

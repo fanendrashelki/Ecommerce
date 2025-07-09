@@ -33,7 +33,7 @@ function HomeSlider() {
       <div className="">
         {loading ? (
           <div role="status" class=" roundedm animate-pulse  px-3">
-            <div class="flex items-center justify-center w-[100%] !h-[380px] mb-4 bg-gray-300 rounded dark:bg-gray-700">
+            <div class="flex items-center justify-center w-[100%] !h-[380px] max-sm:!h-[200px] mb-4 bg-gray-300 rounded dark:bg-gray-700">
               <svg
                 class="w-10 h-10 text-gray-200 dark:text-gray-500"
                 aria-hidden="true"
@@ -62,7 +62,11 @@ function HomeSlider() {
           >
             {Banner.map((item, index) => (
               <SwiperSlide key={item._id || index}>
-                <img className="w-full rounded-xl" src={item.banner} alt="" />
+                <img
+                  className="w-full h-[200px] sm:h-[280px] md:h-[350px] lg:h-[400px] rounded-xl"
+                  src={item.banner}
+                  alt=""
+                />
               </SwiperSlide>
             ))}
           </Swiper>

@@ -20,7 +20,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 
 import BlogItem from "../../components/Blogs/BlogItem";
-import Footer from "../../components/Footer/Footer";
+
 import AdsBannerSliderV2 from "../../components/AdsBannerSlider/AdsBanerSliderV2";
 import BannerBoxAd from "../../components/AdsBannerSlider/BannerBoxAd";
 import axiosInstance from "../../utils/axiosInstance";
