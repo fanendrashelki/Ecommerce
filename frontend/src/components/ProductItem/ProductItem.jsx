@@ -13,7 +13,6 @@ import Skeleton from "@mui/material/Skeleton";
 const ProductItem = ({ product, skeletonloading }) => {
   const context = useContext(MyProductContext);
   const [OpenProductDetails, setOpenProductDetails] = useState(false);
-  console.log("skeletonloading", skeletonloading);
 
   return (
     <>

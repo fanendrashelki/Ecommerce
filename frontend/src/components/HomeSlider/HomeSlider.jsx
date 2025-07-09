@@ -21,7 +21,9 @@ function HomeSlider() {
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
   };
 
