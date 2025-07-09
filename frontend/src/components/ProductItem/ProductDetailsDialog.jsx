@@ -5,20 +5,23 @@ import ZoomImage from "../ZoomImage/ZoomImage";
 import Button from "@mui/material/Button";
 import { IoMdClose } from "react-icons/io";
 
-function ProductDetailsDialog({ open, onClose }) {
+function ProductDetailsDialog({ open, onClose, product }) {
   return (
     <Dialog fullWidth maxWidth="lg" open={open} onClose={onClose}>
       <DialogContent>
         <section className="bg-white py-4 relative">
-          <div className="container flex gap-4">
-            <div className="w-[40%]">
-              <ZoomImage />
+          {/* Responsive layout: column on mobile, row on larger screens */}
+          <div className="container flex flex-col lg:flex-row gap-4">
+            <div className="w-full lg:w-[40%]">
+              <ZoomImage images={product.images} />
             </div>
-            <div className="w-[60%] space-y-2 py-4 px-4 lg:px-10">
-              <ProductDetailsBox />
+            <div className="w-full lg:w-[60%] space-y-2 py-4 px-4 lg:px-10">
+              <ProductDetailsBox productDetails={product} />
             </div>
           </div>
-          <div className="absolute top-2 right-2">
+
+          {/* Close button */}
+          <div className="absolute top-2 right-2 z-10">
             <Button
               onClick={onClose}
               className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000]"

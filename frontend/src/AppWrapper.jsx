@@ -38,7 +38,6 @@ const alertBox = (type, msg) => {
 export const MyProductContext = createContext();
 
 function AppWrapper() {
-  const [openProductDetails, setOpenProductDetails] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [User, setUser] = useState(null);
   const [isLogin, setLogin] = useState(false);
@@ -52,7 +51,6 @@ function AppWrapper() {
   };
 
   const contextValues = {
-    setOpenProductDetails,
     setOpenCart,
     alertBox,
     setUser,
@@ -152,11 +150,10 @@ function AppWrapper() {
       <MobileNav />
       <Footer />
       <Toaster />
-      <ProductDetailsDialog
-        open={openProductDetails}
-        onClose={() => setOpenProductDetails(false)}
-      />
+
+      {/* cart list fro checkout */}
       <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
+
       <Pageloader open={pageloader} />
     </MyProductContext.Provider>
   );
