@@ -30,7 +30,6 @@ const Home = () => {
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
   const [skeletonloading, setSkeletonLoading] = useState(false);
-  console.log(productByCat);
 
   const handleChange = async (event, catId) => {
     setSkeletonLoading(true);
