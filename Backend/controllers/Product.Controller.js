@@ -13,6 +13,15 @@ const parseSize = (size) => {
   return [];
 };
 
+const parseRam = (productRam) => {
+  if (typeof productRam === "string") {
+    return productRam.trim() ? productRam.split(",").map((s) => s.trim()) : [];
+  } else if (Array.isArray(productRam)) {
+    return productRam;
+  }
+  return [];
+};
+
 //======================= create Product ===========================
 const createProduct = asyncHandler(async (req, res, next) => {
   const {
@@ -70,7 +79,7 @@ const createProduct = asyncHandler(async (req, res, next) => {
     rating: rating ? Number(rating) : 0,
     isFeatured: isFeatured === "true" || isFeatured === true,
     discount: discount ? Number(discount) : 0,
-    productRam,
+    productRam: productRam !== undefined ? parseRam(productRam) : [],
     size: size !== undefined ? parseSize(size) : [],
     productWeight,
   });
@@ -190,7 +199,10 @@ const updateProduct = asyncHandler(async (req, res) => {
   existingProduct.discount =
     discount !== undefined ? Number(discount) : existingProduct.discount;
 
-  existingProduct.productRam = productRam || existingProduct.productRam;
+  existingProduct.productRam =
+    productRam !== undefined
+      ? parseRam(productRam)
+      : existingProduct.productRam;
 
   existingProduct.size =
     size !== undefined ? parseSize(size) : existingProduct.size;
