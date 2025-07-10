@@ -30,7 +30,6 @@ const Home = () => {
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
   const [skeletonloading, setSkeletonLoading] = useState(false);
-  console.log(productByCat);
 
   const handleChange = async (event, catId) => {
     setSkeletonLoading(true);
@@ -43,8 +42,8 @@ const Home = () => {
       setProductByCat(res.data?.products);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      setSkeletonLoading(false);
     } finally {
+      console.log(productByCat);
       setTimeout(() => {
         setSkeletonLoading(false);
       }, 2000);
