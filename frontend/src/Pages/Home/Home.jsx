@@ -30,6 +30,7 @@ const Home = () => {
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
   const [skeletonloading, setSkeletonLoading] = useState(false);
+  console.log(productByCat);
 
   const handleChange = async (event, catId) => {
     setSkeletonLoading(true);
@@ -43,7 +44,6 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
-      console.log(productByCat);
       setTimeout(() => {
         setSkeletonLoading(false);
       }, 2000);
@@ -121,7 +121,7 @@ const Home = () => {
 
           {/* Product slider section */}
 
-          {productByCat.length > 0 || skeletonloading ? (
+          {productByCat.length > 0 ? (
             <div className="mt-6">
               <ProductsSlider
                 items={6}
@@ -132,7 +132,7 @@ const Home = () => {
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
               <img
-                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" // You can replace this with your own image URL
                 alt="No products"
                 className="w-24 h-24 opacity-60"
               />
