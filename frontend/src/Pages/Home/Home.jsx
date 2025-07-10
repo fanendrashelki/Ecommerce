@@ -3,7 +3,7 @@ import HomeSlider from "../../components/HomeSlider/HomeSlider";
 import HomeCatSlider from "../../components/CatSlider/HomeCatSlider";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import AdsBannerSlider from "../../components/AdsBannerSlider/AdsBannerSlider";
-
+import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -47,7 +47,7 @@ const Home = () => {
     } finally {
       setTimeout(() => {
         setSkeletonLoading(false);
-      }, 2000);
+      }, 3000);
       setValue(catId);
     }
   };
@@ -69,7 +69,7 @@ const Home = () => {
           setProductByCat(productRes.data?.products);
           setTimeout(() => {
             setSkeletonLoading(false);
-          }, 2000);
+          }, 3000);
         }
       } catch (error) {
         console.error("Error fetching category or products:", error);
@@ -122,18 +122,24 @@ const Home = () => {
 
           {/* Product slider section */}
           {showNotFound ? (
-            <div className="flex flex-col items-center justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" // You can replace this with your own image URL
-                alt="No products"
-                className="w-24 h-24 opacity-60"
+            <div className="flex flex-col items-center justify-center h-full mt-5 p-8 bg-white border border-dashed border-gray-300 rounded-2xl shadow-sm space-y-5 max-w-lg mx-auto text-center animate-fade-in">
+              <MdOutlineRemoveShoppingCart
+                className="w-24 h-24  animate-bounce-slow"
+                style={{
+                  filter:
+                    "brightness(0) saturate(100%) invert(63%) sepia(35%) saturate(414%) hue-rotate(80deg) brightness(92%) contrast(90%)",
+                }}
               />
-              <p className="text-lg text-gray-600 font-medium">
-                No product data available
-              </p>
-              <p className="text-sm text-gray-400 text-center">
-                We couldn’t find any products in this category. Try browsing
-                other categories or check back later.
+
+              <h2
+                className="text-xl font-semibold"
+                style={{ color: "#35ac75" }}
+              >
+                No Products Available
+              </h2>
+              <p className="text-sm text-gray-500">
+                We couldn’t find any products in this category. Try exploring
+                others or come back later.
               </p>
             </div>
           ) : (
