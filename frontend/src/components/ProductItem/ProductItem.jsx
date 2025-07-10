@@ -52,7 +52,7 @@ const ProductItem = ({ product, skeletonloading }) => {
                   <img
                     src={product?.images?.[0]?.url || ""}
                     alt={product.name}
-                    className="w-full h-full object-fill rounded-lg  transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-fill  rounded-t-lg  transition-transform duration-500 group-hover:scale-105"
                   />
                   {product?.images?.[1]?.url && (
                     <img
