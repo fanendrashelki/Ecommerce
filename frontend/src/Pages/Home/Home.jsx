@@ -43,6 +43,7 @@ const Home = () => {
       setProductByCat(res.data?.products);
     } catch (error) {
       console.error("Error fetching user data:", error);
+      setSkeletonLoading(false);
     } finally {
       setTimeout(() => {
         setSkeletonLoading(false);
