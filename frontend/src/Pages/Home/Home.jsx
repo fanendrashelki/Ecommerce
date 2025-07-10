@@ -38,14 +38,13 @@ const Home = () => {
       const res = await axiosInstance.get(
         `/product/getProductBycatId/${catId}`
       );
-
       setProductByCat(res.data?.products);
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
       setTimeout(() => {
         setSkeletonLoading(false);
-      }, 2000);
+      }, 1000);
       setValue(catId);
     }
   };
@@ -67,7 +66,7 @@ const Home = () => {
           setProductByCat(productRes.data?.products);
           setTimeout(() => {
             setSkeletonLoading(false);
-          }, 2000);
+          }, 1000);
         }
       } catch (error) {
         console.error("Error fetching category or products:", error);
