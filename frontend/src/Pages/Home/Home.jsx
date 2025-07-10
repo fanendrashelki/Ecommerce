@@ -129,7 +129,7 @@ const Home = () => {
               />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
+            <div className="flex flex-col items-center mt-4 justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" // You can replace this with your own image URL
                 alt="No products"

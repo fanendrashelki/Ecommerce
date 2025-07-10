@@ -75,16 +75,16 @@ const ProductItem = ({ product, skeletonloading }) => {
             {/* Action Buttons */}
             <div className="absolute top-[-200px] right-2 z-10 flex flex-col items-center gap-2 w-[50px] transition-all duration-700 group-hover:top-4 opacity-0 group-hover:opacity-100">
               <Button
-                className="!w-[35px] !h-[35px] !min-w-[35px] text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+                className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
                 onClick={() => setOpenProductDetails(true)}
               >
-                <MdZoomOutMap className="text-[18px] text-black" />
+                <MdZoomOutMap className="text-[18px] " />
               </Button>
-              <Button className="!w-[35px] !h-[35px] !min-w-[35px] text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-                <FaRegHeart className="text-[18px] text-black" />
+              <Button className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
+                <FaRegHeart className="text-[18px] " />
               </Button>
-              <Button className="!w-[35px] !h-[35px] !min-w-[35px] text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-                <IoGitCompareOutline className="text-[18px] text-black" />
+              <Button className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
+                <IoGitCompareOutline className="text-[18px]" />
               </Button>
             </div>
           </div>
