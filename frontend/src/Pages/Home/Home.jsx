@@ -30,21 +30,24 @@ const Home = () => {
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
   const [skeletonloading, setSkeletonLoading] = useState(false);
-
+  const [showNotFound, setShowNotFound] = useState(false);
   const handleChange = async (event, catId) => {
     setSkeletonLoading(true);
+    setShowNotFound(false);
     setProductByCat([]);
+
     try {
       const res = await axiosInstance.get(
         `/product/getProductBycatId/${catId}`
       );
       setProductByCat(res.data?.products);
     } catch (error) {
+      setShowNotFound(true);
       console.error("Error fetching user data:", error);
     } finally {
       setTimeout(() => {
         setSkeletonLoading(false);
-      }, 1000);
+      }, 2000);
       setValue(catId);
     }
   };
@@ -66,7 +69,7 @@ const Home = () => {
           setProductByCat(productRes.data?.products);
           setTimeout(() => {
             setSkeletonLoading(false);
-          }, 1000);
+          }, 2000);
         }
       } catch (error) {
         console.error("Error fetching category or products:", error);
@@ -118,17 +121,8 @@ const Home = () => {
           </div>
 
           {/* Product slider section */}
-
-          {productByCat.length > 0 || skeletonloading ? (
-            <div className="mt-6">
-              <ProductsSlider
-                items={6}
-                productByCat={productByCat}
-                skeletonloading={skeletonloading}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col items-center mt-4 justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
+          {showNotFound ? (
+            <div className="flex flex-col items-center justify-center h-full p-6 border border-gray-200 rounded-xl shadow-md bg-white space-y-4">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" // You can replace this with your own image URL
                 alt="No products"
@@ -141,6 +135,14 @@ const Home = () => {
                 We couldn’t find any products in this category. Try browsing
                 other categories or check back later.
               </p>
+            </div>
+          ) : (
+            <div className="mt-6">
+              <ProductsSlider
+                items={6}
+                productByCat={productByCat}
+                skeletonloading={skeletonloading}
+              />
             </div>
           )}
         </div>
