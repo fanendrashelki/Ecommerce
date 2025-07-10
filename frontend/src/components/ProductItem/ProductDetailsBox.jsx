@@ -13,6 +13,9 @@ const ProductDetailsBox = ({ productDetails }) => {
   const [selectedSize, setSelectedSize] = useState("M");
   const sizes = productDetails?.size || [];
 
+  const [selectedRam, setSelectedRam] = useState();
+
+  const productRam = productDetails?.productRam || [];
   const increment = () => setQuantity((prev) => prev + 1);
   const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   return (
@@ -57,6 +60,7 @@ const ProductDetailsBox = ({ productDetails }) => {
       <p class="text-[14px] mt-3 mb-2 text-[#000]">
         Free Shipping (Est. Delivery Time 2-3 Days)
       </p>
+
       {sizes && sizes?.length > 0 && (
         <div className="mt-3 mb-3 ">
           <h3 className="text-[14px] font-semibold mb-2">Select Size :</h3>
@@ -77,6 +81,28 @@ const ProductDetailsBox = ({ productDetails }) => {
           </div>
         </div>
       )}
+      {console.log(productRam)}
+      {productRam && productRam?.length > 0 && (
+        <div className="mt-3 mb-3 ">
+          <h3 className="text-[14px] font-semibold mb-2">Select Ram :</h3>
+          <div className="flex gap-2">
+            {productRam.map((ram) => (
+              <button
+                key={ram}
+                onClick={() => setSelectedRam(ram)}
+                className={`px-4 py-1 border rounded-md text-sm font-medium ${
+                  selectedRam === ram
+                    ? "bg-[#35ac75] text-white border-[#35ac75]"
+                    : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
+                }`}
+              >
+                {ram} GB
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-4 mt-4">
         <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
           <button
