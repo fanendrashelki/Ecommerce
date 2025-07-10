@@ -120,7 +120,7 @@ const Home = () => {
 
           {/* Product slider section */}
 
-          {productByCat.length > 0 ? (
+          {productByCat.length > 0 || skeletonloading ? (
             <div className="mt-6">
               <ProductsSlider
                 items={6}
