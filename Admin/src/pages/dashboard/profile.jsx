@@ -51,7 +51,7 @@ export function Profile() {
     }
     setTimeout(() => {
         setSkeletonLoading(false)
-    }, 2000);
+    }, 500);
     
   }, [context.User]);
 
