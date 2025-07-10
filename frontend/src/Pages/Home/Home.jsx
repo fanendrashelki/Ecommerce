@@ -47,7 +47,7 @@ const Home = () => {
     } finally {
       setTimeout(() => {
         setSkeletonLoading(false);
-      }, 3000);
+      }, 500);
       setValue(catId);
     }
   };
@@ -69,7 +69,7 @@ const Home = () => {
           setProductByCat(productRes.data?.products);
           setTimeout(() => {
             setSkeletonLoading(false);
-          }, 3000);
+          }, 500);
         }
       } catch (error) {
         console.error("Error fetching category or products:", error);
