@@ -47,18 +47,18 @@ const ProductItem = ({ product, skeletonloading }) => {
           {/* Image Section */}
           <div className="group w-full relative overflow-hidden">
             <Link to={`/product-details/${product._id}`}>
-              <div className="group w-full max-w-[300px] mx-auto">
-                <div className="relative overflow-hidden aspect-[1/1]">
+              <div className="group imgWrapper w-full overflow-hidden rounded-md rounded-bl-none rounded-br-none relative">
+                <div className="relative h-[180px] overflow-hidden">
                   <img
                     src={product?.images?.[0]?.url || ""}
                     alt={product.name}
-                    className="w-full h-full object-fill  rounded-t-lg  transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover object-top rounded-t-lg transition-transform duration-500 group-hover:scale-105"
                   />
                   {product?.images?.[1]?.url && (
                     <img
                       src={product.images[1].url}
                       alt="Hover"
-                      className="w-full h-full object-fill rounded-lg absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                      className="w-full h-full object-cover object-top rounded-lg absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                     />
                   )}
                 </div>

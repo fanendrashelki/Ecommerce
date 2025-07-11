@@ -24,7 +24,7 @@ const ProductsSlider = ({ items, productByCat, skeletonloading }) => {
         className="mySwiper"
         breakpoints={{
           320: {
-            slidesPerView: 2.5,
+            slidesPerView: 2,
             spaceBetween: 10,
           },
           480: {
