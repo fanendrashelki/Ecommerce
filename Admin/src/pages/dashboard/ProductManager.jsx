@@ -358,17 +358,57 @@ const ProductManager = () => {
       }, 500);
     }
   };
-const handleSearchByCatId = (e) => {
+const handleSearchByCatId = async(e) => {
   const selectedCatId = e.target.value;
-
-
   const matchedCategory = Categories.find((val) => val._id === selectedCatId);
-
   if (matchedCategory) {
     setsubCategories(matchedCategory.children || []);
   } else {
     setsubCategories([]);
   }
+
+  setSkeletonLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axiosInstance.get(
+        `/product/getProductBycatId/${selectedCatId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProducts(res.data?.products || []);
+      setTotalPages(res.data?.totalPages);
+    } catch (error) {
+      setProducts([])
+      console.error("Fetch products failed:", error);
+    } finally {
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 500);
+    }
+};
+
+const handleSearchBySubCatId = async (e) => {
+  const selectedSubCatId = e.target.value;
+  setSkeletonLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axiosInstance.get(
+        `/product/getProductBySubcatId/${selectedSubCatId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProducts(res.data?.products || []);
+      setTotalPages(res.data?.totalPages);
+    } catch (error) {
+      setProducts([])
+      console.error("Fetch products failed:", error);
+    } finally {
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 500);
+    }
 };
 
   return (
@@ -470,7 +510,7 @@ const handleSearchByCatId = (e) => {
             size="small"
           >
             <InputLabel>Subcategory</InputLabel>
-            <Select label="Category">
+            <Select label="Category" onChange={handleSearchBySubCatId}>
               <MenuItem value="">Select Subategory</MenuItem>
               {SubCategories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
