@@ -72,6 +72,7 @@ const Home = () => {
           }, 500);
         }
       } catch (error) {
+        setShowNotFound(true);
         console.error("Error fetching category or products:", error);
       }
     };
