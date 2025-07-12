@@ -15,6 +15,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import alertBox from "../../utils/toster";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import ProductSkeleton from "../../Components/ProductSkeleton";
+import NotFound from "../../Components/NotFound";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -26,11 +28,11 @@ const Category = () => {
   const [existingImage, setExistingImage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-   const [skeletonloading, setSkeletonLoading] = useState(false);
+  const [skeletonloading, setSkeletonLoading] = useState(false);
   const itemsPerPage = 10;
 
   const fetchCategories = async () => {
-   setSkeletonLoading(true)
+    setSkeletonLoading(true);
     const token = localStorage.getItem("token");
     try {
       const res = await axiosInstance.get("categories", {
@@ -41,9 +43,11 @@ const Category = () => {
       setCategories(res.data?.data || []);
     } catch (error) {
       console.error("Fetch failed:", error);
-    }finally{setTimeout(() => {
-         setSkeletonLoading(false)
-      }, 500)}
+    } finally {
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 500);
+    }
   };
 
   useEffect(() => {
@@ -104,7 +108,7 @@ const Category = () => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     };
- setLoading(true);
+    setLoading(true);
     try {
       let response;
       if (editingId) {
@@ -123,7 +127,7 @@ const Category = () => {
         );
       }
 
-     await fetchCategories();
+      await fetchCategories();
       handleClose();
     } catch (error) {
       console.error("Error in category submission:", error);
@@ -131,9 +135,9 @@ const Category = () => {
         error.response?.data?.message ||
         "Something went wrong while saving the category.";
       alertBox("error", errorMessage);
-    }finally {
-    setLoading(false);
-  }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -144,12 +148,11 @@ const Category = () => {
 
     const token = localStorage.getItem("token");
     try {
-       const response = await axiosInstance.delete(`categories/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  await fetchCategories();
-  alertBox("success", "Category deleted");
-     
+      const response = await axiosInstance.delete(`categories/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await fetchCategories();
+      alertBox("success", "Category deleted");
     } catch (err) {
       console.error("Delete failed:", err);
       alertBox("error", "Delete failed");
@@ -196,44 +199,32 @@ const Category = () => {
 
       {/* Table */}
 
-      {
-        skeletonloading?(<div
-          role="status"
-          className="p-4 space-y-4 border rounded shadow animate-pulse"
-        >
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between">
-              <div>
-                <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>
-                <div className="w-32 h-2 bg-gray-200 rounded"></div>
-              </div>
-              <div className="h-2.5 bg-gray-300 rounded w-12"></div>
-            </div>
-          ))}
-        </div>):(currentItems.length>0?(<Card>
-        <CardBody className="px-0 pt-0 pb-2">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {["Category", "subCategory", "Actions"].map((el) => (
-                    <th
-                      key={el}
-                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                    >
-                      <Typography
-                        variant="small"
-                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+      {skeletonloading ? (
+     <ProductSkeleton rows={10}/>
+      ) : currentItems.length > 0 ? (
+        <Card>
+          <CardBody className="px-0 pt-0 pb-2">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] table-auto">
+                <thead>
+                  <tr>
+                    {["Category", "subCategory", "Actions"].map((el) => (
+                      <th
+                        key={el}
+                        className="border-b border-blue-gray-50 py-3 px-5 text-left"
                       >
-                        {el}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  currentItems.map((cat, idx) => {
+                        <Typography
+                          variant="small"
+                          className="text-[11px] font-bold uppercase text-blue-gray-400"
+                        >
+                          {el}
+                        </Typography>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentItems.map((cat, idx) => {
                     const className = `py-3 px-5 ${
                       idx === currentItems.length - 1
                         ? ""
@@ -279,76 +270,65 @@ const Category = () => {
                               color="blue"
                               onClick={() => handleOpenEdit(cat)}
                             >
-                             <FaEdit className="text-[18px]" />
+                              <FaEdit className="text-[18px]" />
                             </Button>
                             <Button
                               size="sm"
                               color="red"
                               onClick={() => handleDelete(cat._id)}
                             >
-                              < MdDelete className="text-[20px]" />
+                              <MdDelete className="text-[20px]" />
                             </Button>
                           </div>
                         </td>
                       </tr>
                     );
-                  })
-               }
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex flex-wrap justify-start items-center p-4 gap-2">
-              <Button
-                size="sm"
-                color="black"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Prev
-              </Button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (pageNum) => (
-                  <Button
-                    key={pageNum}
-                    size="sm"
-                    variant={pageNum === currentPage ? "filled" : "outlined"}
-                    color="black"
-                    onClick={() => setCurrentPage(pageNum)}
-                  >
-                    {pageNum}
-                  </Button>
-                )
-              )}
-
-              <Button
-                size="sm"
-                color="black"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
-                Next
-              </Button>
+                  })}
+                </tbody>
+              </table>
             </div>
-          )}
-        </CardBody>
-      </Card>):( <div className="flex flex-col items-center justify-center text-gray-600 py-10">
-          <img
-            src="https://www.svgrepo.com/show/87468/empty-box.svg"
-            alt="No Banners"
-            className="w-24 h-24 mb-4 opacity-70"
-          />
-          <h2 className="text-xl font-semibold">No Category Found</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Please check back later or add a new Category.
-          </p>
-        </div>))
-      
-      
-}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-wrap justify-start items-center p-4 gap-2">
+                <Button
+                  size="sm"
+                  color="black"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                >
+                  Prev
+                </Button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNum) => (
+                    <Button
+                      key={pageNum}
+                      size="sm"
+                      variant={pageNum === currentPage ? "filled" : "outlined"}
+                      color="black"
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                )}
+
+                <Button
+                  size="sm"
+                  color="black"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+          </CardBody>
+        </Card>
+      ) : (
+        <NotFound title={"category"}/>
+      )}
       {/* Dialog */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle>{editingId ? "Edit" : "Add"} Category</DialogTitle>
@@ -421,16 +401,29 @@ const Category = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={loading}>
-  {loading ? (
-   
-    <svg aria-hidden="true" className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-    </svg>
-  
-
-  ) : editingId ? "Update" : "Add"}
-</Button>
+            {loading ? (
+              <svg
+                aria-hidden="true"
+                className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+            ) : editingId ? (
+              "Update"
+            ) : (
+              "Add"
+            )}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

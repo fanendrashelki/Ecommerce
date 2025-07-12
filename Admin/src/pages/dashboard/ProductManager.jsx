@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MdImageNotSupported } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -10,6 +11,9 @@ import {
   Button,
   Input,
 } from "@material-tailwind/react";
+import { TextField, InputAdornment } from "@mui/material";
+import { IoSearch } from "react-icons/io5";
+
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -17,12 +21,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import axiosInstance from "../../utils/axiosInstance";
 import alertBox from "../../utils/toster";
+import NotFound from "../../Components/NotFound";
+import ProductSkeleton from "../../Components/ProductSkeleton";
 
 const ProductManager = () => {
-  const [products, setProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const DataInput = {
     name: "",
     description: "",
     brand: "",
@@ -42,17 +45,26 @@ const ProductManager = () => {
     size: [],
     productWeight: "",
     images: [],
-  });
+  };
+  const [products, setProducts] = useState([]);
+
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageFromUrl = parseInt(searchParams.get("page")) || 1;
+  const [page, setPage] = useState(pageFromUrl);
+
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState(DataInput);
   const [editingId, setEditingId] = useState(null);
   const [preview, setPreview] = useState([]);
   const [existingImage, setExistingImage] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [skeletonloading, setSkeletonLoading] = useState(false);
-  const itemsPerPage = 10;
 
-  const [filterCat, setfilterCat] = useState("");
-  const [filtersubCat, setfiltersubCat] = useState("");
+  const [searchText, setSearchText] = useState("");
+
   const [Categories, setCategories] = useState([]);
   const [SubCategories, setsubCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -78,23 +90,32 @@ const ProductManager = () => {
     setSkeletonLoading(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await axiosInstance.get("/product", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axiosInstance.get(
+        `/product?page=${page}&limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setProducts(res.data?.products || []);
+      setTotalPages(res.data?.totalPages);
     } catch (error) {
       console.error("Fetch products failed:", error);
     } finally {
-      setSkeletonLoading(false);
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 500);
     }
   };
 
   useEffect(() => {
-    fetchProduct();
+    fetchProduct(page);
     fetchCategories();
-  }, []);
+  }, [page]);
 
+  useEffect(() => {
+    setSearchParams({ page });
+  }, [page]);
   const handleCategoryChange = (e) => {
     const selected = Categories.find((cat) => cat._id === e.target.value);
     setSelectedCategory(selected || null);
@@ -140,27 +161,7 @@ const ProductManager = () => {
 
   const handleOpenAdd = () => {
     setEditingId(null);
-    setFormData({
-      name: "",
-      description: "",
-      brand: "",
-      price: "",
-      oldPrice: "",
-      catId: "",
-      catName: "",
-      subCatId: "",
-      subCatName: "",
-      thirdSubCatId: "",
-      thirdSubCatName: "",
-      countInStore: "",
-      rating: "",
-      isFeatured: false,
-      discount: "",
-      productRam: "",
-      size: [],
-      productWeight: "",
-      images: [],
-    });
+    setFormData(DataInput);
     setPreview(null);
     setExistingImage("");
     setSelectedCategory(null);
@@ -341,53 +342,72 @@ const ProductManager = () => {
     }
   };
 
-  const filteredProducts = products.filter((item) => {
-    const matchesSearch =
-      !searchTerm || item.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesCategory =
-      !filterCat || item?.category?.catId?._id === filterCat;
-
-    const matchessubCategory =
-      !filtersubCat || item?.category?.subCatId?._id === filtersubCat;
-
-    return matchesSearch && matchesCategory && matchessubCategory;
-  });
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const handleSearch = () => {
+    console.log("Searching for:", searchText);
+    // Add your actual search logic here
+  };
 
   return (
     <div className="mt-5 mb-8 flex flex-col gap-6">
       {/* Search & Add */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center  justify-between items-center gap-4">
-        <div>
-          <Input
-            sx={{ m: 1, minWidth: 200 }}
+        <div className="flex items-center justify-center p-2">
+          <TextField
+            variant="outlined"
             size="small"
             label="Search Product"
             type="text"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
+            onChange={handleSearch}
+            sx={{
+              m: 1,
+              minWidth: 280,
+              backgroundColor: "#f9f9f9",
+              borderRadius: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#ccc",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#000", 
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#777",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#000",
+              },
             }}
           />
         </div>
         <div>
-          <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+          <FormControl
+            sx={{
+              m: 1,
+              minWidth: 280,
+              backgroundColor: "#f9f9f9",
+              borderRadius: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#ccc",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#000", 
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#777",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#000",
+              },
+            }}
+            size="small"
+          >
             <InputLabel>Category</InputLabel>
-            <Select
-              label="Category"
-              value={filterCat}
-              onChange={(e) => setfilterCat(e.target.value)}
-            >
+            <Select label="Category">
               <MenuItem value="">Select Category</MenuItem>
               {Categories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
@@ -398,13 +418,32 @@ const ProductManager = () => {
           </FormControl>
         </div>
         <div>
-          <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+          <FormControl
+            sx={{
+              m: 1,
+              minWidth: 280,
+              backgroundColor: "#f9f9f9",
+              borderRadius: 2,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#ccc",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#000",
+                },
+              },
+              "& .MuiInputLabel-root": {
+                color: "#777",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#000",
+              },
+            }}
+            size="small"
+          >
             <InputLabel>Subcategory</InputLabel>
-            <Select
-              label="Category"
-              value={filtersubCat}
-              onChange={(e) => setfiltersubCat(e.target.value)}
-            >
+            <Select label="Category">
               <MenuItem value="">Select Subategory</MenuItem>
               {SubCategories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
@@ -426,35 +465,9 @@ const ProductManager = () => {
         </div>
       </div>
 
-      {/* Table */}
-      {skeletonloading &&  currentItems.length !== 0 ? (
-        <div
-          role="status"
-          className=" p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-900 md:p-6 dark:border-gray-900"
-        >
-          {currentItems.map((item, index) => (
-            <div key={index} className="flex items-center justify-between mb-2">
-              <div>
-                <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-800 w-24 mb-2.5"></div>
-                <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-900"></div>
-              </div>
-              <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-900 w-12"></div>
-            </div>
-          ))}
-        </div>
-      ) : currentItems.length === 0 ? (
-         <div className="flex flex-col items-center justify-center text-gray-600 py-10">
-          <img
-            src="https://www.svgrepo.com/show/87468/empty-box.svg"
-            alt="No Banners"
-            className="w-24 h-24 mb-4 opacity-70"
-          />
-          <h2 className="text-xl font-semibold">No Product Found</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Please check back later or add a new Product.
-          </p>
-        </div>
-      ) : (
+      {skeletonloading ? (
+        <ProductSkeleton rows={10} />
+      ) : products.length > 0 ? (
         <Card>
           <CardBody className="px-0 pt-0 pb-2">
             <div className="overflow-x-auto">
@@ -484,16 +497,16 @@ const ProductManager = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.map((items, idx) => {
+                  {products.map((items, idx) => {
                     const className = `py-3 px-5 ${
-                      idx === currentItems.length - 1
+                      idx === products.length - 1
                         ? ""
                         : "border-b border-blue-gray-50"
                     }`;
 
                     return (
                       <tr key={items._id}>
-                        <td className={className}>
+                        <td className={`${className} w-[400px]`}>
                           <div className="flex items-center gap-4">
                             {items?.images?.[0]?.url ? (
                               <Avatar
@@ -509,12 +522,14 @@ const ProductManager = () => {
                             <Typography
                               variant="small"
                               color="blue-gray"
-                              className="text-sm sm:text-base font-semibold mt-1 text-black overflow-hidden"
+                              className="text-sm  font-semibold mt-1 text-black overflow-hidden"
                               style={{
                                 display: "-webkit-box",
-                                WebkitLineClamp: 2,
+                                WebkitLineClamp: 2, // Limit to 2 lines
                                 WebkitBoxOrient: "vertical",
-                                minHeight: "2.75rem",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                minHeight: "2.75rem", // Ensures enough space for 2 lines
                               }}
                             >
                               {items.name}
@@ -551,15 +566,13 @@ const ProductManager = () => {
                 </tbody>
               </table>
             </div>
-
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex flex-wrap justify-start items-center p-4 gap-2">
                 <Button
                   size="sm"
                   color="black"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  disabled={page === 1}
+                  onClick={() => setPage((prev) => prev - 1)}
                 >
                   Prev
                 </Button>
@@ -569,9 +582,9 @@ const ProductManager = () => {
                     <Button
                       key={pageNum}
                       size="sm"
-                      variant={pageNum === currentPage ? "filled" : "outlined"}
+                      variant={pageNum === page ? "filled" : "outlined"}
                       color="black"
-                      onClick={() => setCurrentPage(pageNum)}
+                      onClick={() => setPage(pageNum)}
                     >
                       {pageNum}
                     </Button>
@@ -581,8 +594,8 @@ const ProductManager = () => {
                 <Button
                   size="sm"
                   color="black"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prev) => prev + 1)}
                 >
                   Next
                 </Button>
@@ -590,9 +603,10 @@ const ProductManager = () => {
             )}
           </CardBody>
         </Card>
+      ) : (
+        <NotFound title={"Product"} />
       )}
-      {/* Dialog */}
-      {/* Dialog */}
+
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
         <DialogTitle>{editingId ? "Edit Product" : "Add Product"}</DialogTitle>
         <DialogContent dividers>

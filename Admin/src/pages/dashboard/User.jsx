@@ -8,6 +8,8 @@ import {
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import ProductSkeleton from "../../Components/ProductSkeleton";
+import NotFound from "../../Components/NotFound";
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -43,33 +45,10 @@ const User = () => {
   return (
     <div className="mt-5 mb-8 flex flex-col gap-6">
       {skeletonloading  ? (
-        <div
-          role="status"
-          className="p-4 space-y-4 border rounded shadow animate-pulse"
-        >
-          {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between">
-              <div>
-                <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>
-                <div className="w-32 h-2 bg-gray-200 rounded"></div>
-              </div>
-              <div className="h-2.5 bg-gray-300 rounded w-12"></div>
-            </div>
-          ))}
-        </div>
+       <ProductSkeleton rows={10}/>
         
       ) : users.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-gray-600 py-10">
-          <img
-            src="https://www.svgrepo.com/show/87468/empty-box.svg"
-            alt="No Banners"
-            className="w-24 h-24 mb-4 opacity-70"
-          />
-          <h2 className="text-xl font-semibold">No User Found</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Please check back later or add a new User.
-          </p>
-        </div>
+        <NotFound title={"User"}/>
       ) : (
         <Card>
           <CardBody className="px-0 pt-0 pb-2">

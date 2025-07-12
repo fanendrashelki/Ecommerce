@@ -15,6 +15,8 @@ import axiosInstance from "../../utils/axiosInstance";
 import alertBox from "../../utils/toster";
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import ProductSkeleton from "../../Components/ProductSkeleton";
+import NotFound from "../../Components/NotFound";
 
 const CategoryTable = () => {
   const [categories, setCategories] = useState([]);
@@ -195,17 +197,7 @@ const CategoryTable = () => {
       </div>
 
       {skeletonloading ? (
-        <div role="status" className="p-4 space-y-4 border rounded shadow animate-pulse">
-          {Array.from({ length:  10 }).map((_, i) => (
-            <div key={i} className="flex items-center justify-between">
-              <div>
-                <div className="h-2.5 bg-gray-300 rounded w-24 mb-2.5"></div>
-                <div className="w-32 h-2 bg-gray-200 rounded"></div>
-              </div>
-              <div className="h-2.5 bg-gray-300 rounded w-12"></div>
-            </div>
-          ))}
-        </div>
+        <ProductSkeleton rows={10}/>
       ) : current.length > 0 ? (
         <Card>
           <CardBody className="px-0 pt-0 pb-2">
@@ -233,11 +225,7 @@ const CategoryTable = () => {
           </CardBody>
         </Card>
       ) : (
-        <div className="w-full flex flex-col items-center justify-center py-12">
-          <img src="https://www.svgrepo.com/show/87468/empty-box.svg" alt="Empty" className="w-28 h-28 opacity-70 mb-4" />
-          <Typography variant="h5" className="text-gray-700 font-semibold mb-2">No Categories Found</Typography>
-          <Typography variant="small" className="text-gray-500">Please add a subcategory or third subcategory to get started.</Typography>
-        </div>
+        <NotFound title={"SubCategory"}/>
       )}
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
