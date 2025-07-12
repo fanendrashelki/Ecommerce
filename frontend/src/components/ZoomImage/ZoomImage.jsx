@@ -67,7 +67,6 @@ const ZoomImage = ({ images }) => {
                 zoomType="hover"
                 zoomScale={1.2}
                 alt={`zoom-${index}`}
-                fullscreenOnMobile={true}
                 hideCloseButton={true}
                 className="object-contain w-full h-full"
               />
