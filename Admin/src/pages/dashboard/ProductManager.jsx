@@ -11,8 +11,7 @@ import {
   Button,
   Input,
 } from "@material-tailwind/react";
-import { TextField, InputAdornment } from "@mui/material";
-import { IoSearch } from "react-icons/io5";
+import { TextField } from "@mui/material";
 
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
@@ -63,7 +62,7 @@ const ProductManager = () => {
   const [loading, setLoading] = useState(false);
   const [skeletonloading, setSkeletonLoading] = useState(false);
 
-  const [searchText, setSearchText] = useState("");
+
 
   const [Categories, setCategories] = useState([]);
   const [SubCategories, setsubCategories] = useState([]);
@@ -76,11 +75,7 @@ const ProductManager = () => {
     const token = localStorage.getItem("token");
     try {
       const rescat = await axiosInstance.get("categories");
-      const ressubcat = await axiosInstance.get("categories/subcategories", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCategories(rescat.data?.data || []);
-      setsubCategories(ressubcat.data?.data || []);
+      setCategories(rescat.data?.data || []); 
     } catch (err) {
       console.error("Fetch categories failed:", err);
     }
@@ -342,10 +337,39 @@ const ProductManager = () => {
     }
   };
 
-  const handleSearch = () => {
-    console.log("Searching for:", searchText);
-    // Add your actual search logic here
+  const handleSearch = async (e) => {
+   
+    setSkeletonLoading(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axiosInstance.get(
+        `/product/filter?keyword=${ e.target.value}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setProducts(res.data?.products || []);
+      setTotalPages(res.data?.totalPages);
+    } catch (error) {
+      console.error("Fetch products failed:", error);
+    } finally {
+      setTimeout(() => {
+        setSkeletonLoading(false);
+      }, 500);
+    }
   };
+const handleSearchByCatId = (e) => {
+  const selectedCatId = e.target.value;
+
+
+  const matchedCategory = Categories.find((val) => val._id === selectedCatId);
+
+  if (matchedCategory) {
+    setsubCategories(matchedCategory.children || []);
+  } else {
+    setsubCategories([]);
+  }
+};
 
   return (
     <div className="mt-5 mb-8 flex flex-col gap-6">
@@ -360,7 +384,7 @@ const ProductManager = () => {
             onChange={handleSearch}
             sx={{
               m: 1,
-              minWidth: 280,
+              minWidth: 200,
               backgroundColor: "#f9f9f9",
               borderRadius: 2,
               "& .MuiOutlinedInput-root": {
@@ -385,7 +409,7 @@ const ProductManager = () => {
           <FormControl
             sx={{
               m: 1,
-              minWidth: 280,
+              minWidth: 200,
               backgroundColor: "#f9f9f9",
               borderRadius: 2,
               "& .MuiOutlinedInput-root": {
@@ -407,7 +431,7 @@ const ProductManager = () => {
             size="small"
           >
             <InputLabel>Category</InputLabel>
-            <Select label="Category">
+            <Select label="Category" onChange={handleSearchByCatId}>
               <MenuItem value="">Select Category</MenuItem>
               {Categories.map((cat) => (
                 <MenuItem key={cat._id} value={cat._id}>
@@ -418,10 +442,13 @@ const ProductManager = () => {
           </FormControl>
         </div>
         <div>
+        {
+          SubCategories.length >0 &&( 
+
           <FormControl
             sx={{
               m: 1,
-              minWidth: 280,
+              minWidth: 200,
               backgroundColor: "#f9f9f9",
               borderRadius: 2,
               "& .MuiOutlinedInput-root": {
@@ -452,6 +479,8 @@ const ProductManager = () => {
               ))}
             </Select>
           </FormControl>
+       ) 
+        }
         </div>
 
         <div>
