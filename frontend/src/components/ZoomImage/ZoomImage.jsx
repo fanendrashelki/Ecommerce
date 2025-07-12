@@ -20,7 +20,7 @@ const ZoomImage = ({ images }) => {
   return (
     <div className="flex gap-3">
       {/* Thumbnail Vertical Slider */}
-      <div className="slider w-[20%] overflow-hidden">
+      <div className="slider w-[20%] !h-[400px] overflow-hidden">
         <Swiper
           ref={zoomSlidersmall}
           direction="vertical"
@@ -67,6 +67,8 @@ const ZoomImage = ({ images }) => {
                 zoomType="hover"
                 zoomScale={1.2}
                 alt={`zoom-${index}`}
+                fullscreenOnMobile={true}
+                hideCloseButton={true}
                 className="object-contain w-full h-full"
               />
             </SwiperSlide>

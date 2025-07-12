@@ -173,7 +173,7 @@ nav ul button:hover {
   width: 30% !important;
   height: 95% !important;
   border-radius: 0 !important;
-  background: rgba(241, 237, 237, 0.2) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
   transform: rotate(90deg);
   font-weight: 700 !important;
   color: #fff !important;

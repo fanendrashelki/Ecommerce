@@ -81,7 +81,7 @@ const ProductDetailsBox = ({ productDetails }) => {
           </div>
         </div>
       )}
-      {console.log(productRam)}
+
       {productRam && productRam?.length > 0 && (
         <div className="mt-3 mb-3 ">
           <h3 className="text-[14px] font-semibold mb-2">Select Ram :</h3>
