@@ -153,7 +153,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     subCatName,
     thirdSubCatId,
     thirdSubCatName,
-    countInStock,
+    countInStore,
     rating,
     isFeatured,
     discount,
@@ -184,8 +184,8 @@ const updateProduct = asyncHandler(async (req, res) => {
   };
 
   existingProduct.countInStore =
-    countInStock !== undefined
-      ? Number(countInStock)
+    countInStore !== undefined
+      ? Number(countInStore)
       : existingProduct.countInStore;
 
   existingProduct.rating =
