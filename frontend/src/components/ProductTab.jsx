@@ -140,7 +140,7 @@ const ProductTab = () => {
               ) : (
                 <ProductsSlider
                   items={6}
-                  productByCat={productByCat}
+                  productData={productByCat}
                   skeletonloading={loading}
                 />
               )}

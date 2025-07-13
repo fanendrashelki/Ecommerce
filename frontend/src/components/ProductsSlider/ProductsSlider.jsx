@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import ProductItem from "../ProductItem/ProductItem";
 
-const ProductsSlider = ({ items, productByCat, skeletonloading }) => {
+const ProductsSlider = ({ items, productData, skeletonloading }) => {
   return (
     <div className="productdSlider py-3">
       <Swiper
@@ -49,13 +49,11 @@ const ProductsSlider = ({ items, productByCat, skeletonloading }) => {
           },
         }}
       >
-        {(Array.isArray(productByCat) ? productByCat : []).map(
-          (item, index) => (
-            <SwiperSlide key={index}>
-              <ProductItem product={item} skeletonloading={skeletonloading} />
-            </SwiperSlide>
-          )
-        )}
+        {(Array.isArray(productData) ? productData : []).map((item, index) => (
+          <SwiperSlide key={index}>
+            <ProductItem product={item} skeletonloading={skeletonloading} />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
