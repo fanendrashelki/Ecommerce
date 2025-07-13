@@ -1,75 +1,75 @@
 import React, { useContext, useState } from "react";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
-import { IoCartOutline } from "react-icons/io5";
-import { Button } from "@mui/material";
+import { IoCartOutline, IoGitCompareOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
-import { IoGitCompareOutline } from "react-icons/io5";
+import { Button } from "@mui/material";
 import { MyProductContext } from "../../AppWrapper";
-
+import { FaShield } from "react-icons/fa6";
+import { FaTruck } from "react-icons/fa";
+import { FaExchangeAlt } from "react-icons/fa";
 const ProductDetailsBox = ({ productDetails }) => {
   const context = useContext(MyProductContext);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
-  const sizes = productDetails?.size || [];
-
   const [selectedRam, setSelectedRam] = useState();
-
+  const sizes = productDetails?.size || [];
   const productRam = productDetails?.productRam || [];
+
   const increment = () => setQuantity((prev) => prev + 1);
   const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
   return (
-    <div>
-      <h1 className="text-xl font-semibold text-gray-800">
+    <div className="space-y-6 px-8 max-sm:px-0 ">
+      {/* Product Title */}
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
         {productDetails.name}
       </h1>
 
-      <div className="flex items-center gap-6">
-        <span className="text-sm text-gray-500">
-          Brand:
-          <span className="ml-1 text-sm font-semibold text-gray-700">
-            {productDetails.brand}
-          </span>
-        </span>
-
+      {/* Rating and Brand */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-gray-700">
           <Rating name="read-only" value={4} size="small" readOnly />
-          <span className="text-sm text-gray-600">Reviews (4)</span>
+          <span className="text-sm text-gray-500">(42 reviews)</span>
         </div>
-      </div>
-      <div className="flex items-center gap-4 py-1">
-        <span className=" line-through text-gray-500 text-[20px] font-[500]">
-          {productDetails.oldPrice}
+        <span className="text-sm bg-green-100 text-[#35ac75] px-2 py-1 rounded">
+          <span className="font-medium">Brand:</span> {productDetails.brand}
         </span>
-        <span className="ml-1 text-sm  text-[#35ac75] price text-primary text-[20px]  font-[600]">
-          {productDetails.price}
-        </span>
-
-        <div className="flex items-center gap-2 text-sm text-gray-700">
-          <span className="text-[14px] text-gray-600 ">
-            Available In Stock:
-          </span>
-          <span className="text-sm  text-green-600 text-[14px] font-bold">
-            {productDetails.countInStore}
-          </span>
-        </div>
       </div>
-      <p className="mt-3 pr-10 mb-3 text-[14px] text-gray-500">
-        {productDetails.description}
-      </p>
-      <p class="text-[14px] mt-3 mb-2 text-[#000]">
-        Free Shipping (Est. Delivery Time 2-3 Days)
+
+      {/* Pricing */}
+      <div className="text-3xl font-bold text-green-700 flex items-center flex-wrap gap-2">
+        ₹{productDetails.price}
+        {productDetails.oldPrice && (
+          <span className="text-lg text-gray-500 line-through ml-3">
+            ₹{productDetails.oldPrice}
+          </span>
+        )}
+        {productDetails.discount !== 0 && (
+          <span className="text-sm bg-red-100 text-red-600 px-2 py-1 rounded">
+            {productDetails.discount}% OFF
+          </span>
+        )}
+      </div>
+
+      {/* Description */}
+      <p className="text-gray-600 text-[14px]">{productDetails.description}</p>
+      <p className="text-sm text-black font-medium">
+        🚚 Free Shipping (Est. Delivery Time 2-3 Days)
       </p>
 
-      {sizes && sizes?.length > 0 && (
-        <div className="mt-3 mb-3 ">
-          <h3 className="text-[14px] font-semibold mb-2">Select Size :</h3>
-          <div className="flex gap-2">
+      {/* Size Selector */}
+      {sizes.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Select Size:
+          </h3>
+          <div className="flex gap-2 flex-wrap">
             {sizes.map((size) => (
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
-                className={`px-4 py-1 border rounded-md text-sm font-medium ${
+                className={`px-4 py-1 border rounded-md text-sm font-medium transition-all ${
                   selectedSize === size
                     ? "bg-[#35ac75] text-white border-[#35ac75]"
                     : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
@@ -82,15 +82,18 @@ const ProductDetailsBox = ({ productDetails }) => {
         </div>
       )}
 
-      {productRam && productRam?.length > 0 && (
-        <div className="mt-3 mb-3 ">
-          <h3 className="text-[14px] font-semibold mb-2">Select Ram :</h3>
-          <div className="flex gap-2">
+      {/* RAM Selector */}
+      {productRam.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Select RAM:
+          </h3>
+          <div className="flex gap-2 flex-wrap">
             {productRam.map((ram) => (
               <button
                 key={ram}
                 onClick={() => setSelectedRam(ram)}
-                className={`px-4 py-1 border rounded-md text-sm font-medium ${
+                className={`px-4 py-2 border rounded-md text-sm font-medium transition-all ${
                   selectedRam === ram
                     ? "bg-[#35ac75] text-white border-[#35ac75]"
                     : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
@@ -103,56 +106,70 @@ const ProductDetailsBox = ({ productDetails }) => {
         </div>
       )}
 
-      <div className="flex items-center gap-4 mt-4">
-        <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
-          <button
-            onClick={decrement}
-            className="px-3 py-1 bg-gray-100 hover:bg-[#35ac75] hover:text-white text-lg font-semibold"
-          >
-            -
-          </button>
-          <input
-            type="number"
-            value={quantity}
-            readOnly
-            className="w-12 text-center p-1 outline-none"
-          />
-          <button
-            onClick={increment}
-            className="px-3 py-1 bg-gray-100 hover:bg-[#35ac75] hover:text-white text-lg font-semibold"
-          >
-            +
-          </button>
+      {/* Quantity and Availability */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Quantity:</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex border border-gray-300 rounded-md overflow-hidden">
+            <button
+              onClick={decrement}
+              className="w-10 bg-gray-100 text-lg font-semibold hover:bg-[#35ac75] hover:text-white"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              value={quantity}
+              readOnly
+              className="w-12 text-center p-1 outline-none border-x border-gray-300"
+            />
+            <button
+              onClick={increment}
+              className="w-10 bg-gray-100 text-lg font-semibold hover:bg-[#35ac75] hover:text-white"
+            >
+              +
+            </button>
+          </div>
+          <span className="text-sm text-[#35ac75]">
+            <span className="font-medium">Availability:</span> 15 in stock
+          </span>
         </div>
+      </div>
 
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-3">
         <Button
-          className="btn-org flex items-center gap-2 px-4 py-2 rounded-md"
+          className="flex-1 bg-gradient-to-r !bg-[#35ac75]   hover:bg-green-400  !text-white py-3 px-6 rounded-md font-medium transition-transform transform  flex items-center justify-center gap-2"
           onClick={() => context.addToCart(productDetails)}
         >
           <IoCartOutline className="text-lg" />
           Add to Cart
         </Button>
+        <button className="flex-1 bg-white border border-[#35ac75] text-[#35ac75] hover:bg-green-50 py-3 px-6 rounded-md font-medium transition flex items-center justify-center gap-2">
+          <i className="fas fa-bolt"></i> Buy Now
+        </button>
+        <button className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition">
+          <FaRegHeart className="text-gray-500" />
+        </button>
       </div>
-      <div className="flex items-center gap-6 mt-4">
-        {/* Wishlist */}
-        <Link
-          to="/wishlist"
-          className="flex items-center gap-2 !text-gray-700 hover:text-orange-500 transition-colors duration-200 !no-underline"
-        >
-          <FaRegHeart className="text-lg !text-gray-700" />
-          <span className="text-sm font-medium no-underline">
-            Add to Wishlist
-          </span>
-        </Link>
 
-        {/* Compare */}
-        <Link
-          to="/compare"
-          className="flex items-center gap-2 !text-gray-700 hover:text-orange-500 transition-colors duration-200 !no-underline"
-        >
-          <IoGitCompareOutline className="text-lg !text-gray-700" />
-          <span className="text-sm font-medium ">Add to Compare</span>
-        </Link>
+      {/* Guarantees */}
+      <div className="text-sm text-gray-500 border-t border-gray-200 pt-4 space-y-2">
+        <div className="flex items-center gap-2">
+          <FaShield className=" text-[#35ac75]" />
+
+          <span>1 Year Warranty</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaTruck className="text-[#35ac75]" />
+
+          <span>Free shipping on orders over ₹50</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <FaExchangeAlt className=" text-[#35ac75]" />
+
+          <span>14-Day Free Returns</span>
+        </div>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ import axiosInstance from "./utils/axiosInstance";
 import Pageloader from "./utils/Pageloader";
 import PrivateRoute from "./PrivateRoute";
 import MobileNav from "./components/Header/Navigation/MobileNav";
+import ScrollToTop from "./utils/ScrollToTop";
 
 const alertBox = (type, msg) => {
   if (type === "success") {
@@ -95,6 +96,7 @@ function AppWrapper() {
     <MyProductContext.Provider value={contextValues}>
       <Header />
       <main>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/productlist" element={<ProductListing />} />

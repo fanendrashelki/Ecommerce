@@ -1,40 +1,90 @@
 import React, { useEffect, useState } from "react";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import { Button, TextField } from "@mui/material";
-
-import ProductDetailsBox from "../components/ProductItem/ProductDetailsBox";
-import ZoomImage from "../components/ZoomImage/ZoomImage";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
+import ProductDetailsBox from "../components/ProductItem/ProductDetailsBox";
+import ZoomImage from "../components/ZoomImage/ZoomImage";
+
+// Static tab labels
+const TABS = ["Product Description", "Specifications", "Reviews"];
+
+// Dummy reviews data
+const reviews = [
+  {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "https://i.pravatar.cc/150?img=1",
+    comment: "Absolutely loved the product! Highly recommend it.",
+    rating: 5,
+  },
+  {
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    avatar: "https://i.pravatar.cc/150?img=2",
+    comment: "Good quality but delivery was delayed by 2 days.",
+    rating: 4,
+  },
+  {
+    name: "Raj Patel",
+    email: "raj.patel@example.com",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    comment: "Average experience. Expected better packaging.",
+    rating: 3,
+  },
+  {
+    name: "Aisha Khan",
+    email: "aisha.khan@example.com",
+    avatar: "https://i.pravatar.cc/150?img=4",
+    comment: "Great service and quality. Will purchase again!",
+    rating: 5,
+  },
+];
+
+// Dummy specification table
+const productSpecs = [
+  ['Apple MacBook Pro 17"', "Silver", "Laptop", "$2999"],
+  ["Microsoft Surface Pro", "White", "Laptop PC", "$1999"],
+  ["Magic Mouse 2", "Black", "Accessories", "$99"],
+];
+
 const ProductDetails = () => {
   const { id } = useParams();
-  const [ActiveTab, setActiveTab] = useState(0);
-  const [productDetails, setProductDetails] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+  const [productDetails, setProductDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    fetchProductDetails(id);
+    if (id) fetchProductDetails(id);
   }, [id]);
 
   const fetchProductDetails = async (productId) => {
     try {
       const res = await axiosInstance.get(`/product/${productId}`);
-
       setProductDetails(res?.data);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("Error fetching product details:", error);
     } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="py-20 text-center text-gray-600 font-medium">
+        Loading product details...
+      </div>
+    );
+  }
 
   return (
     <>
       {/* Product Image and Details */}
-      <section className="bg-white py-5 mt-5">
-        <div className="container px-4 sm:px-6 flex flex-col lg:flex-row gap-6">
+      <section className="py-5 mt-5">
+        <div className="container px-4 sm:px-6 flex flex-col lg:flex-row gap-6 mx-auto py-8 lg:py-12 product-card bg-white rounded-lg overflow-hidden">
           <div className="w-full lg:w-[40%]">
-            <ZoomImage images={productDetails.images} />
+            <ZoomImage images={productDetails?.images} />
           </div>
           <div className="w-full lg:w-[60%] space-y-4 py-6">
             <ProductDetailsBox productDetails={productDetails} />
@@ -46,33 +96,29 @@ const ProductDetails = () => {
       <div className="bg-white py-5">
         <div className="container px-4 sm:px-6">
           <div className="flex flex-wrap items-center gap-4 mb-5">
-            {["Description", "Product Details", "Reviews (1)"].map(
-              (label, i) => (
-                <span
-                  key={i}
-                  onClick={() => setActiveTab(i)}
-                  className={`cursor-pointer text-[16px] font-[500] transition ${
-                    ActiveTab === i ? "text-[#35ac75]" : "text-gray-800"
-                  }`}
-                >
-                  {label}
-                </span>
-              )
-            )}
+            {TABS.map((label, index) => (
+              <span
+                key={index}
+                onClick={() => setActiveTab(index)}
+                className={`cursor-pointer text-[16px] font-[500] transition ${
+                  activeTab === index ? "text-[#35ac75]" : "text-gray-800"
+                }`}
+              >
+                {label}
+              </span>
+            ))}
           </div>
 
-          {/* Tab 0: Description */}
-          {ActiveTab === 0 && (
+          {/* Tab Content */}
+          {activeTab === 0 && (
             <div className="w-full shadow-md p-5 rounded-md text-sm sm:text-base">
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry...
+                {productDetails?.description || "No description available."}
               </p>
             </div>
           )}
 
-          {/* Tab 1: Product Details Table */}
-          {ActiveTab === 1 && (
+          {activeTab === 1 && (
             <div className="w-full overflow-x-auto shadow-md p-5 rounded-md">
               <table className="min-w-full text-sm text-left text-gray-700">
                 <thead className="bg-gray-100 text-xs uppercase text-gray-600">
@@ -84,15 +130,11 @@ const ProductDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    ['Apple MacBook Pro 17"', "Silver", "Laptop", "$2999"],
-                    ["Microsoft Surface Pro", "White", "Laptop PC", "$1999"],
-                    ["Magic Mouse 2", "Black", "Accessories", "$99"],
-                  ].map(([name, color, category, price], idx) => (
+                  {productSpecs.map(([name, color, category, price], idx) => (
                     <tr key={idx} className="bg-white border-b border-gray-200">
-                      <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {name}
-                      </th>
+                      </td>
                       <td className="px-6 py-4">{color}</td>
                       <td className="px-6 py-4">{category}</td>
                       <td className="px-6 py-4">{price}</td>
@@ -103,9 +145,8 @@ const ProductDetails = () => {
             </div>
           )}
 
-          {/* Tab 2: Reviews */}
-          {ActiveTab === 2 && (
-            <div className="w-full lg:w-[80%] mx-auto shadow-md p-5 rounded-md">
+          {activeTab === 2 && (
+            <div className="w-full shadow-md p-5 rounded-md">
               <h5 className="text-xl font-bold mb-4 text-gray-900">
                 Latest Customer Reviews
               </h5>
@@ -125,12 +166,7 @@ const ProductDetails = () => {
                       <p className="text-gray-700 text-sm mt-1">
                         {review.comment}
                       </p>
-                      <Rating
-                        name={`rating-${idx}`}
-                        value={review.rating}
-                        size="small"
-                        readOnly
-                      />
+                      <Rating value={review.rating} size="small" readOnly />
                     </div>
                   </li>
                 ))}

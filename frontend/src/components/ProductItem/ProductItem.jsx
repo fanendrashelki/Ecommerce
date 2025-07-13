@@ -121,7 +121,7 @@ const ProductItem = ({ product, skeletonloading }) => {
             <Button
               fullWidth
               variant="contained"
-              className="!mt-auto !bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-sm max-sm:!text-[10px]"
+              className="!mt-auto !bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-sm max-sm:!text-[10px] !capitalize"
               onClick={() => context.addToCart(product)}
             >
               Add to Cart

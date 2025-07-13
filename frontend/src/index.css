@@ -165,7 +165,7 @@ nav ul button:hover {
 }
 
 /* Zoom Image Buttons */
-.zoomimg .swiper-slide {
+/* .zoomimg .swiper-slide {
   height: auto !important;
 }
 .zoomimg .swiper-button-prev,
@@ -194,7 +194,7 @@ nav ul button:hover {
 .zoomimg .swiper-button-next::after,
 .zoomimg .swiper-button-prev::after {
   font-size: 25px !important;
-}
+} */
 
 /* Input Number No Spinner */
 input[type="number"]::-webkit-inner-spin-button,
