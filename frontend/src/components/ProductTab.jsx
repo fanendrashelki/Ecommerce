@@ -115,9 +115,11 @@ const ProductTab = () => {
             <div className="mt-6">
               {loading ? (
                 <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <ProductItemSkeleton key={index} />
-                  ))}
+                  {Array.from({ length: window.innerWidth < 640 ? 2 : 6 }).map(
+                    (_, index) => (
+                      <ProductItemSkeleton key={index} />
+                    )
+                  )}
                 </div>
               ) : (
                 <ProductsSlider
