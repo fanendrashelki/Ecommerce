@@ -13,7 +13,7 @@ const ProductTab = () => {
   const [productByCat, setProductByCat] = useState([]);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
-
+  const [skeletonCount, setSkeletonCount] = useState(6);
   const handleTabChange = async (event, newCatId) => {
     setSelectedCatId(newCatId);
     setLoading(true);
@@ -66,6 +66,24 @@ const ProductTab = () => {
 
     fetchCategoriesAndProducts();
   }, []);
+  useEffect(() => {
+    const updateSkeletonCount = () => {
+      const width = window.innerWidth;
+      console.log("width", width);
+
+      if (width < 640) {
+        setSkeletonCount(2);
+      } else if (width < 1000) {
+        setSkeletonCount(3);
+      } else {
+        setSkeletonCount(6);
+      }
+    };
+
+    updateSkeletonCount(); // Initial call
+    window.addEventListener("resize", updateSkeletonCount);
+    return () => window.removeEventListener("resize", updateSkeletonCount);
+  }, []);
   return (
     <>
       {/* Product Tabs & Slider Section */}
@@ -115,11 +133,9 @@ const ProductTab = () => {
             <div className="mt-6">
               {loading ? (
                 <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {Array.from({ length: window.innerWidth < 640 ? 2 : 6 }).map(
-                    (_, index) => (
-                      <ProductItemSkeleton key={index} />
-                    )
-                  )}
+                  {Array.from({ length: skeletonCount }).map((_, index) => (
+                    <ProductItemSkeleton key={index} />
+                  ))}
                 </div>
               ) : (
                 <ProductsSlider
