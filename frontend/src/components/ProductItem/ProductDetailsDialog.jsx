@@ -12,10 +12,10 @@ function ProductDetailsDialog({ open, onClose, product }) {
         <section className="bg-white py-4 relative">
           {/* Responsive layout: column on mobile, row on larger screens */}
           <div className="container flex flex-col lg:flex-row gap-4">
-            <div className="w-full lg:w-[40%]">
+            <div className="w-full lg:w-[30%]">
               <ZoomImage images={product.images} />
             </div>
-            <div className="w-full lg:w-[60%] space-y-2 py-4 px-4 lg:px-10">
+            <div className="w-full lg:w-[70%] space-y-2 py-4 px-4 lg:px-10">
               <ProductDetailsBox productDetails={product} />
             </div>
           </div>
