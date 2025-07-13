@@ -2,82 +2,82 @@ import React, { useEffect, useState } from "react";
 import HomeSlider from "../../components/HomeSlider/HomeSlider";
 import HomeCatSlider from "../../components/CatSlider/HomeCatSlider";
 import { LiaShippingFastSolid } from "react-icons/lia";
-import AdsBannerSlider from "../../components/AdsBannerSlider/AdsBannerSlider";
 import { MdOutlineRemoveShoppingCart } from "react-icons/md";
+import AdsBannerSlider from "../../components/AdsBannerSlider/AdsBannerSlider";
+import AdsBannerSliderV2 from "../../components/AdsBannerSlider/AdsBanerSliderV2";
+import BannerBoxAd from "../../components/AdsBannerSlider/BannerBoxAd";
+import ProductsSlider from "../../components/ProductsSlider/ProductsSlider";
+import BlogItem from "../../components/Blogs/BlogItem";
+
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import ProductsSlider from "../../components/ProductsSlider/ProductsSlider";
 
-// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-
-// Import Swiper styles
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// import required modules
-import { Navigation } from "swiper/modules";
-
-import BlogItem from "../../components/Blogs/BlogItem";
-
-import AdsBannerSliderV2 from "../../components/AdsBannerSlider/AdsBanerSliderV2";
-import BannerBoxAd from "../../components/AdsBannerSlider/BannerBoxAd";
 import axiosInstance from "../../utils/axiosInstance";
 
 const Home = () => {
-  const [value, setValue] = useState("");
+  const [selectedCatId, setSelectedCatId] = useState("");
   const [catList, setCatList] = useState([]);
   const [productByCat, setProductByCat] = useState([]);
-  const [skeletonloading, setSkeletonLoading] = useState(false);
-  const [showNotFound, setShowNotFound] = useState(false);
-  const handleChange = async (event, catId) => {
-    setSkeletonLoading(true);
-    setShowNotFound(false);
+  const [loading, setLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  const handleTabChange = async (event, newCatId) => {
+    setSelectedCatId(newCatId);
+    setLoading(true);
+    setNotFound(false);
     setProductByCat([]);
 
     try {
       const res = await axiosInstance.get(
-        `/product/getProductBycatId/${catId}`
+        `/product/getProductBycatId/${newCatId}`
       );
-      setProductByCat(res.data?.products);
-    } catch (error) {
-      setShowNotFound(true);
-      console.error("Error fetching user data:", error);
+      const products = res.data?.products || [];
+
+      if (products.length === 0) {
+        setNotFound(true);
+      }
+
+      setProductByCat(products);
+    } catch (err) {
+      setNotFound(true);
+      console.error("Failed to fetch products:", err);
     } finally {
-      setTimeout(() => {
-        setSkeletonLoading(false);
-      }, 500);
-      setValue(catId);
+      setTimeout(() => setLoading(false), 500);
     }
   };
 
   useEffect(() => {
-    const fetchCatList = async () => {
+    const fetchCategoriesAndProducts = async () => {
       try {
         const res = await axiosInstance.get("/categories");
-        const categories = res?.data?.data;
+        const categories = res.data?.data || [];
 
-        if (categories && categories.length > 0) {
+        if (categories.length > 0) {
           setCatList(categories);
-          setValue(categories[0]._id);
-          setSkeletonLoading(true);
-          // Fetch default products
+          const firstCatId = categories[0]._id;
+          setSelectedCatId(firstCatId);
+          setLoading(true);
+
           const productRes = await axiosInstance.get(
-            `/product/getProductBycatId/${categories[0]._id}`
+            `/product/getProductBycatId/${firstCatId}`
           );
-          setProductByCat(productRes.data?.products);
-          setTimeout(() => {
-            setSkeletonLoading(false);
-          }, 500);
+          setProductByCat(productRes.data?.products || []);
         }
-      } catch (error) {
-        setShowNotFound(true);
-        console.error("Error fetching category or products:", error);
+      } catch (err) {
+        setNotFound(true);
+        console.error("Error fetching initial data:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 500);
       }
     };
 
-    fetchCatList();
+    fetchCategoriesAndProducts();
   }, []);
 
   return (
@@ -85,35 +85,32 @@ const Home = () => {
       <HomeSlider />
       <HomeCatSlider />
 
-      {/* Product slider */}
+      {/* Product Tabs & Slider Section */}
       <section className="py-5 bg-white mt-5">
         <div className="container">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="leftSec text-center md:text-left">
-              <h2 className="text-[18px] sm:text-[20px] md:text-[22px] font-[600]">
-                Popular Products
-              </h2>
-              <p className="text-[13px] sm:text-[14px] font-[500]">
+            <div className="text-center md:text-left">
+              <h2 className="text-[22px] font-semibold">Popular Products</h2>
+              <p className="text-sm font-medium">
                 Do not miss the current offers until the end of March.
               </p>
             </div>
 
-            <div className="rightSec w-full md:w-[60%]">
+            <div className="w-full md:w-[60%]">
               <Box>
                 <Tabs
-                  value={value}
-                  onChange={handleChange}
+                  value={selectedCatId}
+                  onChange={handleTabChange}
                   variant="scrollable"
                   scrollButtons="auto"
-                  aria-label="scrollable auto tabs example"
-                  className="w-full"
+                  aria-label="category tabs"
                 >
-                  {catList.map((item) => (
+                  {catList.map((cat) => (
                     <Tab
+                      key={cat._id}
+                      value={cat._id}
+                      label={cat.name}
                       className="!capitalize"
-                      key={item._id}
-                      value={item._id}
-                      label={item.name}
                     />
                   ))}
                 </Tabs>
@@ -121,26 +118,14 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Product slider section */}
-          {showNotFound ? (
-            <div className="flex flex-col items-center justify-center h-full mt-5 p-8 bg-white border border-dashed border-gray-300 rounded-2xl shadow-sm space-y-5 max-w-lg mx-auto text-center animate-fade-in">
-              <MdOutlineRemoveShoppingCart
-                className="w-24 h-24  animate-bounce-slow"
-                style={{
-                  filter:
-                    "brightness(0) saturate(100%) invert(63%) sepia(35%) saturate(414%) hue-rotate(80deg) brightness(92%) contrast(90%)",
-                }}
-              />
-
-              <h2
-                className="text-xl font-semibold"
-                style={{ color: "#35ac75" }}
-              >
+          {notFound ? (
+            <div className="flex flex-col items-center justify-center h-full mt-5 p-8 border border-dashed border-gray-300 rounded-2xl shadow-sm max-w-lg mx-auto text-center animate-fade-in">
+              <MdOutlineRemoveShoppingCart className="w-24 h-24 animate-bounce-slow text-green-400" />
+              <h2 className="text-xl font-semibold text-[#35ac75]">
                 No Products Available
               </h2>
               <p className="text-sm text-gray-500">
-                We couldn’t find any products in this category. Try exploring
-                others or come back later.
+                Try exploring another category or come back later.
               </p>
             </div>
           ) : (
@@ -148,77 +133,56 @@ const Home = () => {
               <ProductsSlider
                 items={6}
                 productByCat={productByCat}
-                skeletonloading={skeletonloading}
+                skeletonloading={loading}
               />
             </div>
           )}
         </div>
       </section>
 
-      {/* ADs Section  */}
+      {/* Ads Section */}
       <div className="py-6 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-5">
-            {/* Left: Main Slider */}
-            <div className="w-full lg:w-[70%]">
-              <AdsBannerSliderV2 />
-            </div>
-
-            {/* Right: Two Stacked Banners */}
-            <div className="w-full lg:w-[30%] flex lg:flex-col gap-5 max-sm:flex-row">
-              <div className="w-full h-auto lg:h-[215px]">
-                <BannerBoxAd
-                  info="right"
-                  img="https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"
-                />
-              </div>
-              <div className="w-full h-auto lg:h-[215px]">
-                <BannerBoxAd
-                  info="left"
-                  img="https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"
-                />
-              </div>
-            </div>
+        <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-5">
+          <div className="w-full lg:w-[70%]">
+            <AdsBannerSliderV2 />
+          </div>
+          <div className="w-full lg:w-[30%] flex flex-col gap-5 max-sm:flex-row">
+            <BannerBoxAd
+              info="right"
+              img="https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"
+            />
+            <BannerBoxAd
+              info="left"
+              img="https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"
+            />
           </div>
         </div>
       </div>
 
-      {/* Ads slider */}
+      {/* Shipping Promo Banner + Ad Slider */}
       <section className="py-4 pt-2 bg-white">
         <div className="container mx-auto px-4">
-          {/* Free Shipping Banner */}
-          <div className="freeShipping w-full sm:w-[90%] lg:w-[80%] mx-auto py-4 px-4 border-2 border-[#35ac75] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-sm mb-5">
-            {/* Left - Icon + Title */}
-            <div className="col1 flex items-center gap-3 mb-4 md:mb-0">
-              <LiaShippingFastSolid className="text-[36px] sm:text-[40px] text-[#35ac75]" />
-              <span className="text-[16px] sm:text-[20px] font-semibold uppercase">
+          <div className="border-2 border-[#35ac75] rounded-sm mb-5 p-4 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div className="flex items-center gap-3">
+              <LiaShippingFastSolid className="text-4xl text-[#35ac75]" />
+              <span className="text-lg font-semibold uppercase">
                 Free Shipping
               </span>
             </div>
-
-            {/* Middle - Description */}
-            <div className="col2 flex-1 mb-4 md:mb-0">
-              <p className="text-sm sm:text-base font-medium">
-                Free Delivery Now On Your First Order and over $200
-              </p>
-            </div>
-
-            {/* Right - Highlighted Price */}
-            <div className="col3">
-              <p className="text-[18px] sm:text-[24px] font-bold text-[#35ac75]">
-                - Only $200
-              </p>
-            </div>
+            <p className="flex-1 text-sm font-medium">
+              Free Delivery Now On Your First Order and over $200
+            </p>
+            <p className="text-xl font-bold text-[#35ac75]">- Only $200</p>
           </div>
 
-          {/* Ad Slider Component */}
           <AdsBannerSlider item={4} />
         </div>
       </section>
 
+      {/* Latest & Featured Products */}
       <section className="py-5 pt-0 bg-white">
         <div className="container">
-          <h2 className="text-[22px] font-[600]">Latest Products</h2>
+          <h2 className="text-[22px] font-semibold">Latest Products</h2>
           <ProductsSlider items={6} />
           <AdsBannerSlider item={3} />
         </div>
@@ -226,23 +190,20 @@ const Home = () => {
 
       <section className="py-5 pt-0 bg-white">
         <div className="container">
-          <h2 className="text-[22px] font-[600]">Feature Products</h2>
+          <h2 className="text-[22px] font-semibold">Feature Products</h2>
           <ProductsSlider items={6} />
         </div>
       </section>
 
-      {/* blog  */}
-
-      <section className="py-5 pb-8 pt-0 bg-white blogSection">
+      {/* Blog Section */}
+      <section className="py-5 pb-8 pt-0 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-[22px] font-[600] mb-4">From the Blog</h2>
+          <h2 className="text-[22px] font-semibold mb-4">From the Blog</h2>
 
           <Swiper
             spaceBetween={20}
-            navigation={true}
-            pagination={{ clickable: true }}
+            navigation
             modules={[Navigation]}
-            className="blogSlider"
             breakpoints={{
               320: { slidesPerView: 1 },
               640: { slidesPerView: 2 },
