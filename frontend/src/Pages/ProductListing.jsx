@@ -6,13 +6,12 @@ import ProductItemList from "../components/ProductItem/ProductItemList";
 import { Button } from "@mui/material";
 import { IoGridSharp } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
-
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useLocation, useParams } from "react-router-dom";
-import ProductItemSkeleton from "../components/Skeleton/ProductItemSkeleton"; // Import your loader
+import ProductItemSkeleton from "../components/Skeleton/ProductItemSkeleton";
 import ProductNotFound from "../components/ProductNotFound";
 
 const ProductListing = () => {
@@ -44,7 +43,6 @@ const ProductListing = () => {
           `/product/getProductBythirdsubcatId/${productId}`
         );
       }
-
       setProductByCat(res?.data?.products || []);
     } catch (error) {
       console.error("Error fetching product details:", error);
@@ -69,8 +67,9 @@ const ProductListing = () => {
   };
 
   return (
-    <section className="py-5 pb-0 bg-[#efefef]">
-      <div className="container">
+    <section className="py-5 pb-0 bg-[#efefef] min-h-screen">
+      <div className="container mx-auto px-3 sm:px-4">
+        {/* Breadcrumbs */}
         <Breadcrumbs aria-label="breadcrumb">
           <Link
             underline="hover"
@@ -90,17 +89,22 @@ const ProductListing = () => {
           </Link>
         </Breadcrumbs>
       </div>
+
       <div className="bg-white p-2 mt-4">
-        <div className="container flex gap-3">
-          <div className="sidebarWrapper w-[20%] h-full bg-white">
+        <div className="container mx-auto px-3 sm:px-4 flex flex-col lg:flex-row gap-3">
+          {/* Sidebar */}
+          <div className="w-full lg:w-[25%]">
             <Sidebar />
           </div>
-          <div className="w-[80%]">
-            <div className="bg-[#f1f1f1] p-2 w-full mb-3 rounded-md flex items-center justify-between">
-              <div className="col1 flex items-center itemView">
+
+          {/* Product Area */}
+          <div className="w-full lg:w-[75%]">
+            {/* Header Controls */}
+            <div className="bg-[#f1f1f1] p-2 mb-3 rounded-md flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Button
                   className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${
-                    itemView === "list" && "active"
+                    itemView === "list" ? "active" : ""
                   }`}
                   onClick={() => setItemView("list")}
                 >
@@ -108,20 +112,20 @@ const ProductListing = () => {
                 </Button>
                 <Button
                   className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${
-                    itemView === "grid" && "active"
+                    itemView === "grid" ? "active" : ""
                   }`}
                   onClick={() => setItemView("grid")}
                 >
                   <IoGridSharp className="text-[rgba(0,0,0,0.7)]" />
                 </Button>
-
-                <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
+                <span className="text-sm font-medium text-[rgba(0,0,0,0.7)]">
                   {productByCat?.length ?? 0} products found.
                 </span>
               </div>
-              <div className="col2 ml-auto flex items-center justify-end gap-3 pr-4 ">
-                <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
-                  Sort By :
+
+              <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                <span className="text-sm font-medium text-[rgba(0,0,0,0.7)]">
+                  Sort By:
                 </span>
                 <Button
                   id="basic-button"
@@ -129,7 +133,7 @@ const ProductListing = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
-                  className="!bg-white  !text-[13px] !text-[#000] !capitalize !border-1 !border-[rgba(0,0,0,0.4)] !px-3 !py-1"
+                  className="!bg-white !text-sm !text-[#000] !capitalize !border !border-[rgba(0,0,0,0.4)] !px-3 !py-1"
                 >
                   Name, A to Z
                 </Button>
@@ -141,19 +145,19 @@ const ProductListing = () => {
                 >
                   <MenuItem
                     onClick={handleClose}
-                    className="!text-[13px] !text-[#000] !capitalize"
+                    className="!text-sm !text-[#000] !capitalize"
                   >
                     1
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
-                    className="!text-[13px] !text-[#000] !capitalize"
+                    className="!text-sm !text-[#000] !capitalize"
                   >
                     2
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
-                    className="!text-[13px] !text-[#000] !capitalize"
+                    className="!text-sm !text-[#000] !capitalize"
                   >
                     3
                   </MenuItem>
@@ -161,11 +165,12 @@ const ProductListing = () => {
               </div>
             </div>
 
+            {/* Product List/Grid */}
             <div
               className={`grid gap-4 ${
                 itemView === "list"
-                  ? "grid-cols-1 md:grid-cols-1"
-                  : "grid-cols-4 md:grid-cols-4"
+                  ? "grid-cols-1"
+                  : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
               }`}
             >
               {loading ? (

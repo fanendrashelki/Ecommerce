@@ -30,7 +30,7 @@ const ProductItemList = ({ product }) => {
         </Link>
         {product.discount !== 0 && (
           <span className="discount flex items-center absolute top-[10px] left-[10px] z-50 bg-[#35ac75] text-white rounded-lg p-1 text-[12px] font-[500]">
-            {product.discount}
+            {product.discount}%
           </span>
         )}
 
@@ -59,20 +59,25 @@ const ProductItemList = ({ product }) => {
         </div>
       </div>
       <div className="info p-3 py-5 pl-5 w-[75%] ">
-        <h6 className="text-[15px]">
+        <h6 className="text-[15px] mb-2">
           <Link to="/" className="link transition-all">
             {product.brand}
           </Link>
         </h6>
-        <h3 className="text-[18px] title mt-2 font-[500]  md-1 text-[#000]">
+        <h3 className="text-[18px] title mt-2 font-[500]  mb-2 min-h-[20px]  text-[#000] line-clamp-1  ">
           <Link to="/" className="link transition-all">
             {product.name}
           </Link>
         </h3>
-        <p className="text-[14px] mt-2">{product.description}</p>
-        <Rating name="size-medium" defaultValue={2} size="small" readOnly />
+        {/* <p className="text-[14px] mt-2">{product.description}</p> */}
+        <Rating
+          name="size-medium"
+          defaultValue={product.rating}
+          size="small"
+          readOnly
+        />
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4  mb-2">
           <span className="oldPrice line-through text-gray-500   font-[500]">
             ₹{product.oldPrice}
           </span>
@@ -80,9 +85,13 @@ const ProductItemList = ({ product }) => {
             ₹{product.price}
           </span>
         </div>
-        <div className="w-full mt-3 ">
-          <Button className="btn-org flex gap-2">
-            <IoCartOutline className="text-[18px]" /> Add to Cart
+        <div className="w-[25%] mt-3 ">
+          <Button
+            fullWidth
+            variant="contained"
+            className="!mt-auto  !bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-sm max-sm:!text-[10px] !capitalize"
+          >
+            Add to Cart
           </Button>
         </div>
       </div>
