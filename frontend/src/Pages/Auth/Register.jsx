@@ -131,16 +131,16 @@ const Register = () => {
             )}
           </Button>
 
-          <p class="text-center">
+          <p className="text-center">
             Already have an account?
             <Link
-              class="link text-[14px] font-[600] text-sm leading-[25px] mt-[10px] mb-[10px]  text-[#35ac75] "
+              className="link text-[14px] font-[600] text-sm leading-[25px] mt-[10px] mb-[10px]  text-[#35ac75] "
               to="/login"
             >
               Login
             </Link>
           </p>
-          <p class="text-center font-[500] text-sm leading-[25px] mt-[10px] mb-[10px]">
+          <p className="text-center font-[500] text-sm leading-[25px] mt-[10px] mb-[10px]">
             Or continue with social account
           </p>
 

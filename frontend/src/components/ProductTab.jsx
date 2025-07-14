@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -7,6 +7,7 @@ import ProductsSlider from "./ProductsSlider/ProductsSlider";
 import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 import axiosInstance from "../utils/axiosInstance";
 import ProductItemSkeleton from "./Skeleton/ProductItemSkeleton";
+import { MyProductContext } from "../AppWrapper";
 const ProductTab = () => {
   const [selectedCatId, setSelectedCatId] = useState("");
   const [catList, setCatList] = useState([]);
@@ -14,6 +15,8 @@ const ProductTab = () => {
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [skeletonCount, setSkeletonCount] = useState(6);
+  const context = useContext(MyProductContext);
+
   const handleTabChange = async (event, newCatId) => {
     setSelectedCatId(newCatId);
     setLoading(true);
@@ -38,38 +41,35 @@ const ProductTab = () => {
       setTimeout(() => setLoading(false), 500);
     }
   };
-
   useEffect(() => {
-    const fetchCategoriesAndProducts = async () => {
-      try {
-        const res = await axiosInstance.get("/categories");
-        const categories = res.data?.data || [];
+    if (context?.category?.length) {
+      const categories = context.category;
+      setCatList(categories);
+      const firstCatId = categories[0]?._id;
+      setSelectedCatId(firstCatId);
 
-        if (categories.length > 0) {
-          setCatList(categories);
-          const firstCatId = categories[0]._id;
-          setSelectedCatId(firstCatId);
-          setLoading(true);
-
-          const productRes = await axiosInstance.get(
+      const fetchProducts = async () => {
+        setLoading(true);
+        try {
+          const res = await axiosInstance.get(
             `/product/getProductBycatId/${firstCatId}`
           );
-          setProductByCat(productRes.data?.products || []);
+          setProductByCat(res.data?.products || []);
+        } catch (err) {
+          console.error("Initial fetch failed:", err);
+          setNotFound(true);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        setNotFound(true);
-        console.error("Error fetching initial data:", err);
-      } finally {
-        setTimeout(() => setLoading(false), 500);
-      }
-    };
+      };
 
-    fetchCategoriesAndProducts();
-  }, []);
+      fetchProducts();
+    }
+  }, [context?.category]);
+
   useEffect(() => {
     const updateSkeletonCount = () => {
       const width = window.innerWidth;
-      console.log("width", width);
 
       if (width < 640) {
         setSkeletonCount(2);

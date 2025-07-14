@@ -10,7 +10,7 @@ import Login from "./Pages/Auth/Login";
 import Register from "./Pages/Auth/Register";
 
 import Cart from "./Pages/Cart";
-import ProductDetailsDialog from "./components/ProductItem/ProductDetailsDialog";
+
 import CartDrawer from "./components/Cart/CartDrawer";
 import ForgetPassword from "./Pages/Auth/ForgetPassword";
 import VerifyOtp from "./Pages/Auth/VerifyOtp";
@@ -43,7 +43,7 @@ function AppWrapper() {
   const [User, setUser] = useState(null);
   const [isLogin, setLogin] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-
+  const [category, setCategories] = useState([]);
   const [pageloader, setPageLoader] = useState(false);
 
   const addToCart = (product) => {
@@ -60,8 +60,24 @@ function AppWrapper() {
     User,
     setPageLoader,
     addToCart,
+    category,
   };
   const token = localStorage.getItem("token");
+
+  const fetchCategories = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axiosInstance.get("categories", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCategories(res?.data?.data || []);
+    } catch (err) {
+      console.error("Fetch failed:", err);
+    }
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -99,7 +115,7 @@ function AppWrapper() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/productlist" element={<ProductListing />} />
+          <Route path="/product/:id" element={<ProductListing />} />
 
           <Route path="/product-details/:id" element={<ProductDetails />} />
           <Route

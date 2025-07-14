@@ -3,24 +3,17 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import { useEffect, useState } from "react";
-import axiosInstance from "../../utils/axiosInstance";
+import { useContext, useEffect, useState } from "react";
+import { MyProductContext } from "../../AppWrapper";
 
 const HomeCatSlider = () => {
   const [catList, setCatList] = useState([]);
-
-  const fetchCatList = async () => {
-    try {
-      const res = await axiosInstance.get("/categories");
-      setCatList(res?.data?.data);
-    } catch (error) {
-      console.error("Error fetching category data:", error);
-    }
-  };
-
+  const context = useContext(MyProductContext);
   useEffect(() => {
-    fetchCatList();
-  }, []);
+    if (context?.category) {
+      setCatList(context.category);
+    }
+  }, [context.category]);
 
   return (
     <div className="homecatslider py-6 bg-gray-100">
@@ -43,7 +36,7 @@ const HomeCatSlider = () => {
         >
           {catList.map((cat, index) => (
             <SwiperSlide key={cat._id || index}>
-              <Link to="/" className="block">
+              <Link to={`/product/${cat._id}`} className="block">
                 <div className="py-4 px-2 sm:py-5 sm:px-4 bg-white rounded-lg text-center flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-transform duration-200 transform hover:scale-105">
                   <img
                     src={cat.image}

@@ -34,10 +34,10 @@ function HomeSlider() {
     <div className="homeslider py-6">
       <div className="">
         {loading ? (
-          <div role="status" class=" roundedm animate-pulse  px-3">
-            <div class="flex items-center justify-center w-[100%] !h-[380px] max-sm:!h-[200px] mb-4 bg-gray-300 rounded dark:bg-gray-700">
+          <div role="status" className=" roundedm animate-pulse  px-3">
+            <div className="flex items-center justify-center w-[100%] !h-[380px] max-sm:!h-[200px] mb-4 bg-gray-300 rounded dark:bg-gray-700">
               <svg
-                class="w-10 h-10 text-gray-200 dark:text-gray-500"
+                className="w-10 h-10 text-gray-200 dark:text-gray-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"

@@ -66,15 +66,56 @@ const ProductDetails = () => {
     } catch (error) {
       console.error("Error fetching product details:", error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   };
 
   if (loading) {
     return (
-      <div className="py-20 text-center text-gray-600 font-medium">
-        Loading product details...
-      </div>
+      <main className="p-15 mt-5 ">
+        <ul className="space-y-10">
+          <li className="flex gap-6">
+            {/* <!-- Image skeleton --> */}
+            <div className="flex-shrink-0">
+              <div className="bg-gray-300 animate-pulse rounded w-[350px] h-[400px]"></div>
+            </div>
+
+            {/* <!-- Content skeleton --> */}
+            <div className="flex-1 space-y-4">
+              {/* <!-- Headline --> */}
+              <h3>
+                <div className="bg-gray-300 animate-pulse h-6 w-[60%] rounded"></div>
+              </h3>
+
+              {/* <!-- Paragraph lines --> */}
+              <p className="space-y-2">
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="flex items-center justify-between">
+                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                </div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[90%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="flex items-center justify-between">
+                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
+                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
+                </div>
+              </p>
+
+              {/* <!-- Meta info --> */}
+              <div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[70px] rounded"></div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </main>
     );
   }
 
@@ -83,10 +124,10 @@ const ProductDetails = () => {
       {/* Product Image and Details */}
       <section className="py-5 mt-5">
         <div className="container px-4 sm:px-6 flex flex-col lg:flex-row gap-6 mx-auto py-8 lg:py-12 product-card bg-white rounded-lg overflow-hidden">
-          <div className="w-full lg:w-[40%]">
+          <div className="w-full lg:w-[30%]">
             <ZoomImage images={productDetails?.images} />
           </div>
-          <div className="w-full lg:w-[60%] space-y-4 py-6">
+          <div className="w-full lg:w-[70%] space-y-4 py-6">
             <ProductDetailsBox productDetails={productDetails} />
           </div>
         </div>

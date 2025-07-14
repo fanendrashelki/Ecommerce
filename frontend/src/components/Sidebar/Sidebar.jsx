@@ -17,7 +17,7 @@ const Sidebar = () => {
     <aside className="sidebar py-5">
       <div className="box flex justify-center flex-col ">
         <h3 className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5">
-          Shop by Category
+          Shop by Category1
           <Button
             className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
             onClick={() => SetIsOpenCategory(!isOpenCategory)}

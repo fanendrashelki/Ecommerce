@@ -9,7 +9,6 @@ const Latest = () => {
     const getLatestProduct = async () => {
       try {
         const res = await axiosInstance.get("/product");
-        console.log(res?.data?.products);
         setLatestProduct(res?.data?.products);
       } catch (error) {
         console.error("Error fetching user data:", error);
