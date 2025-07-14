@@ -48,15 +48,15 @@ const ProductItem = ({ product }) => {
           {/* Action Buttons */}
           <div className="absolute top-[-200px] right-2 z-10 flex flex-col items-center gap-2 w-[50px] transition-all duration-700 group-hover:top-4 opacity-0 group-hover:opacity-100">
             <Button
-              className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+              className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
               onClick={() => setOpenProductDetails(true)}
             >
               <MdZoomOutMap className="text-[18px] " />
             </Button>
-            <Button className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
+            <Button className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
               <FaRegHeart className="text-[18px] " />
             </Button>
-            <Button className="!w-[35px] !h-[35px] !min-w-[35px] !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
+            <Button className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
               <IoGitCompareOutline className="text-[18px]" />
             </Button>
           </div>
@@ -65,12 +65,18 @@ const ProductItem = ({ product }) => {
         {/* Info Section */}
         <div className="p-3 sm:p-4 flex flex-col flex-grow">
           <h6 className="text-xs sm:text-sm text-gray-500 font-medium truncate">
-            <Link to="/" className="hover:text-[#35ac75]">
+            <Link
+              to={`/product-details/${product._id}`}
+              className="hover:text-[#35ac75]"
+            >
               {product.brand}
             </Link>
           </h6>
           <h3 className="text-sm  font-semibold mt-1  min-h-[40px]  text-black  line-clamp-2   max-sm:!text-[13px] ">
-            <Link to="/" className="hover:text-[#35ac75]">
+            <Link
+              to={`/product-details/${product._id}`}
+              className="hover:text-[#35ac75]"
+            >
               {product.name}
             </Link>
           </h3>

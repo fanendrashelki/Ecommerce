@@ -16,8 +16,11 @@ const Sidebar = () => {
   return (
     <aside className="sidebar py-5">
       <div className="box flex justify-center flex-col ">
-        <h3 className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5">
-          Shop by Category1
+        <h3
+          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
+          onClick={() => SetIsOpenCategory(!isOpenCategory)}
+        >
+          Shop by Category
           <Button
             className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
             onClick={() => SetIsOpenCategory(!isOpenCategory)}
@@ -70,7 +73,10 @@ const Sidebar = () => {
         </Collapse>
       </div>
       <div className="box mt-3 flex justify-center flex-col ">
-        <h3 className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5">
+        <h3
+          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
+          onClick={() => SetIsOpenAvailable(!isOpenAvailable)}
+        >
           Availability
           <Button
             className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
@@ -100,8 +106,11 @@ const Sidebar = () => {
         </Collapse>
       </div>
       <div className="box mt-3 flex justify-center flex-col ">
-        <h3 className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5">
-          Availability
+        <h3
+          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
+          onClick={() => SetIsOpenSize(!isOpenSize)}
+        >
+          Size
           <Button
             className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
             onClick={() => SetIsOpenSize(!isOpenSize)}

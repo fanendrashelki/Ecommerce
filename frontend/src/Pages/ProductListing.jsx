@@ -105,12 +105,12 @@ const ProductListing = () => {
       <div className="bg-white p-2 mt-4">
         <div className="container mx-auto px-3 sm:px-4 flex flex-col lg:flex-row gap-3">
           {/* Desktop Sidebar */}
-          <div className="hidden lg:block w-full lg:w-[25%]">
+          <div className="hidden lg:block w-full lg:w-[20%]">
             <Sidebar />
           </div>
 
           {/* Product Area */}
-          <div className="w-full lg:w-[75%]">
+          <div className="w-full lg:w-[80%]">
             {/* Header Controls */}
             <div className="bg-[#f1f1f1] p-2 mb-3 rounded-md flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between">
               <div className="flex items-center gap-2 flex-wrap">
