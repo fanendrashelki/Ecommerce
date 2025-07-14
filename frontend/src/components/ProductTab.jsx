@@ -8,6 +8,7 @@ import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 import axiosInstance from "../utils/axiosInstance";
 import ProductItemSkeleton from "./Skeleton/ProductItemSkeleton";
 import { MyProductContext } from "../AppWrapper";
+import ProductNotFound from "./ProductNotFound";
 const ProductTab = () => {
   const [selectedCatId, setSelectedCatId] = useState("");
   const [catList, setCatList] = useState([]);
@@ -120,14 +121,8 @@ const ProductTab = () => {
           </div>
 
           {notFound ? (
-            <div className="flex flex-col items-center justify-center h-full mt-5 p-8 border border-dashed border-gray-300 rounded-2xl shadow-sm max-w-lg mx-auto text-center animate-fade-in">
-              <MdOutlineRemoveShoppingCart className="w-24 h-24 animate-bounce-slow text-[#35ac75]" />
-              <h2 className="text-xl font-semibold text-[#35ac75]">
-                No Products Available
-              </h2>
-              <p className="text-sm text-gray-500">
-                Try exploring another category or come back later.
-              </p>
+            <div className="w-full">
+              <ProductNotFound />
             </div>
           ) : (
             <div className="mt-6">

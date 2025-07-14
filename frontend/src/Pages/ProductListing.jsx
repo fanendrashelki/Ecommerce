@@ -9,11 +9,55 @@ import { FiMenu } from "react-icons/fi";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axiosInstance from "../utils/axiosInstance";
+import { useLocation, useParams } from "react-router-dom";
+import ProductItemSkeleton from "../components/Skeleton/ProductItemSkeleton"; // Import your loader
+import ProductNotFound from "../components/ProductNotFound";
 
 const ProductListing = () => {
+  const { id } = useParams();
   const [itemView, setItemView] = useState("grid");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [productByCat, setProductByCat] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const type = queryParams.get("type");
+
+  const fetchProductbyCatId = async (productId) => {
+    setLoading(true);
+    setProductByCat([]);
+    try {
+      let res;
+      if (type === "cat") {
+        res = await axiosInstance.get(
+          `/product/getProductBycatId/${productId}`
+        );
+      } else if (type === "subcat") {
+        res = await axiosInstance.get(
+          `/product/getProductBySubcatId/${productId}`
+        );
+      } else if (type === "thirdsubcat") {
+        res = await axiosInstance.get(
+          `/product/getProductBythirdsubcatId/${productId}`
+        );
+      }
+
+      setProductByCat(res?.data?.products || []);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (id && type) {
+      fetchProductbyCatId(id);
+    }
+  }, [id, type]);
 
   const open = Boolean(anchorEl);
 
@@ -23,9 +67,10 @@ const ProductListing = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <section className="py-5 pb-0 bg-[#efefef]">
-      <div className="container ">
+      <div className="container">
         <Breadcrumbs aria-label="breadcrumb">
           <Link
             underline="hover"
@@ -39,7 +84,7 @@ const ProductListing = () => {
             underline="hover"
             color="inherit"
             className="link transition"
-            href="/"
+            href="/products"
           >
             Product List
           </Link>
@@ -71,11 +116,11 @@ const ProductListing = () => {
                 </Button>
 
                 <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
-                  There are 27 products.
+                  {productByCat?.length ?? 0} products found.
                 </span>
               </div>
               <div className="col2 ml-auto flex items-center justify-end gap-3 pr-4 ">
-                <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)] ">
+                <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
                   Sort By :
                 </span>
                 <Button
@@ -96,51 +141,51 @@ const ProductListing = () => {
                 >
                   <MenuItem
                     onClick={handleClose}
-                    className=" !text-[13px] !text-[#000] !capitalize"
+                    className="!text-[13px] !text-[#000] !capitalize"
                   >
-                    Profile
+                    1
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
-                    className=" !text-[13px] !text-[#000] !capitalize"
+                    className="!text-[13px] !text-[#000] !capitalize"
                   >
-                    My account
+                    2
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
-                    className=" !text-[13px] !text-[#000] !capitalize"
+                    className="!text-[13px] !text-[#000] !capitalize"
                   >
-                    Logout
+                    3
                   </MenuItem>
                 </Menu>
               </div>
             </div>
 
             <div
-              className={`grid  gap-4 ${
+              className={`grid gap-4 ${
                 itemView === "list"
                   ? "grid-cols-1 md:grid-cols-1"
                   : "grid-cols-4 md:grid-cols-4"
               }`}
             >
-              {itemView === "grid" ? (
-                <>
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                </>
+              {loading ? (
+                [...Array(8)].map((_, index) => (
+                  <ProductItemSkeleton key={index} />
+                ))
+              ) : productByCat?.length > 0 ? (
+                itemView === "grid" ? (
+                  productByCat.map((item) => (
+                    <ProductItem key={item._id} product={item} />
+                  ))
+                ) : (
+                  productByCat.map((item) => (
+                    <ProductItemList key={item._id} product={item} />
+                  ))
+                )
               ) : (
-                <>
-                  <ProductItemList />
-                  <ProductItemList />
-                  <ProductItemList />
-                  <ProductItemList />
-                  <ProductItemList />
-                  <ProductItemList />
-                </>
+                <div className="col-span-full flex justify-center py-10">
+                  <ProductNotFound />
+                </div>
               )}
             </div>
           </div>

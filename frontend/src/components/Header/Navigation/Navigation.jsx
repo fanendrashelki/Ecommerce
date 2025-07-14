@@ -49,7 +49,10 @@ const Navigation = () => {
 
               {categories.map((cat, catIndex) => (
                 <li key={catIndex} className="list-none relative group">
-                  <Link to={`/product/${cat._id}`} className="link transition">
+                  <Link
+                    to={`/product/${cat._id}?type=cat`}
+                    className="link transition"
+                  >
                     <Button className="!font-[500] !text-[rgba(0,0,0,0.8)] hover:!text-[#35ac75] !py-4">
                       {cat.name}
                     </Button>
@@ -64,7 +67,7 @@ const Navigation = () => {
                             className="list-none relative group"
                           >
                             <Link
-                              to={`/product/${subCat._id}`}
+                              to={`/product/${subCat._id}?type=subcat`}
                               className="w-full block"
                             >
                               <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#35ac75]">
@@ -82,7 +85,7 @@ const Navigation = () => {
                                         className="list-none"
                                       >
                                         <Link
-                                          to={`/product/${thirdCat._id}`}
+                                          to={`/product/${thirdCat._id}?type=thirdsubcat`}
                                           className="w-full block"
                                         >
                                           <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#35ac75]">

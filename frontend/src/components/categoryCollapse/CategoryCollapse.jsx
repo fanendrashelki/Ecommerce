@@ -30,7 +30,7 @@ const CategoryCollapse = () => {
         {categories.map((cat, catIndex) => (
           <li key={cat._id} className="list-none flex flex-col relative">
             <div className="flex items-center w-full relative">
-              <Link to={`/product/${cat._id}`} className="w-full">
+              <Link to={`/product/${cat._id}?type=cat`} className="w-full">
                 <Button className="w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]">
                   {cat.name}
                 </Button>
@@ -53,9 +53,12 @@ const CategoryCollapse = () => {
                 {cat.children.map((subCat, subIndex) => (
                   <li key={subCat._id} className="list-none relative">
                     <div className="flex items-center w-full relative">
-                      <Link to={`/product/${subCat._id}`} className="w-full">
+                      <Link
+                        to={`/product/${subCat._id}?type=subcat`}
+                        className="w-full"
+                      >
                         <Button
-                          onClick={() => toggleInnerSubMenu(subIndex)}
+                          // onClick={() => toggleInnerSubMenu(subIndex)}
                           className="w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]"
                         >
                           {subCat.name}
@@ -83,7 +86,7 @@ const CategoryCollapse = () => {
                               className="list-none relative mb-2"
                             >
                               <Link
-                                to={`/product/${innerSubCat._id}`}
+                                to={`/product/${innerSubCat._id}?type=thirdsubcat`}
                                 className="transition w-full block px-3 text-[14px]"
                               >
                                 {innerSubCat.name}
