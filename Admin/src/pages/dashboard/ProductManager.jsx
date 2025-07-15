@@ -214,20 +214,33 @@ const ProductManager = () => {
     setSelectedThirdSubCategory(null);
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
 
-    if (name === "images") {
-      const fileArray = Array.from(files);
-      setFormData((prev) => ({ ...prev, images: fileArray }));
+  if (name === "images") {
+    const fileArray = Array.from(files);
+    setFormData((prev) => ({ ...prev, images: fileArray }));
+    const imagePreviews = fileArray.map((file) => URL.createObjectURL(file));
+    setPreview(imagePreviews);
+  } else {
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
 
-      const imagePreviews = fileArray.map((file) => URL.createObjectURL(file));
+      const price = parseFloat(name === "price" ? value : updated.price);
+      const oldPrice = parseFloat(name === "oldPrice" ? value : updated.oldPrice);
 
-      setPreview(imagePreviews);
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+      if (!isNaN(price) && !isNaN(oldPrice) && oldPrice > 0 && price >= 0) {
+        const discount = Math.round(((oldPrice - price) / oldPrice) * 100);
+        updated.discount = discount > 0 ? discount : 0;
+      } else {
+        updated.discount = 0;
+      }
+
+      return updated;
+    });
+  }
+};
+
 
   const validateForm = () => {
     if (!formData.name.trim()) return alertBox("error", "Name is required");

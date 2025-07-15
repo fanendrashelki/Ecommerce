@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
-  Typography,
+ 
   Avatar,
   Button,
   Input,
