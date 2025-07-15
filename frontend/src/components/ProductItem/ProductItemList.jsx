@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import { Button } from "@mui/material";
 import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
 
 import { MdZoomOutMap } from "react-icons/md";
 import { useContext, useState } from "react";
@@ -12,6 +13,7 @@ import ProductDetailsDialog from "./ProductDetailsDialog";
 const ProductItemList = ({ product }) => {
   const context = useContext(MyProductContext);
   const [OpenProductDetails, setOpenProductDetails] = useState(false);
+  const [liked, setLiked] = useState(false);
   return (
     <div className="productItem flex flex-col md:flex-row shadow-lg rounded-md overflow-hidden border border-[rgba(0,0,0,0.1)]">
       {/* Image Section */}
@@ -37,16 +39,26 @@ const ProductItemList = ({ product }) => {
           </span>
         )}
 
-        <div className="actions absolute top-[-200px] right-2 z-50 flex items-center gap-2 flex-col w-[50px] transition-all duration-700 group-hover:top-4 opacity-0 group-hover:opacity-100">
+        {/* Action Buttons (hidden on desktop until hover) */}
+        <div className="absolute top-2 right-2 z-10 flex flex-col items-center gap-2 w-[50px] md:top-[-200px] md:group-hover:top-4 md:opacity-0 md:group-hover:opacity-100 transition-all duration-700">
+          {/* View Product - hidden on small (mobile) screens */}
           <Button
-            className="!w-9 !h-9 !min-w-0 !text-black shadow !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+            className="!hidden md:!flex !w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
             onClick={() => setOpenProductDetails(true)}
           >
             <MdZoomOutMap className="text-[18px]" />
           </Button>
 
-          <Button className="!w-9 !h-9 !min-w-0 !text-black shadow !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-            <FaRegHeart className="text-[18px]" />
+          {/* Like Button - visible on all screens */}
+          <Button
+            onClick={() => setLiked(!liked)}
+            className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+          >
+            {liked ? (
+              <FaHeart className="text-[20px] text-red-500" />
+            ) : (
+              <FaRegHeart className="text-[20px]" />
+            )}
           </Button>
         </div>
       </div>
