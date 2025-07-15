@@ -82,4 +82,8 @@ router.get(
 // get single product
 router.get("/:id", productController.getProductById);
 
+//  Rate Product
+router.put("/:id/rating", productController.rateProduct);
+router.get("/:id/ratings", productController.getProductRatings);
+
 export default router;

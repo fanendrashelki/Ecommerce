@@ -89,7 +89,7 @@ const deleteBanner = asyncHandler(async (req, res, next) => {
 });
 
 const getBanner = asyncHandler(async (req, res, next) => {
-  const banner = await AdsBanner.find();
+  const banner = await AdsBanner.find().sort({ _id: -1 });
   if (banner.length === 0) {
     return next(new ErrorHandle("No banner found", 404));
   }

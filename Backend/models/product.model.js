@@ -75,6 +75,24 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    ratings: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        star: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
+        },
+        comment: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
     rating: {
       type: Number,
       default: 0,
@@ -92,4 +110,5 @@ const productSchema = new mongoose.Schema(
 );
 
 const ProductModel = mongoose.model("Product", productSchema);
+
 export default ProductModel;

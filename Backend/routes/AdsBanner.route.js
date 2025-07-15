@@ -23,5 +23,5 @@ router.put(
 );
 
 router.delete("/:id", authMiddleware, AdsBannerController.deleteBanner);
-router.get("/", authMiddleware, AdsBannerController.getBanner);
+router.get("/", AdsBannerController.getBanner);
 export default router;

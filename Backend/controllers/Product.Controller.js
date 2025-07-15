@@ -531,6 +531,58 @@ const featuredProduct = asyncHandler(async (req, res, next) => {
   res.json(product);
 });
 
+const rateProduct = async (req, res) => {
+  const { userId, star, comment } = req.body;
+
+  try {
+    const product = await ProductModel.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Remove old rating if user has rated before
+    product.ratings = product.ratings.filter(
+      (r) => r.user.toString() !== userId.toString()
+    );
+
+    // Push new rating
+    product.ratings.push({ user: userId, star, comment });
+
+    if (product.ratings.length === 0) {
+      product.rating = 2;
+    } else {
+      const total = product.ratings.reduce((sum, r) => sum + r.star, 0);
+      product.rating = parseFloat((total / product.ratings.length).toFixed(1));
+    }
+    await product.save();
+
+    res.status(200).json({ message: "Rating submitted" });
+  } catch (error) {
+    res.status(500).json({ message: "Error rating product" });
+  }
+};
+
+const getProductRatings = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const product = await ProductModel.findById(productId)
+      .populate("ratings.user", "name  avatar") // Optional: show user details
+      .select("name ratings rating"); // Only select relevant fields
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json({
+      productName: product.name,
+      averageRating: product.rating,
+      totalReviews: product.ratings.length,
+      reviews: product.ratings,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   createProduct,
   getAllProducts,
@@ -545,4 +597,6 @@ export default {
   getProductBythirdSubcatName,
   filterProducts,
   featuredProduct,
+  rateProduct,
+  getProductRatings,
 };
