@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import { Button } from "@mui/material";
 import { FaRegHeart } from "react-icons/fa";
-import { IoGitCompareOutline } from "react-icons/io5";
+
 import { MdZoomOutMap } from "react-icons/md";
 import { useContext, useState } from "react";
 import { MyProductContext } from "../../AppWrapper";
@@ -47,10 +47,6 @@ const ProductItemList = ({ product }) => {
 
           <Button className="!w-9 !h-9 !min-w-0 !text-black shadow !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
             <FaRegHeart className="text-[18px]" />
-          </Button>
-
-          <Button className="!w-9 !h-9 !min-w-0 !text-black shadow !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-            <IoGitCompareOutline className="text-[18px]" />
           </Button>
         </div>
       </div>

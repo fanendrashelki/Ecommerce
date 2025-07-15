@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
-import { IoCartOutline, IoGitCompareOutline } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { Button } from "@mui/material";
 import { MyProductContext } from "../../AppWrapper";

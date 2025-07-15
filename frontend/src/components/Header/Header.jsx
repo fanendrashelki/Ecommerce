@@ -6,7 +6,7 @@ import { Badge } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IoGitCompareOutline } from "react-icons/io5";
+
 import { FaRegHeart } from "react-icons/fa6";
 import Tooltip from "@mui/material/Tooltip";
 import Navigation from "./Navigation/Navigation";
@@ -208,15 +208,6 @@ function Header() {
               )}
 
               {/* Icons */}
-              <li className="hidden lg:block">
-                <Tooltip title="Compare">
-                  <IconButton>
-                    <StyledBadge badgeContent={4} color="secondary">
-                      <IoGitCompareOutline />
-                    </StyledBadge>
-                  </IconButton>
-                </Tooltip>
-              </li>
               <li onClick={() => context.setOpenCart(true)}>
                 <Tooltip title="Cart">
                   <IconButton>

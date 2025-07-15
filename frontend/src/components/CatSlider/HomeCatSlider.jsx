@@ -36,7 +36,7 @@ const HomeCatSlider = () => {
         >
           {catList.map((cat, index) => (
             <SwiperSlide key={cat._id || index}>
-              <Link to={`/product/${cat._id}`} className="block">
+              <Link to={`/product/${cat._id}?type=cat`} className="block">
                 <div className="py-4 px-2 sm:py-5 sm:px-4 bg-white rounded-lg text-center flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-transform duration-200 transform hover:scale-105">
                   <img
                     src={cat.image}

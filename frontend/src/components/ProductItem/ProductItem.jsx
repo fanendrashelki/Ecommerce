@@ -4,15 +4,15 @@ import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import { Button } from "@mui/material";
 import { FaRegHeart } from "react-icons/fa";
-import { IoGitCompareOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa6";
 import { MdZoomOutMap } from "react-icons/md";
 import { MyProductContext } from "../../AppWrapper";
 import ProductDetailsDialog from "./ProductDetailsDialog";
-import Skeleton from "@mui/material/Skeleton";
 
 const ProductItem = ({ product }) => {
   const context = useContext(MyProductContext);
   const [OpenProductDetails, setOpenProductDetails] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   return (
     <>
@@ -20,8 +20,8 @@ const ProductItem = ({ product }) => {
         {/* Image Section */}
         <div className="group w-full relative overflow-hidden">
           <Link to={`/product-details/${product._id}`}>
-            <div className="group imgWrapper w-full overflow-hidden rounded-md rounded-bl-none rounded-br-none relative">
-              <div className="relative h-[180px] overflow-hidden">
+            <div className="imgWrapper w-full overflow-hidden rounded-md rounded-bl-none rounded-br-none relative">
+              <div className="relative h-[200px]  overflow-hidden">
                 <img
                   src={product?.images?.[0]?.url || ""}
                   alt={product.name}
@@ -45,26 +45,34 @@ const ProductItem = ({ product }) => {
             </span>
           )}
 
-          {/* Action Buttons */}
-          <div className="absolute top-[-200px] right-2 z-10 flex flex-col items-center gap-2 w-[50px] transition-all duration-700 group-hover:top-4 opacity-0 group-hover:opacity-100">
+          {/* Action Buttons (hidden on desktop until hover) */}
+          <div className="absolute top-2 right-2 z-10 flex flex-col items-center gap-2 w-[50px] md:top-[-200px] md:group-hover:top-4 md:opacity-0 md:group-hover:opacity-100 transition-all duration-700">
+            {/* View Product - hidden on small (mobile) screens */}
             <Button
-              className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+              className="!hidden sm:!flex !w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
               onClick={() => setOpenProductDetails(true)}
             >
-              <MdZoomOutMap className="text-[18px] " />
+              <MdZoomOutMap className="text-[18px]" />
             </Button>
-            <Button className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-              <FaRegHeart className="text-[18px] " />
-            </Button>
-            <Button className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white">
-              <IoGitCompareOutline className="text-[18px]" />
+
+            {/* Like Button - visible on all screens */}
+            <Button
+              onClick={() => setLiked(!liked)}
+              className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+            >
+              {liked ? (
+                <FaHeart className="text-[20px] text-red-500" />
+              ) : (
+                <FaRegHeart className="text-[20px]" />
+              )}
             </Button>
           </div>
         </div>
 
         {/* Info Section */}
         <div className="p-3 sm:p-4 flex flex-col flex-grow">
-          <h6 className="text-xs sm:text-sm text-gray-500 font-medium truncate">
+          {/* Brand */}
+          <h6 className="text-[11px] sm:text-sm text-gray-500 font-medium truncate">
             <Link
               to={`/product-details/${product._id}`}
               className="hover:text-[#35ac75]"
@@ -72,7 +80,9 @@ const ProductItem = ({ product }) => {
               {product.brand}
             </Link>
           </h6>
-          <h3 className="text-sm  font-semibold mt-1  min-h-[40px]  text-black  line-clamp-2   max-sm:!text-[13px] ">
+
+          {/* Product Name */}
+          <h3 className="text-[13px] sm:text-sm font-semibold mt-1 min-h-[40px] text-black line-clamp-2">
             <Link
               to={`/product-details/${product._id}`}
               className="hover:text-[#35ac75]"
@@ -80,6 +90,8 @@ const ProductItem = ({ product }) => {
               {product.name}
             </Link>
           </h3>
+
+          {/* Rating */}
           <Rating
             name="size-medium"
             defaultValue={product.rating}
@@ -87,20 +99,22 @@ const ProductItem = ({ product }) => {
             readOnly
             className="my-2"
           />
+
+          {/* Prices */}
           <div className="flex flex-wrap items-center gap-2 mt-1">
-            <span className="line-through text-gray-500 text-sm font-medium max-sm:!text-[12px]">
+            <span className="line-through text-[12px] sm:text-sm text-gray-500 font-medium">
               ₹{product.oldPrice}
             </span>
-            <span className="text-[#35ac75] text-base font-bold max-sm:!text-[12px]">
+            <span className="text-[#35ac75] text-[14px] sm:text-base font-bold">
               ₹{product.price}
             </span>
           </div>
 
-          {/* Add to Cart Button */}
+          {/* Add to Cart */}
           <Button
             fullWidth
             variant="contained"
-            className=" !bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-sm max-sm:!text-[10px] !capitalize !mt-3"
+            className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 text-[11px] sm:text-sm !capitalize mt-3"
             onClick={() => context.addToCart(product)}
           >
             Add to Cart
@@ -108,6 +122,7 @@ const ProductItem = ({ product }) => {
         </div>
       </div>
 
+      {/* Product Modal */}
       <ProductDetailsDialog
         open={OpenProductDetails}
         product={product}
