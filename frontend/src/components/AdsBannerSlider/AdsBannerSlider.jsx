@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -14,8 +14,24 @@ import banner1 from "../../assets/banner1.webp";
 import banner2 from "../../assets/banner2.webp";
 import banner3 from "../../assets/banner3.webp";
 import banner4 from "../../assets/banner4.webp";
+import axiosInstance from "../../utils/axiosInstance";
 
 const AdsBannerSlider = (props) => {
+  const [AdsBanner, setAdsBanner] = useState([]);
+
+  const getBanner = async () => {
+    try {
+      const res = await axiosInstance.get("adsbanner");
+      console.log("banner", res?.data?.banner);
+      setAdsBanner(res?.data?.banner);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getBanner();
+  }, []);
+
   return (
     <div className="py-5 w-full">
       <Swiper
@@ -42,21 +58,11 @@ const AdsBannerSlider = (props) => {
           },
         }}
       >
-        <SwiperSlide>
-          <BannerBox img={banner1} link={"/"} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <BannerBox img={banner2} link={"/"} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <BannerBox img={banner3} link={"/"} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <BannerBox img={banner4} link={"/"} />
-        </SwiperSlide>
-        <SwiperSlide>
-          <BannerBox img={banner1} link={"/"} />
-        </SwiperSlide>
+        {AdsBanner.map((item, index) => (
+          <SwiperSlide key={index}>
+            <BannerBox img={item} link={"/"} />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

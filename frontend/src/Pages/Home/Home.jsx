@@ -38,17 +38,19 @@ const Home = () => {
             </p>
             <p className="text-xl font-bold text-[#35ac75]"> Only $200</p>
           </div>
-
-          <AdsBannerSlider item={4} />
         </div>
       </section>
 
       {/* Latest & Featured Products */}
       <Latest />
+      <div className="container mx-auto ">
+        <AdsBannerSlider item={4} />
+      </div>
+
       <Feature />
 
       {/* Blog Section */}
-      <Bloglist />
+      {/* <Bloglist /> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Rating from "@mui/material/Rating";
 import { Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
@@ -6,54 +6,19 @@ import axiosInstance from "../utils/axiosInstance";
 
 import ProductDetailsBox from "../components/ProductItem/ProductDetailsBox";
 import ZoomImage from "../components/ZoomImage/ZoomImage";
+import ProductDetailsSkeleton from "../components/Skeleton/ProductDetailsSkeleton";
+import Review from "../components/Review";
+import { MyProductContext } from "../AppWrapper";
 
 // Static tab labels
 const TABS = ["Product Description", "Specifications", "Reviews"];
-
-// Dummy reviews data
-const reviews = [
-  {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    comment: "Absolutely loved the product! Highly recommend it.",
-    rating: 5,
-  },
-  {
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    comment: "Good quality but delivery was delayed by 2 days.",
-    rating: 4,
-  },
-  {
-    name: "Raj Patel",
-    email: "raj.patel@example.com",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    comment: "Average experience. Expected better packaging.",
-    rating: 3,
-  },
-  {
-    name: "Aisha Khan",
-    email: "aisha.khan@example.com",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    comment: "Great service and quality. Will purchase again!",
-    rating: 5,
-  },
-];
-
-// Dummy specification table
-const productSpecs = [
-  ['Apple MacBook Pro 17"', "Silver", "Laptop", "$2999"],
-  ["Microsoft Surface Pro", "White", "Laptop PC", "$1999"],
-  ["Magic Mouse 2", "Black", "Accessories", "$99"],
-];
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(0);
   const [productDetails, setProductDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const context = useContext(MyProductContext);
 
   useEffect(() => {
     if (id) fetchProductDetails(id);
@@ -71,52 +36,14 @@ const ProductDetails = () => {
       }, 500);
     }
   };
+  const productSpecs = [
+    ['Apple MacBook Pro 17"', "Silver", "Laptop", "$2999"],
+    ["Microsoft Surface Pro", "White", "Laptop PC", "$1999"],
+    ["Magic Mouse 2", "Black", "Accessories", "$99"],
+  ];
 
   if (loading) {
-    return (
-      <main className="p-15 mt-5 ">
-        <ul className="space-y-10">
-          <li className="flex gap-6">
-            {/* <!-- Image skeleton --> */}
-            <div className="flex-shrink-0">
-              <div className="bg-gray-300 animate-pulse rounded w-[350px] h-[400px]"></div>
-            </div>
-
-            {/* <!-- Content skeleton --> */}
-            <div className="flex-1 space-y-4">
-              {/* <!-- Headline --> */}
-              <h3>
-                <div className="bg-gray-300 animate-pulse h-6 w-[60%] rounded"></div>
-              </h3>
-
-              {/* <!-- Paragraph lines --> */}
-              <p className="space-y-2">
-                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
-                <div className="flex items-center justify-between">
-                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
-                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
-                </div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[90%] rounded"></div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
-                <div className="flex items-center justify-between">
-                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
-                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
-                </div>
-              </p>
-
-              {/* <!-- Meta info --> */}
-              <div>
-                <div className="bg-gray-300 animate-pulse h-4 w-[70px] rounded"></div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </main>
-    );
+    return <ProductDetailsSkeleton />;
   }
 
   return (
@@ -187,71 +114,7 @@ const ProductDetails = () => {
           )}
 
           {activeTab === 2 && (
-            <div className="w-full shadow-md p-5 rounded-md">
-              <h5 className="text-xl font-bold mb-4 text-gray-900">
-                Latest Customer Reviews
-              </h5>
-              <ul className="divide-y divide-gray-200">
-                {reviews.map((review, idx) => (
-                  <li key={idx} className="py-4 flex gap-4">
-                    <img
-                      src={review.avatar}
-                      className="w-14 h-14 rounded-full shadow-md"
-                      alt={review.name}
-                    />
-                    <div className="flex-1">
-                      <p className="text-[16px] font-semibold text-gray-900">
-                        {review.name}
-                      </p>
-                      <p className="text-gray-500 text-sm">{review.email}</p>
-                      <p className="text-gray-700 text-sm mt-1">
-                        {review.comment}
-                      </p>
-                      <Rating value={review.rating} size="small" readOnly />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Add Review Form */}
-              <div className="mt-6">
-                <h6 className="mb-2 text-[17px] font-semibold">Add Review</h6>
-                <form className="space-y-4">
-                  <TextField
-                    required
-                    label="Your Review"
-                    fullWidth
-                    multiline
-                    minRows={3}
-                    sx={{
-                      "& label": { color: "#35ac75" },
-                      "& label.Mui-focused": { color: "#ff1744" },
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": { borderColor: "#35ac75" },
-                        "&:hover fieldset": { borderColor: "#ff8a80" },
-                        "&.Mui-focused fieldset": { borderColor: "#ff1744" },
-                      },
-                    }}
-                  />
-                  <div className="flex items-center gap-3">
-                    <label className="text-gray-700">Rating:</label>
-                    <Rating
-                      name="review-rating"
-                      defaultValue={4}
-                      size="small"
-                      readOnly
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    className="!bg-[#35ac75] hover:!bg-[#000000]"
-                  >
-                    Submit
-                  </Button>
-                </form>
-              </div>
-            </div>
+            <Review productId={id} userId={context?.User?._id} />
           )}
         </div>
       </div>

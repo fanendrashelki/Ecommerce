@@ -30,8 +30,15 @@ const ProductDetailsBox = ({ productDetails }) => {
       {/* Rating and Brand */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center gap-2 text-sm text-gray-700">
-          <Rating name="read-only" value={4} size="small" readOnly />
-          <span className="text-sm text-gray-500">(42 reviews)</span>
+          <Rating
+            name="read-only"
+            value={productDetails.rating}
+            size="small"
+            readOnly
+          />
+          <span className="text-sm text-gray-500">
+            ({productDetails.ratings.length})
+          </span>
         </div>
         <span className="text-sm bg-green-100 text-[#35ac75] px-2 py-1 rounded">
           <span className="font-medium">Brand:</span> {productDetails.brand}

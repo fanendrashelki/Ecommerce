@@ -21,7 +21,6 @@ const Latest = () => {
       <div className="container">
         <h2 className="text-[22px] font-semibold">Latest Products</h2>
         <ProductsSlider items={6} productData={LatestProduct} />
-        <AdsBannerSlider item={3} />
       </div>
     </section>
   );
