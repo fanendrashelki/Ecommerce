@@ -49,7 +49,7 @@ const ProductItem = ({ product }) => {
           <div className="absolute top-2 right-2 z-10 flex flex-col items-center gap-2 w-[50px] md:top-[-200px] md:group-hover:top-4 md:opacity-0 md:group-hover:opacity-100 transition-all duration-700">
             {/* View Product - hidden on small (mobile) screens */}
             <Button
-              className="!hidden sm:!flex !w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+              className="!hidden md:!flex !w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
               onClick={() => setOpenProductDetails(true)}
             >
               <MdZoomOutMap className="text-[18px]" />
