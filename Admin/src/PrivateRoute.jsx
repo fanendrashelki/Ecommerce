@@ -1,13 +1,15 @@
 import { Navigate } from "react-router-dom";
+import { isTokenValid } from "./utils/auth";
+
 
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem("token"); 
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  const token = localStorage.getItem("token");
+  return isTokenValid(token) ? children : <Navigate to="/" replace />;
 };
 
 const PrivateRouteLogin = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("token"); 
-  return isAuthenticated== null ? children : <Navigate to="/dashboard/home" replace />;
+  const token = localStorage.getItem("token");
+  return isTokenValid(token) ? <Navigate to="/dashboard/home" replace /> : children;
 };
 
-export  {PrivateRoute,PrivateRouteLogin};
+export { PrivateRoute, PrivateRouteLogin };
