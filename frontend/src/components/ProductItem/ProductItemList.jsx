@@ -17,7 +17,7 @@ const ProductItemList = ({ product }) => {
       {/* Image Section */}
       <div className="group imgWrapper w-full md:w-[30%] relative">
         <Link to={`/product-details/${product._id}`}>
-          <div className="h-[220px] md:h-[250px] overflow-hidden">
+          <div className="w-[80%] h-[220px] md:h-[250px] overflow-hidden">
             <img
               src={product?.images?.[0]?.url || ""}
               alt=""

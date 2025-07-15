@@ -235,7 +235,6 @@ const handleChange = (e) => {
       } else {
         updated.discount = 0;
       }
-
       return updated;
     });
   }

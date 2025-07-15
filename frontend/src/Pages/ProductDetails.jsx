@@ -6,10 +6,48 @@ import axiosInstance from "../utils/axiosInstance";
 
 import ProductDetailsBox from "../components/ProductItem/ProductDetailsBox";
 import ZoomImage from "../components/ZoomImage/ZoomImage";
-import ProductDetailsSkeleton from "../components/Skeleton/ProductDetailsSkeleton";
 
 // Static tab labels
 const TABS = ["Product Description", "Specifications", "Reviews"];
+
+// Dummy reviews data
+const reviews = [
+  {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    avatar: "https://i.pravatar.cc/150?img=1",
+    comment: "Absolutely loved the product! Highly recommend it.",
+    rating: 5,
+  },
+  {
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    avatar: "https://i.pravatar.cc/150?img=2",
+    comment: "Good quality but delivery was delayed by 2 days.",
+    rating: 4,
+  },
+  {
+    name: "Raj Patel",
+    email: "raj.patel@example.com",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    comment: "Average experience. Expected better packaging.",
+    rating: 3,
+  },
+  {
+    name: "Aisha Khan",
+    email: "aisha.khan@example.com",
+    avatar: "https://i.pravatar.cc/150?img=4",
+    comment: "Great service and quality. Will purchase again!",
+    rating: 5,
+  },
+];
+
+// Dummy specification table
+const productSpecs = [
+  ['Apple MacBook Pro 17"', "Silver", "Laptop", "$2999"],
+  ["Microsoft Surface Pro", "White", "Laptop PC", "$1999"],
+  ["Magic Mouse 2", "Black", "Accessories", "$99"],
+];
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -35,7 +73,50 @@ const ProductDetails = () => {
   };
 
   if (loading) {
-    return <ProductDetailsSkeleton />;
+    return (
+      <main className="p-15 mt-5 ">
+        <ul className="space-y-10">
+          <li className="flex gap-6">
+            {/* <!-- Image skeleton --> */}
+            <div className="flex-shrink-0">
+              <div className="bg-gray-300 animate-pulse rounded w-[350px] h-[400px]"></div>
+            </div>
+
+            {/* <!-- Content skeleton --> */}
+            <div className="flex-1 space-y-4">
+              {/* <!-- Headline --> */}
+              <h3>
+                <div className="bg-gray-300 animate-pulse h-6 w-[60%] rounded"></div>
+              </h3>
+
+              {/* <!-- Paragraph lines --> */}
+              <p className="space-y-2">
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="flex items-center justify-between">
+                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                  <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                </div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[20%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[90%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[83%] rounded"></div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[80%] rounded"></div>
+                <div className="flex items-center justify-between">
+                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
+                  <div className="bg-gray-300 animate-pulse h-4 w-[40%] mt-2 p-5 rounded"></div>
+                </div>
+              </p>
+
+              {/* <!-- Meta info --> */}
+              <div>
+                <div className="bg-gray-300 animate-pulse h-4 w-[70px] rounded"></div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </main>
+    );
   }
 
   return (

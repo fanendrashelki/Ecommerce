@@ -79,29 +79,7 @@ const ProductListing = () => {
   };
 
   return (
-    <section className="py-5 pb-24 bg-[#efefef] min-h-screen">
-      <div className="container mx-auto px-3 sm:px-4">
-        {/* Breadcrumbs */}
-        <Breadcrumbs aria-label="breadcrumb">
-          <Link
-            underline="hover"
-            color="inherit"
-            className="link transition"
-            href="/"
-          >
-            Home
-          </Link>
-          <Link
-            underline="hover"
-            color="inherit"
-            className="link transition"
-            href="/products"
-          >
-            Product List
-          </Link>
-        </Breadcrumbs>
-      </div>
-
+    <section className=" bg-[#efefef] min-h-screen">
       <div className="bg-white p-2 mt-4">
         <div className="container mx-auto px-3 sm:px-4 flex flex-col lg:flex-row gap-3">
           {/* Desktop Sidebar */}
@@ -112,66 +90,85 @@ const ProductListing = () => {
           {/* Product Area */}
           <div className="w-full lg:w-[80%]">
             {/* Header Controls */}
-            <div className="bg-[#f1f1f1] p-2 mb-3 rounded-md flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between">
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="bg-[#f1f1f1] p-4 rounded-md mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* Left: View toggle + count */}
+              <div className="flex items-center flex-wrap gap-2">
+                {/* List View */}
                 <Button
-                  className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${
-                    itemView === "list" ? "active" : ""
+                  className={`!w-[36px] !h-[36px] !min-w-[36px] !rounded-full shadow ${
+                    itemView === "list"
+                      ? "!bg-[#35ac75] !text-white"
+                      : "!bg-gray-200 !text-black"
                   }`}
                   onClick={() => setItemView("list")}
                 >
-                  <FiMenu className="text-[rgba(0,0,0,0.7)]" />
+                  <FiMenu className="text-[16px]" />
                 </Button>
+
+                {/* Grid View */}
                 <Button
-                  className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${
-                    itemView === "grid" ? "active" : ""
+                  className={`!w-[36px] !h-[36px] !min-w-[36px] !rounded-full shadow ${
+                    itemView === "grid"
+                      ? "!bg-[#35ac75] !text-white"
+                      : "!bg-gray-200 !text-black"
                   }`}
                   onClick={() => setItemView("grid")}
                 >
-                  <IoGridSharp className="text-[rgba(0,0,0,0.7)]" />
+                  <IoGridSharp className="text-[16px]" />
                 </Button>
-                <span className="text-sm font-medium text-[rgba(0,0,0,0.7)]">
-                  {productByCat?.length ?? 0} products found.
+
+                {/* Product count */}
+                <span className="text-sm text-[rgba(0,0,0,0.7)] font-medium ml-2">
+                  {productByCat?.length ?? 0} products found
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-                <span className="text-sm font-medium text-[rgba(0,0,0,0.7)]">
+              {/* Right: Sorting */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                <label className="text-sm font-medium text-[rgba(0,0,0,0.7)] hidden sm:block">
                   Sort By:
-                </span>
+                </label>
                 <Button
                   id="basic-button"
                   aria-controls={open ? "basic-menu" : undefined}
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
-                  className="!bg-white !text-sm !text-[#000] !capitalize !border !border-[rgba(0,0,0,0.4)] !px-3 !py-1"
+                  className="!bg-white !text-sm !text-[#000] !capitalize !border !border-[rgba(0,0,0,0.4)] !px-4 !py-1.5 shadow-sm hover:!bg-gray-100"
                 >
-                  Name, A to Z
+                  Sort By
                 </Button>
+
                 <Menu
                   id="basic-menu"
                   anchorEl={anchorEl}
                   open={open}
                   onClose={handleClose}
+                  MenuListProps={{ className: "!p-0" }}
                 >
                   <MenuItem
                     onClick={handleClose}
                     className="!text-sm !text-[#000] !capitalize"
                   >
-                    1
+                    Name, A to Z
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
                     className="!text-sm !text-[#000] !capitalize"
                   >
-                    2
+                    Name, Z to A
                   </MenuItem>
                   <MenuItem
                     onClick={handleClose}
                     className="!text-sm !text-[#000] !capitalize"
                   >
-                    3
+                    Price, Low to High
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleClose}
+                    className="!text-sm !text-[#000] !capitalize"
+                  >
+                    Price, High to Low
                   </MenuItem>
                 </Menu>
               </div>
