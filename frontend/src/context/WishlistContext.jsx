@@ -55,7 +55,9 @@ export const WishlistProvider = ({ children }) => {
     wishlist.some(
       (item) => item && item._id?.toString() === productId?.toString()
     );
-
+  const clearWishlist = () => {
+    setWishlist([]);
+  };
   return (
     <WishlistContext.Provider
       value={{
@@ -65,6 +67,7 @@ export const WishlistProvider = ({ children }) => {
         removeFromWishlist,
         isWishlisted,
         fetchWishlist,
+        clearWishlist,
       }}
     >
       {children}

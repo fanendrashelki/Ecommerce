@@ -8,99 +8,97 @@ import { BsCartCheck } from "react-icons/bs";
 import { BiLogOutCircle } from "react-icons/bi";
 import { MyProductContext } from "../../AppWrapper";
 import axiosInstance from "../../utils/axiosInstance";
+import { useWishlist } from "../../context/WishlistContext";
+import { ProfileImageContext } from "../../context/ProfileImageContext";
 
 const ProfileSidebar = () => {
   const context = useContext(MyProductContext);
-  const [profileImg, setProfileImg] = useState([]);
-  const [loading, setLoading] = useState(false);
 
+  const imageContext = useContext(ProfileImageContext);
+  if (!imageContext) {
+    return <div>Image context not available</div>; // or return null;
+  }
+
+  const { profileImg, loading, handleImageChange } = imageContext;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setProfileImg(context.User?.avatar);
-  }, [context.User?.avatar]);
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setProfileImg(URL.createObjectURL(file)); // Temporary preview
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
 
     try {
-      setLoading(true);
+      context.setPageLoader(true);
 
-      const formData = new FormData();
-      formData.append("image", file);
-      const token = localStorage.getItem("token");
-
-      const res = await axiosInstance.post("/user/profile-image", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res?.data?.error) {
-        context.alertBox("error", res.data.message);
-      } else {
-        const url = res?.data?.imageUrl;
-        setProfileImg(url);
-        context.alertBox("success", "Avatar updated successfully");
+      if (token) {
+        await axiosInstance.get("/user/logout", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
-    } catch (err) {
-      const message = err.response?.data?.message || "Something went wrong";
-      context.alertBox("error", message);
+
+      // Clear user session even if the logout request fails
+      localStorage.removeItem("token");
+      context.setUser(null);
+      context.setLogin(false);
+      navigate("/login");
+      clearWishlist();
+      context.alertBox("success", "Logout successful");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      context.alertBox("error", "Logout failed. Please try again.");
     } finally {
-      setLoading(false);
+      context.setPageLoader(false);
     }
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    context.setUser(null);
-    navigate("/login");
-  };
+  const { fetchWishlist, clearWishlist } = useWishlist();
+  useEffect(() => {
+    if (context.isLogin) {
+      fetchWishlist(); // 🟢 fetch wishlist on login
+    } else {
+      clearWishlist(); // 🔴 clear wishlist on logout
+    }
+  }, [context.isLogin]);
 
   return (
     <aside className="sticky top-0 w-[20%] bg-white px-4 py-6 rounded-lg shadow-lg m-6">
       <div className="flex flex-col items-center justify-center mb-5 space-y-3">
         {/* Avatar Upload Section */}
-        <div className="relative group w-[100px] h-[100px] flex items-center justify-center">
-          {loading ? (
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="span"
-              className="bg-white myShadow w-[100px] h-[100px] rounded-full flex items-center justify-center"
-            >
-              <CircularProgress className="text-gray-500" color="inherit" />
-            </IconButton>
-          ) : (
-            <Avatar
-              alt="User Avatar"
-              src={profileImg}
-              sx={{ width: 100, height: 100 }}
-              className="w-[100px] h-[100px] myShadow"
-            />
-          )}
-          <div className="absolute inset-0 bg-black bg-opacity-30 opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
-          <input
-            accept="image/*"
-            type="file"
-            id="profile-image"
-            hidden
-            onChange={handleImageChange}
+        <div className="relative group w-[100px] h-[100px]">
+          {/* Avatar */}
+          <Avatar
+            alt="User Avatar"
+            src={profileImg}
+            sx={{ width: 100, height: 100 }}
+            className="w-full h-full myShadow"
           />
-          <label htmlFor="profile-image">
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 cursor-pointer">
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="span"
-                className="bg-white shadow w-[100px] h-[100px] rounded-full flex items-center justify-center"
-              >
-                <LiaUserEditSolid className="text-[40px] text-white" />
-              </IconButton>
+
+          {/* Loading overlay */}
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 rounded-full z-20">
+              <CircularProgress size={30} className="text-gray-500" />
             </div>
+          )}
+
+          {/* Hover effect + upload button */}
+          <label htmlFor="profile-image">
+            <div className="absolute inset-0 rounded-full z-30 cursor-pointer">
+              <div className="w-full h-full bg-black bg-opacity-30 opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <IconButton
+                  component="span"
+                  className="bg-gray-800 bg-opacity-80 w-[100px] h-[100px] rounded-full flex items-center justify-center"
+                >
+                  <LiaUserEditSolid className="text-[32px] text-white" />
+                </IconButton>
+              </div>
+            </div>
+            <input
+              accept="image/*"
+              type="file"
+              id="profile-image"
+              hidden
+              onChange={handleImageChange}
+            />
           </label>
         </div>
 

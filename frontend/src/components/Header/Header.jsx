@@ -16,7 +16,6 @@ import { FaRegUser } from "react-icons/fa";
 import { BsCartCheck } from "react-icons/bs";
 import { BiLogOutCircle } from "react-icons/bi";
 
-import ProfileImg1 from "../../assets/avatar1.png";
 import axiosInstance from "../../utils/axiosInstance";
 import { useEffect } from "react";
 import CategoryPanel from "./Navigation/CategoryPanel";
@@ -25,6 +24,7 @@ import { Button } from "@mui/material";
 import { IoMenu } from "react-icons/io5";
 
 import { useWishlist } from "../../context/WishlistContext";
+import { ProfileImageContext } from "../../context/ProfileImageContext";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -37,8 +37,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 function Header() {
   const context = useContext(MyProductContext);
+  const { profileImg } = useContext(ProfileImageContext);
+  // console.log("Prof  ileImageContext:", profileImg);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [profileImg, setProfileImg] = useState(ProfileImg1);
+
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
@@ -53,9 +55,7 @@ function Header() {
   const toggleDrawer = (open) => () => {
     setIsOpenCatPanel(open);
   };
-  useEffect(() => {
-    setProfileImg(context.User?.avatar);
-  }, [context.User?.avatar]);
+
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
 
@@ -75,7 +75,7 @@ function Header() {
       context.setUser(null);
       context.setLogin(false);
       navigate("/login");
-
+      clearWishlist();
       context.alertBox("success", "Logout successful");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -84,8 +84,15 @@ function Header() {
       context.setPageLoader(false);
     }
   };
-  const { wishlistCount } = useWishlist();
 
+  const { wishlistCount, fetchWishlist, clearWishlist } = useWishlist();
+  useEffect(() => {
+    if (context.isLogin) {
+      fetchWishlist(); // 🟢 fetch wishlist on login
+    } else {
+      clearWishlist(); // 🔴 clear wishlist on logout
+    }
+  }, [context.isLogin]);
   return (
     <header className="bg-white w-full">
       {/* Top Strip - Hidden on small devices */}
