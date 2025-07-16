@@ -44,8 +44,6 @@ const sendMail = async ({ email, name, type, otp, otpExpireTime, ...rest }) => {
       subject,
       html,
     });
-
-    // console.log(`📧 Email sent to ${email} - Type: ${type}`);
   } catch (error) {
     console.error(
       `❌ Failed to send ${type} email to ${email}:`,

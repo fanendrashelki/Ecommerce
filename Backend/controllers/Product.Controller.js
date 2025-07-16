@@ -45,9 +45,6 @@ const createProduct = asyncHandler(async (req, res, next) => {
     productWeight,
   } = req.body;
 
-  console.log(req.body);
-  console.log(size);
-
   const images =
     req.files?.map((file) => ({
       url: file.path,
@@ -161,8 +158,6 @@ const updateProduct = asyncHandler(async (req, res) => {
     size,
     productWeight,
   } = req.body;
-
-  console.log("Size from body:", size);
 
   existingProduct.name = name || existingProduct.name;
   existingProduct.description = description || existingProduct.description;

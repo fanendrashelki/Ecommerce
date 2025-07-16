@@ -187,7 +187,6 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
 
 const VerifyOTP = asyncHandler(async (req, res, next) => {
   const { email, otp, type } = req.body;
-  console.log(req.body);
 
   if (!email || !otp) {
     return res.status(400).json({ message: "Email and OTP are required" });
@@ -220,7 +219,6 @@ const VerifyOTP = asyncHandler(async (req, res, next) => {
 
 const resetPassword = asyncHandler(async (req, res, next) => {
   const { email, newPassword, confirmPassword } = req.body;
-  console.log(req.body);
 
   // Step 1: Validate required fields
   if (!email || !newPassword || !confirmPassword) {
@@ -275,7 +273,6 @@ const updateProfile = asyncHandler(async (req, res, next) => {
   const { name, email, mobile } = req.body;
   const userId = req.user.id;
   const user = await User.findById(userId);
-  console.log(user);
 
   if (!user) return next(new ErrorHandle("User not found", 404));
 

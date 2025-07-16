@@ -2,35 +2,44 @@ import asyncHandler from "../utils/AsyncHandler.js";
 import UserModel from "../models/user.model.js";
 import ProductModel from "../models/product.model.js";
 
-// add To Wishlist
+// ✅ Add to Wishlist
 const addToWishlist = asyncHandler(async (req, res) => {
   const { productId } = req.body;
 
-  const user = await UserModel.findById(req.user.id);
-
-  if (!user.wishlist.includes(productId)) {
-    user.wishlist.push(productId);
-    await user.save();
+  // Check if product exists
+  const product = await ProductModel.findById(productId);
+  if (!product) {
     return res
-      .status(200)
-      .json({ success: true, message: "Added to wishlist" });
+      .status(404)
+      .json({ success: false, message: "Product not found" });
   }
 
-  res
-    .status(400)
-    .json({ success: false, message: "Product already in wishlist" });
+  // Use $addToSet to avoid duplicates
+  const user = await UserModel.findByIdAndUpdate(
+    req.user.id,
+    { $addToSet: { wishlist: productId } },
+    { new: true }
+  );
+
+  res.status(200).json({ success: true, message: "Added to wishlist" });
 });
 
-//  Get Wishlist
+// ✅ Get Wishlist
 const getWishlist = asyncHandler(async (req, res) => {
   const user = await UserModel.findById(req.user.id).populate("wishlist");
-  res.status(200).json({ success: true, wishlist: user.wishlist });
+
+  res.status(200).json({
+    success: true,
+    wishlist: user.wishlist,
+    count: user.wishlist.length,
+  });
 });
 
 // ✅ Remove from Wishlist
 const removeFromWishlist = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
+  // Validate ObjectId format
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     return res
       .status(400)
@@ -51,6 +60,7 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
     success: true,
     message: "Removed from wishlist",
     wishlist: user.wishlist,
+    count: user.wishlist.length,
   });
 });
 
@@ -61,8 +71,13 @@ const clearWishlist = asyncHandler(async (req, res) => {
     { $set: { wishlist: [] } },
     { new: true }
   );
-  res.status(200).json({ success: true, message: "Wishlist cleared" });
+
+  res.status(200).json({
+    success: true,
+    message: "Wishlist cleared",
+  });
 });
+
 export default {
   addToWishlist,
   getWishlist,

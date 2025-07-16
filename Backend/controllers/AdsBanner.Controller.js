@@ -6,8 +6,6 @@ import { cloudinary } from "../config/cloudinary.js";
 
 // Add Banner
 const addBanner = asyncHandler(async (req, res, next) => {
-  console.log(req.file);
-
   if (!req.file || !req.file.path || !req.file.filename) {
     return next(new ErrorHandle("No file uploaded", 400));
   }
