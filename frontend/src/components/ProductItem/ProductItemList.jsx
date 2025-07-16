@@ -10,12 +10,21 @@ import { useContext, useMemo, useState } from "react";
 import { MyProductContext } from "../../AppWrapper";
 import ProductDetailsDialog from "./ProductDetailsDialog";
 import { useWishlist } from "../../context/WishlistContext";
+import { usecartlist } from "../../context/cartContext";
+import { FaPlus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
+import { IoCartOutline } from "react-icons/io5";
 
 const ProductItemList = ({ product }) => {
   const context = useContext(MyProductContext);
   const [OpenProductDetails, setOpenProductDetails] = useState(false);
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
+  const { cartlist, addToCart, updateCart, isCartlisted } = usecartlist();
 
+  const cartItem = useMemo(
+    () => cartlist.find((item) => item?.productId?._id === product._id),
+    [cartlist, product._id]
+  );
   // Local liked state to prevent UI delay
   const [localLiked, setLocalLiked] = useState(isWishlisted(product._id));
 
@@ -42,6 +51,20 @@ const ProductItemList = ({ product }) => {
     } catch (error) {
       context.alertBox("error", "Something went wrong");
       console.error("Wishlist toggle failed:", error);
+    }
+  };
+
+  const handleCart = async (productId, q = 1) => {
+    if (!context.isLogin) {
+      context.alertBox("error", "You are not logged in. Please login first.");
+      return;
+    }
+    try {
+      await addToCart(productId, q, context?.User?._id);
+      context.alertBox("success", "Added to cart");
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+      context.alertBox("error", "Something went wrong");
     }
   };
   return (
@@ -135,13 +158,53 @@ const ProductItemList = ({ product }) => {
         </div>
 
         <div className="w-full md:w-[40%] lg:w-[25%]">
-          <Button
-            fullWidth
-            variant="contained"
-            className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-sm sm:!text-xs md:!text-sm !capitalize"
-          >
-            Add to Cart
-          </Button>
+          {/* Add to Cart */}
+          {cartItem ? (
+            <div className="flex  mx-auto mt-2  border border-gray-300 rounded-md overflow-hidden">
+              <Button
+                className="w-10 bg-gray-100  font-semibold !hover:bg-[#35ac75] hover:text-white"
+                onClick={() =>
+                  updateCart(
+                    cartItem._id,
+                    cartItem.quantity - 1,
+                    context?.User?._id
+                  )
+                }
+              >
+                <FaMinus className="text-[#35ac75]" />
+              </Button>
+              <input
+                type="number"
+                value={cartItem.quantity}
+                readOnly
+                className="w-12 text-center font-bold p-1 outline-none border-x border-gray-300"
+              />
+              <Button
+                className="w-10 bg-gray-100 font-semibold hover:bg-[#35ac75] hover:text-white"
+                onClick={() =>
+                  updateCart(
+                    cartItem._id,
+                    cartItem.quantity + 1,
+                    context?.User?._id
+                  )
+                }
+              >
+                <FaPlus className="text-[#35ac75]" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              fullWidth
+              variant="contained"
+              className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 text-xs sm:text-sm !capitalize mt-3  !text-[16px] gap-2 "
+              aria-label="Add to Cart"
+              onClick={() => handleCart(product._id)}
+            >
+              {" "}
+              <IoCartOutline className="text-lg" />
+              Add to Cart
+            </Button>
+          )}
         </div>
       </div>
       <ProductDetailsDialog

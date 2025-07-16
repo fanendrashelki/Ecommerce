@@ -27,6 +27,7 @@ import MobileNav from "./components/Header/Navigation/MobileNav";
 import ScrollToTop from "./utils/ScrollToTop";
 import { WishlistProvider } from "./context/WishlistContext";
 import { ProfileImageProvider } from "./context/ProfileImageContext";
+import { CartProvider } from "./context/cartContext";
 
 const alertBox = (type, msg) => {
   if (type === "success") {
@@ -48,10 +49,6 @@ function AppWrapper() {
   const [category, setCategories] = useState([]);
   const [pageloader, setPageLoader] = useState(false);
 
-  const addToCart = (product) => {
-    setCartItems((prev) => [...prev, product]);
-  };
-
   const contextValues = {
     setOpenCart,
     alertBox,
@@ -60,7 +57,7 @@ function AppWrapper() {
     isLogin,
     User,
     setPageLoader,
-    addToCart,
+
     category,
   };
   const token = localStorage.getItem("token");
@@ -113,69 +110,72 @@ function AppWrapper() {
     <MyProductContext.Provider value={contextValues}>
       <WishlistProvider>
         <ProfileImageProvider>
-          <Header />
-          <main>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/product/:id" element={<ProductListing />} />
+          <CartProvider>
+            <Header />
+            <main>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/product/:id" element={<ProductListing />} />
 
-              <Route path="/product-details/:id" element={<ProductDetails />} />
-              <Route
-                path="/login"
-                element={isLogin ? <Navigate to="/" /> : <Login />}
-              />
-              <Route
-                path="/register"
-                element={isLogin ? <Navigate to="/" /> : <Register />}
-              />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/forget-password" element={<ForgetPassword />} />
-              <Route path="/verify-otp" element={<VerifyOtp />} />
-              <Route path="/change-password" element={<ResetPassword />} />
-              {/* Protected Routes */}
-              <Route
-                path="/checkout"
-                element={
-                  <PrivateRoute>
-                    <Checkout />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/wishlist"
-                element={
-                  <PrivateRoute>
-                    <Wishlist />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/order"
-                element={
-                  <PrivateRoute>
-                    <Orders />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <MobileNav />
-          <Footer />
-          <Toaster />
-
-          {/* cart list fro checkout */}
-          <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
-
-          <Pageloader open={pageloader} />
+                <Route
+                  path="/product-details/:id"
+                  element={<ProductDetails />}
+                />
+                <Route
+                  path="/login"
+                  element={isLogin ? <Navigate to="/" /> : <Login />}
+                />
+                <Route
+                  path="/register"
+                  element={isLogin ? <Navigate to="/" /> : <Register />}
+                />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/forget-password" element={<ForgetPassword />} />
+                <Route path="/verify-otp" element={<VerifyOtp />} />
+                <Route path="/change-password" element={<ResetPassword />} />
+                {/* Protected Routes */}
+                <Route
+                  path="/checkout"
+                  element={
+                    <PrivateRoute>
+                      <Checkout />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute>
+                      <Profile />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/wishlist"
+                  element={
+                    <PrivateRoute>
+                      <Wishlist />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/order"
+                  element={
+                    <PrivateRoute>
+                      <Orders />
+                    </PrivateRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <MobileNav />
+            <Footer />
+            <Toaster />
+            {/* cart list fro checkout */}
+            <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
+            <Pageloader open={pageloader} />
+          </CartProvider>
         </ProfileImageProvider>
       </WishlistProvider>
     </MyProductContext.Provider>
