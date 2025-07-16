@@ -25,6 +25,7 @@ import { IoMenu } from "react-icons/io5";
 
 import { useWishlist } from "../../context/WishlistContext";
 import { ProfileImageContext } from "../../context/ProfileImageContext";
+import { usecartlist } from "../../context/cartContext";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -86,13 +87,17 @@ function Header() {
   };
 
   const { wishlistCount, fetchWishlist, clearWishlist } = useWishlist();
+  const { cartCount, fetchCartlist, clearCartlist } = usecartlist();
   useEffect(() => {
     if (context.isLogin) {
-      fetchWishlist(); // 🟢 fetch wishlist on login
+      fetchWishlist();
+      fetchCartlist(); // 🟢 fetch wishlist on login
     } else {
-      clearWishlist(); // 🔴 clear wishlist on logout
+      clearWishlist();
+      clearCartlist(); // 🔴 clear wishlist on logout
     }
   }, [context.isLogin]);
+
   return (
     <header className="bg-white w-full">
       {/* Top Strip - Hidden on small devices */}
@@ -222,7 +227,7 @@ function Header() {
               <li onClick={() => context.setOpenCart(true)}>
                 <Tooltip title="Cart">
                   <IconButton>
-                    <StyledBadge badgeContent={0} color="secondary">
+                    <StyledBadge badgeContent={cartCount} color="secondary">
                       <MdOutlineShoppingCart className="max-sm:text-[30px] max-sm:text-black" />
                     </StyledBadge>
                   </IconButton>

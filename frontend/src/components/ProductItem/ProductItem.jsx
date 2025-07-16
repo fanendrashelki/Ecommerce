@@ -3,22 +3,27 @@ import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import { Button, Tooltip } from "@mui/material";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaPlus, FaMinus } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { MdZoomOutMap } from "react-icons/md";
+import { IoCartOutline } from "react-icons/io5";
 import { MyProductContext } from "../../AppWrapper";
 import ProductDetailsDialog from "./ProductDetailsDialog";
 import { useWishlist } from "../../context/WishlistContext";
 import { usecartlist } from "../../context/cartContext";
-import { FaPlus } from "react-icons/fa";
-import { FaMinus } from "react-icons/fa";
-import { IoCartOutline } from "react-icons/io5";
 
 const ProductItem = ({ product }) => {
   const [openProductDetails, setOpenProductDetails] = useState(false);
+  const [openvariant, setOpenvariant] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedRam, setSelectedRam] = useState("");
+
+  const sizes = product?.size || [];
+  const productRam = product?.productRam || [];
+
   const context = useContext(MyProductContext);
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
-  const { cartlist, addToCart, updateCart, isCartlisted } = usecartlist();
+  const { cartlist, addToCart, updateCart } = usecartlist();
 
   const cartItem = useMemo(
     () => cartlist.find((item) => item?.productId?._id === product._id),
@@ -50,13 +55,34 @@ const ProductItem = ({ product }) => {
   };
 
   const handleCart = async (productId, q = 1) => {
+    const hasSize = sizes.length > 0;
+    const hasRam = productRam.length > 0;
     if (!context.isLogin) {
       context.alertBox("error", "You are not logged in. Please login first.");
       return;
     }
+    // If variants required but not selected
+    if ((hasSize && !selectedSize) || (hasRam && !selectedRam)) {
+      setOpenvariant(true);
+      context.alertBox(
+        "error",
+        `Please select product ${hasSize && !selectedSize ? "size" : ""}${
+          hasSize && hasRam ? " and " : ""
+        }${hasRam && !selectedRam ? "RAM" : ""} before adding to cart.`
+      );
+      return;
+    }
+
     try {
-      await addToCart(productId, q, context?.User?._id);
+      await addToCart(
+        productId,
+        q,
+        context?.User?._id,
+        selectedSize,
+        selectedRam
+      );
       context.alertBox("success", "Added to cart");
+      setOpenvariant(false);
     } catch (error) {
       console.error("Add to cart failed:", error);
       context.alertBox("error", "Something went wrong");
@@ -87,16 +113,13 @@ const ProductItem = ({ product }) => {
             </div>
           </Link>
 
-          {/* Discount Badge */}
           {product.discount > 0 && (
             <span className="absolute top-2 left-2 z-10 bg-[#35ac75] text-white text-xs font-semibold px-2 py-1 rounded">
               {product.discount}%
             </span>
           )}
 
-          {/* Action Buttons */}
           <div className="absolute top-2 right-2 z-10 flex flex-col items-center gap-2 w-[50px] md:top-[-200px] md:group-hover:top-4 md:opacity-0 md:group-hover:opacity-100 transition-all duration-700">
-            {/* View Product */}
             <Button
               aria-label="Quick view"
               className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
@@ -105,7 +128,6 @@ const ProductItem = ({ product }) => {
               <MdZoomOutMap className="text-[18px]" />
             </Button>
 
-            {/* Wishlist */}
             <Tooltip title={liked ? "Remove from Wishlist" : "Add to Wishlist"}>
               <Button
                 onClick={toggleWishlist}
@@ -120,11 +142,68 @@ const ProductItem = ({ product }) => {
               </Button>
             </Tooltip>
           </div>
+
+          {openvariant && (
+            <div className="absolute w-full rounded-t-lg h-full bg-[rgba(0,0,0,0.5)] top-0 z-100 flex flex-col gap-3 p-4 justify-center">
+              {/* Size Selector */}
+              {sizes.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-white mb-2">
+                    Select Size:
+                  </h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {sizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${
+                          selectedSize === size
+                            ? "bg-white text-[#35ac75] border-white"
+                            : "text-white border-white hover:bg-white hover:text-[#35ac75]"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* RAM Selector */}
+              {productRam.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-white mb-2">
+                    Select RAM:
+                  </h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {productRam.map((ram) => (
+                      <button
+                        key={ram}
+                        onClick={() => setSelectedRam(ram)}
+                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${
+                          selectedRam === ram
+                            ? "bg-white text-[#35ac75] border-white"
+                            : "text-white border-white hover:bg-white hover:text-[#35ac75]"
+                        }`}
+                      >
+                        {ram} GB
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {/* <Button
+                onClick={() => handleCart(product._id)}
+                className="!bg-white !text-[#35ac75] mt-4 hover:!bg-[#35ac75] hover:!text-white !rounded-md"
+              >
+                Confirm and Add to Cart
+              </Button> */}
+            </div>
+          )}
         </div>
 
         {/* Info Section */}
         <div className="p-2 sm:p-4 flex flex-col flex-grow">
-          {/* Brand */}
           <h6 className="text-xs sm:text-sm text-gray-500 font-medium truncate">
             <Link
               to={`/product-details/${product._id}`}
@@ -134,17 +213,15 @@ const ProductItem = ({ product }) => {
             </Link>
           </h6>
 
-          {/* Name */}
           <h3 className="text-sm sm:text-base font-semibold mt-1 min-h-[40px] text-black line-clamp-2">
             <Link
               to={`/product-details/${product._id}`}
               className="hover:text-[#35ac75]"
             >
-              {product.name}
+              {product._id}
             </Link>
           </h3>
 
-          {/* Rating */}
           <Rating
             name="product-rating"
             defaultValue={product.rating}
@@ -153,8 +230,7 @@ const ProductItem = ({ product }) => {
             className="my-2"
           />
 
-          {/* Price */}
-          <div className="flex flex-wrap items-center gap-2 mt-1">
+          <div className="flex flex-wrap items-center gap-2 mt-1 mb-3">
             <span className="line-through text-xs sm:text-sm text-gray-500 font-medium">
               ₹{product.oldPrice}
             </span>
@@ -163,11 +239,10 @@ const ProductItem = ({ product }) => {
             </span>
           </div>
 
-          {/* Add to Cart */}
           {cartItem ? (
-            <div className="flex  mx-auto mt-2  border border-gray-300 rounded-md overflow-hidden">
+            <div className=" w-full flex items-center justify-evenly border border-gray-300 rounded-md overflow-hidden">
               <Button
-                className="w-10 bg-gray-100  font-semibold !hover:bg-[#35ac75] hover:text-white"
+                className="w-8 bg-gray-100 font-semibold hover:bg-[#35ac75] hover:text-white"
                 onClick={() =>
                   updateCart(
                     cartItem._id,
@@ -182,10 +257,10 @@ const ProductItem = ({ product }) => {
                 type="number"
                 value={cartItem.quantity}
                 readOnly
-                className="w-12 text-center font-bold p-1 outline-none border-x border-gray-300"
+                className="w-10 text-center font-bold p-1 outline-none border-x border-gray-300"
               />
               <Button
-                className="w-10 bg-gray-100 font-semibold hover:bg-[#35ac75] hover:text-white"
+                className="w-8 bg-gray-100 font-semibold hover:bg-[#35ac75] hover:text-white"
                 onClick={() =>
                   updateCart(
                     cartItem._id,
@@ -201,11 +276,10 @@ const ProductItem = ({ product }) => {
             <Button
               fullWidth
               variant="contained"
-              className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-2 !text-[16px] sm:text-sm !capitalize mt-3 gap-2"
+              className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-1 !text-[14px] sm:text-sm !capitalize mt-3 gap-2"
               aria-label="Add to Cart"
               onClick={() => handleCart(product._id)}
             >
-              {" "}
               <IoCartOutline className="text-lg" />
               Add to Cart
             </Button>
@@ -213,7 +287,6 @@ const ProductItem = ({ product }) => {
         </div>
       </div>
 
-      {/* Product Quick View Modal */}
       <ProductDetailsDialog
         open={openProductDetails}
         product={product}

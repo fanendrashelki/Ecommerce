@@ -4,12 +4,15 @@ import axiosInstance from "../utils/axiosInstance";
 const CartlistContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartlist, setCartlist] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
   const token = localStorage.getItem("token");
   const fetchCartlist = async () => {
     try {
       const res = await axiosInstance.get("/cart/get", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      setCartCount(res.data.cart.length);
       setCartlist(res.data.cart);
     } catch (err) {
       console.error("Failed to load wishlist", err);
@@ -20,15 +23,17 @@ export const CartProvider = ({ children }) => {
     fetchCartlist();
   }, []);
 
-  const addToCart = async (productId, quantity, userId) => {
-    console.log(productId);
-    console.log(quantity);
-    console.log(userId);
-
+  const addToCart = async (
+    productId,
+    quantity,
+    userId,
+    selectedSize,
+    selectedRam
+  ) => {
     try {
       const res = await axiosInstance.post(
         "/cart/add",
-        { productId, quantity, userId },
+        { productId, quantity, userId, selectedSize, selectedRam },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -42,20 +47,19 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCartlist = async (productId) => {
+    console.log(productId);
+
     try {
       await axiosInstance.delete(`/cart/remove/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCartlist((prev) => prev.filter((item) => item._id !== productId)); // ✅ filter by _id
+      setCartlist((prev) => prev.filter((item) => item._id !== productId));
     } catch (err) {
       console.error("Remove from wishlist failed", err);
     }
   };
 
   const updateCart = async (productId, quantity, userId) => {
-    console.log(productId);
-    console.log(quantity);
-    console.log(userId);
     try {
       if (quantity <= 0) {
         await removeFromCartlist(productId);
@@ -69,7 +73,6 @@ export const CartProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("update", res);
 
       await fetchCartlist();
     } catch (err) {
@@ -88,12 +91,14 @@ export const CartProvider = ({ children }) => {
   return (
     <CartlistContext.Provider
       value={{
+        fetchCartlist,
         cartlist,
         addToCart,
         removeFromCartlist,
         updateCart,
         clearCartlist,
         isCartlisted,
+        cartCount,
       }}
     >
       {children}
