@@ -14,6 +14,14 @@ const cartProductSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    selectedSize: {
+      type: String,
+      default: null,
+    },
+    selectedRam: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,

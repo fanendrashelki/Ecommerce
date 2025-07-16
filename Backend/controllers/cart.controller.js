@@ -1,3 +1,4 @@
+// controllers/cart.controller.js
 import asyncHandler from "../utils/AsyncHandler.js";
 import mongoose from "mongoose";
 import UserModel from "../models/user.model.js";
@@ -6,7 +7,7 @@ import CartProductModel from "../models/cartproduct.model.js";
 
 // Add to Cart
 const addToCart = asyncHandler(async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity, selectedSize, selectedRam } = req.body;
   const userId = req.user.id;
 
   if (!productId || !quantity) {
@@ -33,13 +34,34 @@ const addToCart = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Product not found" });
   }
 
-  let cartItem = await CartProductModel.findOne({ user: userId, productId });
+  // Validate variants if required
+  if (existingProduct.size?.length > 0 && !selectedSize) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please select a size." });
+  }
+
+  if (existingProduct.productRam?.length > 0 && !selectedRam) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please select RAM." });
+  }
+
+  // Check if item with same variants already in cart
+  let cartItem = await CartProductModel.findOne({
+    userId,
+    productId,
+    selectedSize: selectedSize || null,
+    selectedRam: selectedRam || null,
+  });
 
   if (!cartItem) {
     cartItem = new CartProductModel({
-      userId: userId,
-      productId: productId,
+      userId,
+      productId,
       quantity: qty,
+      selectedSize: selectedSize || null,
+      selectedRam: selectedRam || null,
     });
     await cartItem.save();
 
@@ -50,10 +72,11 @@ const addToCart = asyncHandler(async (req, res) => {
     cartItem.quantity += qty;
     await cartItem.save();
   }
+
   res.status(200).json({ success: true, cartItem });
 });
 
-// get cart
+// Get Cart
 const getCart = asyncHandler(async (req, res) => {
   const cart = await CartProductModel.find({ userId: req.user.id }).populate(
     "productId"
@@ -62,12 +85,34 @@ const getCart = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, cart });
 });
 
-//  update cart
+// Update Cart Quantity
 const updateCart = asyncHandler(async (req, res) => {
   const { cartItemId, quantity } = req.body;
 
+  if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid cart item ID" });
+  }
+
+  if (quantity < 1) {
+    // Remove item if quantity is less than 1
+    await CartProductModel.findOneAndDelete({
+      _id: cartItemId,
+      userId: req.user.id,
+    });
+
+    await UserModel.findByIdAndUpdate(req.user.id, {
+      $pull: { shopping_cart: cartItemId },
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Item removed from cart" });
+  }
+
   const cartItem = await CartProductModel.findOneAndUpdate(
-    { id: cartItemId, user: req.user.id },
+    { _id: cartItemId, userId: req.user.id },
     { quantity },
     { new: true }
   );
@@ -81,7 +126,7 @@ const updateCart = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, cartItem });
 });
 
-// Delete from Cart
+// Delete Cart Item
 const deleteCart = asyncHandler(async (req, res) => {
   const { cartItemId } = req.params.id;
 
@@ -103,4 +148,9 @@ const deleteCart = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Removed from cart" });
 });
 
-export default { addToCart, getCart, updateCart, deleteCart };
+export default {
+  addToCart,
+  getCart,
+  updateCart,
+  deleteCart,
+};
