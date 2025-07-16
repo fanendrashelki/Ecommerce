@@ -20,7 +20,7 @@ export function ForgetPassword() {
   const navigate = useNavigate();
   const handleChange = (e) => {
     setEmail(e.target.value);
-    // console.log(e.target.value);
+  
   };
 
    const handleSubmit = async (e) => {

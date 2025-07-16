@@ -38,8 +38,6 @@ const Category = () => {
       const res = await axiosInstance.get("categories", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data?.data);
-
       setCategories(res.data?.data || []);
     } catch (error) {
       console.error("Fetch failed:", error);
