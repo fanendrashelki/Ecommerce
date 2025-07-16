@@ -1,19 +1,49 @@
 import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 
 import { MdZoomOutMap } from "react-icons/md";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { MyProductContext } from "../../AppWrapper";
 import ProductDetailsDialog from "./ProductDetailsDialog";
+import { useWishlist } from "../../context/WishlistContext";
 
 const ProductItemList = ({ product }) => {
   const context = useContext(MyProductContext);
   const [OpenProductDetails, setOpenProductDetails] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
+
+  // Local liked state to prevent UI delay
+  const [localLiked, setLocalLiked] = useState(isWishlisted(product._id));
+
+  // Sync with context wishlist when product or wishlist changes
+  const liked = useMemo(
+    () => isWishlisted(product._id),
+    [product._id, isWishlisted]
+  );
+
+  const toggleWishlist = async () => {
+    if (!context.isLogin) {
+      context.alertBox("error", "You are not logged in. Please login first.");
+      return;
+    }
+    try {
+      if (localLiked) {
+        await removeFromWishlist(product._id);
+        context.alertBox("success", "Removed from wishlist");
+      } else {
+        await addToWishlist(product._id);
+        context.alertBox("success", "Added to wishlist");
+      }
+      setLocalLiked(!localLiked);
+    } catch (error) {
+      context.alertBox("error", "Something went wrong");
+      console.error("Wishlist toggle failed:", error);
+    }
+  };
   return (
     <div className="productItem flex flex-col md:flex-row shadow-lg rounded-md overflow-hidden border border-[rgba(0,0,0,0.1)]">
       {/* Image Section */}
@@ -49,17 +79,20 @@ const ProductItemList = ({ product }) => {
             <MdZoomOutMap className="text-[18px]" />
           </Button>
 
-          {/* Like Button - visible on all screens */}
-          <Button
-            onClick={() => setLiked(!liked)}
-            className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
-          >
-            {liked ? (
-              <FaHeart className="text-[20px] text-red-500" />
-            ) : (
-              <FaRegHeart className="text-[20px]" />
-            )}
-          </Button>
+          {/* Wishlist */}
+          <Tooltip title={liked ? "Remove from Wishlist" : "Add to Wishlist"}>
+            <Button
+              onClick={toggleWishlist}
+              aria-label={liked ? "Remove from Wishlist" : "Add to Wishlist"}
+              className="!w-[35px] !h-[35px] !min-w-[35px] shadow !text-black !rounded-full !bg-white hover:!bg-[#35ac75] hover:!text-white"
+            >
+              {liked ? (
+                <FaHeart className="text-[20px] text-red-500" />
+              ) : (
+                <FaRegHeart className="text-[20px]" />
+              )}
+            </Button>
+          </Tooltip>
         </div>
       </div>
 

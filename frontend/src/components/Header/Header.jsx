@@ -23,6 +23,9 @@ import CategoryPanel from "./Navigation/CategoryPanel";
 
 import { Button } from "@mui/material";
 import { IoMenu } from "react-icons/io5";
+
+import { useWishlist } from "../../context/WishlistContext";
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: -3,
@@ -81,6 +84,7 @@ function Header() {
       context.setPageLoader(false);
     }
   };
+  const { wishlistCount } = useWishlist();
 
   return (
     <header className="bg-white w-full">
@@ -219,11 +223,16 @@ function Header() {
               </li>
               <li className="hidden lg:block">
                 <Tooltip title="Wishlist">
-                  <IconButton>
-                    <StyledBadge badgeContent={4} color="secondary">
-                      <FaRegHeart />
-                    </StyledBadge>
-                  </IconButton>
+                  <Link to="/wishlist">
+                    <IconButton>
+                      <StyledBadge
+                        badgeContent={wishlistCount}
+                        color="secondary"
+                      >
+                        <FaRegHeart />
+                      </StyledBadge>
+                    </IconButton>
+                  </Link>
                 </Tooltip>
               </li>
             </ul>

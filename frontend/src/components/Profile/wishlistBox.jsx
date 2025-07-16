@@ -1,126 +1,103 @@
-import React, { useState } from "react";
-import { Button, IconButton, Tooltip, Rating } from "@mui/material";
+import React, { useContext } from "react";
+import { FaRegHeart } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { FaRegHeart, FaRegEye } from "react-icons/fa";
-import { IoCartOutline } from "react-icons/io5";
-
-const dummyWishlist = [
-  {
-    id: 1,
-    title: "The Great Gatsby",
-    price: 499,
-    rating: 4.5,
-    image:
-      "https://serviceapi.spicezgold.com/download/1742462485037_siril-poly-silk-grey-off-white-color-saree-with-blouse-piece-product-images-rvcpwdyagl-2-202304220521.webp",
-  },
-  {
-    id: 2,
-    title: "1984",
-    price: 399,
-    rating: 4,
-    image:
-      "https://serviceapi.spicezgold.com/download/1742462485037_siril-poly-silk-grey-off-white-color-saree-with-blouse-piece-product-images-rvcpwdyagl-2-202304220521.webp",
-  },
-  {
-    id: 3,
-    title: "Atomic Habits",
-    price: 699,
-    rating: 4.8,
-    image:
-      "https://serviceapi.spicezgold.com/download/1742462485037_siril-poly-silk-grey-off-white-color-saree-with-blouse-piece-product-images-rvcpwdyagl-2-202304220521.webp",
-  },
-];
+import { useWishlist } from "../../context/WishlistContext";
+import { MyProductContext } from "../../AppWrapper";
+import { Button, Tooltip } from "@mui/material";
 
 const WishlistBox = () => {
-  const [wishlist, setWishlist] = useState(dummyWishlist);
+  const { wishlist, removeFromWishlist } = useWishlist();
+  const context = useContext(MyProductContext);
 
-  const handleRemove = (id) => {
-    setWishlist(wishlist.filter((item) => item.id !== id));
+  const handleRemove = async (id) => {
+    await removeFromWishlist(id);
   };
 
+  if (!wishlist || wishlist.length === 0) {
+    return (
+      <div className="w-full bg-white p-8 sm:p-10 rounded-xl shadow-lg m-4 sm:m-6 text-center">
+        <FaRegHeart className="w-20 h-20 text-[#35ac75] mx-auto mb-4 sm:mb-6" />
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
+          Your wishlist is empty
+        </h2>
+        <p className="text-gray-500 mb-4 sm:mb-6 max-w-md mx-auto text-sm sm:text-base">
+          Start adding your favorite items to keep track of what you love.
+        </p>
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="px-6 sm:px-8 py-2.5 bg-[#35ac75] hover:bg-[#2a9d5d] text-white font-medium rounded-lg shadow transition"
+        >
+          Browse Items
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-[60%] bg-white p-10 rounded-lg shadow-lg m-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Wishlist</h1>
+    <div className="w-[80%] bg-white p-10 rounded-lg shadow m-3">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">My Wishlist</h1>
+      </div>
 
-      {wishlist.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center px-4 bg-white">
-          <FaRegHeart
-            className="w-24 h-24 text-[#35ac75] mb-6"
-            strokeWidth={1.5}
-          />
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-            Your wishlist is empty
-          </h2>
-          <p className="text-gray-500 mb-6 max-w-md">
-            Start adding your favorite items to keep track of what you love.
-          </p>
-          <button className="px-6 py-3 bg-[#35ac75] hover:bg-[#000000] text-white font-medium rounded-xl shadow transition-all">
-            Browse Items
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {wishlist.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white flex items-center gap-4 p-4 rounded-lg hover:shadow-md transition"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-[80px] h-[100px] object-cover rounded-md"
-              />
-
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {item.title}
-                </h2>
-
-                <div className="mt-1">
-                  <Rating
-                    name="size-medium"
-                    defaultValue={2}
-                    size="small"
-                    readOnly
+      <div className="w-full shadow rounded ">
+        <table className="w-full text-sm text-left text-gray-700">
+          <thead className="text-xs uppercase bg-gray-100 text-gray-600">
+            <tr>
+              <th className="px-4 py-3">Product</th>
+              <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {wishlist.map((item) => (
+              <tr
+                key={item._id}
+                className=" shadow hover:bg-gray-50 transition"
+              >
+                <td className="px-4 py-3 flex items-center gap-3 sm:gap-4">
+                  <img
+                    src={item?.images?.[0]?.url || "/placeholder.jpg"}
+                    alt={item.name}
+                    className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded"
                   />
-                </div>
+                  <Tooltip title={item.name} arrow>
+                    <span className="font-medium text-gray-800 truncate max-w-[160px] sm:max-w-[200px] block text-sm sm:text-base">
+                      {item.name}
+                    </span>
+                  </Tooltip>
+                </td>
 
-                <div className="mt-1 flex items-center gap-5">
-                  <p className="text-sm font-semibold text-gray-500 line-through">
-                    $200
-                  </p>
-                  <p className="text-[#35ac75] font-semibold">${item.price}</p>
-                </div>
+                <td className="px-4 py-3 font-semibold text-green-600 whitespace-nowrap">
+                  ₹{item.price}
+                </td>
 
-                <div className="w-full mt-3">
-                  <Button className="btn-org flex gap-2">
-                    <IoCartOutline className="text-[18px]" /> Add to Cart
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Tooltip title="View">
-                  <Link to="/">
-                    <Button className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000]">
-                      <FaRegEye className="text-[rgba(0,0,0,0.7)] !text-[20px]" />
+                <td className="px-4 py-3 text-center">
+                  <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+                    <Button
+                      variant="contained"
+                      className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-1.5 sm:!py-2 !px-4 text-xs sm:text-sm !capitalize"
+                      aria-label="Add to Cart"
+                      onClick={() => context.addToCart(item)}
+                    >
+                      Add to Cart
                     </Button>
-                  </Link>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <IconButton
-                    color="error"
-                    onClick={() => handleRemove(item.id)}
-                  >
-                    <MdDelete />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+
+                    <Tooltip title="Remove from wishlist" arrow>
+                      <Button
+                        onClick={() => handleRemove(item._id)}
+                        className="!w-9 !h-9 !min-w-[36px] shadow !text-[#f01010] !rounded-full !bg-white hover:!bg-[#f01010] hover:!text-white"
+                        aria-label="Remove from wishlist"
+                      >
+                        <MdDelete className="w-5 h-5" />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

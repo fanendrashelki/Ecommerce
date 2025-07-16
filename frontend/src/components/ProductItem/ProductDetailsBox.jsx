@@ -1,16 +1,42 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Link from "@mui/material/Link";
 import Rating from "@mui/material/Rating";
 import { IoCartOutline } from "react-icons/io5";
-import { FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { Button } from "@mui/material";
 import { MyProductContext } from "../../AppWrapper";
 import { FaShield } from "react-icons/fa6";
 import { FaTruck } from "react-icons/fa";
 import { FaExchangeAlt } from "react-icons/fa";
+import { useWishlist } from "../../context/WishlistContext";
 
 const ProductDetailsBox = ({ productDetails }) => {
   const context = useContext(MyProductContext);
+
+  const { wishlist, isWishlisted, addToWishlist, removeFromWishlist } =
+    useWishlist();
+
+  const liked = isWishlisted(productDetails._id);
+
+  const toggleWishlist = async () => {
+    if (!context.isLogin) {
+      context.alertBox("error", "You are not logged in. Please login first.");
+      return;
+    }
+    try {
+      if (liked) {
+        await removeFromWishlist(productDetails._id);
+        context.alertBox("success", "Removed from wishlist");
+      } else {
+        await addToWishlist(productDetails._id);
+        context.alertBox("success", "Added to wishlist");
+      }
+    } catch (error) {
+      context.alertBox("error", "Something went wrong");
+      console.error("Wishlist toggle failed:", error);
+    }
+  };
+
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedRam, setSelectedRam] = useState();
@@ -156,8 +182,15 @@ const ProductDetailsBox = ({ productDetails }) => {
         <button className="w-full sm:flex-1 bg-white border border-[#35ac75] text-[#35ac75] hover:bg-green-50 py-3 px-6 rounded-md font-medium flex items-center justify-center gap-2">
           <i className="fas fa-bolt"></i> Buy Now
         </button>
-        <button className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition self-center">
-          <FaRegHeart className="text-gray-500" />
+        <button
+          onClick={toggleWishlist}
+          className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition self-center"
+        >
+          {liked ? (
+            <FaHeart className="text-[20px] !text-red-500 transition-transform duration-150 active:scale-125" />
+          ) : (
+            <FaRegHeart className="text-[20px] transition-transform duration-150 active:scale-125" />
+          )}
         </button>
       </div>
 

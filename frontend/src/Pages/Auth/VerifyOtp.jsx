@@ -63,7 +63,6 @@ const VerifyOtp = () => {
 
     try {
       const email = localStorage.getItem("email");
-      console.log(email);
 
       context.setPageLoader(true);
       const res = await axiosInstance.post("/user/verify-otp", {
@@ -90,8 +89,6 @@ const VerifyOtp = () => {
         }
       }
     } catch (err) {
-      console.log(err);
-
       const message = err.response?.data?.message || "Something went wrong";
       context.alertBox("error", message);
       console.error("Login error:", err);

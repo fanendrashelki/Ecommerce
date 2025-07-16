@@ -110,7 +110,10 @@ const MyOrders = () => {
     <div className="flex  ">
       <ProfileSidebar />
       <div className="w-[80%] bg-white p-10 rounded-lg shadow-lg m-6">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">My Orders</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>
+        </div>
+
         <div className="space-y-6">
           {orders.map((order) => {
             const total = order.products.reduce(

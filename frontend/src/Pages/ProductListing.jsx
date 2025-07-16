@@ -122,56 +122,6 @@ const ProductListing = () => {
                   {productByCat?.length ?? 0} products found
                 </span>
               </div>
-
-              {/* Right: Sorting */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                <label className="text-sm font-medium text-[rgba(0,0,0,0.7)] hidden sm:block">
-                  Sort By:
-                </label>
-                <Button
-                  id="basic-button"
-                  aria-controls={open ? "basic-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
-                  onClick={handleClick}
-                  className="!bg-white !text-sm !text-[#000] !capitalize !border !border-[rgba(0,0,0,0.4)] !px-4 !py-1.5 shadow-sm hover:!bg-gray-100"
-                >
-                  Sort By
-                </Button>
-
-                <Menu
-                  id="basic-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{ className: "!p-0" }}
-                >
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-sm !text-[#000] !capitalize"
-                  >
-                    Name, A to Z
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-sm !text-[#000] !capitalize"
-                  >
-                    Name, Z to A
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-sm !text-[#000] !capitalize"
-                  >
-                    Price, Low to High
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-sm !text-[#000] !capitalize"
-                  >
-                    Price, High to Low
-                  </MenuItem>
-                </Menu>
-              </div>
             </div>
 
             {/* Product List/Grid */}

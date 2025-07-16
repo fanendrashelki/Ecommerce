@@ -22,7 +22,7 @@ const AdsBannerSlider = (props) => {
   const getBanner = async () => {
     try {
       const res = await axiosInstance.get("adsbanner");
-      console.log("banner", res?.data?.banner);
+
       setAdsBanner(res?.data?.banner);
     } catch (error) {
       console.log(error);
