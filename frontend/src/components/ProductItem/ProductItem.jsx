@@ -218,7 +218,7 @@ const ProductItem = ({ product }) => {
               to={`/product-details/${product._id}`}
               className="hover:text-[#35ac75]"
             >
-              {product._id}
+              {product.name}
             </Link>
           </h3>
 
