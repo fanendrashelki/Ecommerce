@@ -24,7 +24,7 @@ import { Button } from "@mui/material";
 import { IoMenu } from "react-icons/io5";
 
 import { useWishlist } from "../../context/WishlistContext";
-import { ProfileImageContext } from "../../context/ProfileImageContext";
+import { useProfileImage } from "../../context/ProfileImageContext";
 import { usecartlist } from "../../context/cartContext";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -38,7 +38,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 function Header() {
   const context = useContext(MyProductContext);
-  const { profileImg } = useContext(ProfileImageContext);
+  const { profileImg, handleImageChange, loading } = useProfileImage();
   // console.log("Prof  ileImageContext:", profileImg);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -210,8 +210,8 @@ function Header() {
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
-                      <button className="flex gap-2 items-center w-full">
-                        <BiLogOutCircle /> Logout
+                      <button className="flex gap-2 items-center w-full  text-red-700">
+                        <BiLogOutCircle className="text-red-700" /> Logout
                       </button>
                     </MenuItem>
                   </Menu>
@@ -224,6 +224,7 @@ function Header() {
               )}
 
               {/* Icons */}
+
               <li onClick={() => context.setOpenCart(true)}>
                 <Tooltip title="Cart">
                   <IconButton>
@@ -233,20 +234,22 @@ function Header() {
                   </IconButton>
                 </Tooltip>
               </li>
-              <li className="hidden lg:block">
-                <Tooltip title="Wishlist">
-                  <Link to="/wishlist">
-                    <IconButton>
-                      <StyledBadge
-                        badgeContent={wishlistCount}
-                        color="secondary"
-                      >
-                        <FaRegHeart />
-                      </StyledBadge>
-                    </IconButton>
-                  </Link>
-                </Tooltip>
-              </li>
+              {context.isLogin && (
+                <li className="hidden lg:block">
+                  <Tooltip title="Wishlist">
+                    <Link to="/wishlist">
+                      <IconButton>
+                        <StyledBadge
+                          badgeContent={wishlistCount}
+                          color="secondary"
+                        >
+                          <FaRegHeart />
+                        </StyledBadge>
+                      </IconButton>
+                    </Link>
+                  </Tooltip>
+                </li>
+              )}
             </ul>
           </div>
         </div>

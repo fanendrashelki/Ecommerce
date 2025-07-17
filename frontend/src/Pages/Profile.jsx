@@ -1,22 +1,19 @@
-import React, { useState } from "react";
-import { Avatar, TextField, MenuItem, Button, IconButton } from "@mui/material";
-import { FaRegUser } from "react-icons/fa";
-import { LiaUserEditSolid } from "react-icons/lia";
-import { Link } from "react-router-dom";
-import { FaRegHeart } from "react-icons/fa6";
-import { BsCartCheck } from "react-icons/bs";
-import { BiLogOutCircle } from "react-icons/bi";
+import React from "react";
 import ProfileSidebar from "../components/Sidebar/ProfileSidebar";
 import ProfileForm from "../components/Profile/ProfileForm";
 
 const Profile = () => {
   return (
-    <div className="flex  ">
+    <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-8 py-6 w-full">
       {/* Sidebar */}
-      <ProfileSidebar />
+      <div className="hidden lg:block w-full lg:w-[300px]">
+        <ProfileSidebar />
+      </div>
 
       {/* Main Content */}
-      <ProfileForm />
+      <div className="w-full flex-grow">
+        <ProfileForm />
+      </div>
     </div>
   );
 };

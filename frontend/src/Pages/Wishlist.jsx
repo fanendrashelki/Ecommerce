@@ -6,7 +6,9 @@ const Wishlist = () => {
   return (
     <div className="flex min-h-screen ">
       {/* Sidebar */}
-      <ProfileSidebar />
+      <div className="hidden lg:block w-full lg:w-[300px]">
+        <ProfileSidebar />
+      </div>
 
       {/* Main Content */}
       <WishlistBox />

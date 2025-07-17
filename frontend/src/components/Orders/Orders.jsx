@@ -108,7 +108,9 @@ const MyOrders = () => {
 
   return (
     <div className="flex  ">
-      <ProfileSidebar />
+      <div className="hidden lg:block w-full lg:w-[300px]">
+        <ProfileSidebar />
+      </div>
       <div className="w-[80%] bg-white p-10 rounded-lg shadow-lg m-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>

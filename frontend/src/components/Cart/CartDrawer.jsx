@@ -6,14 +6,28 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { usecartlist } from "../../context/cartContext";
 import { MyProductContext } from "../../AppWrapper";
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import shopping from "../../assets/shopping.png";
 
 function CartDrawer({ open, onClose }) {
   const navigate = useNavigate();
   const context = useContext(MyProductContext);
-  const { cartlist, fetchCartlist, cartCount, updateCart, removeFromCartlist } =
-    usecartlist();
+  const {
+    cartlist,
+    fetchCartlist,
+    cartCount,
+    updateCart,
+    removeFromCartlist,
+    clearCartlist,
+  } = usecartlist();
+
+  useEffect(() => {
+    if (context.isLogin) {
+      fetchCartlist(); // 🟢 fetch wishlist on login
+    } else {
+      clearCartlist(); // 🔴 clear wishlist on logout
+    }
+  }, [context.isLogin]);
 
   // Calculate total
   const total = cartlist.reduce(

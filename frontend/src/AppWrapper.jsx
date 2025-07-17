@@ -26,8 +26,8 @@ import PrivateRoute from "./PrivateRoute";
 import MobileNav from "./components/Header/Navigation/MobileNav";
 import ScrollToTop from "./utils/ScrollToTop";
 import { WishlistProvider } from "./context/WishlistContext";
-import { ProfileImageProvider } from "./context/ProfileImageContext";
 import { CartProvider } from "./context/cartContext";
+import ProfileImageProvider from "./context/ProfileImageContext";
 
 const alertBox = (type, msg) => {
   if (type === "success") {
@@ -45,37 +45,8 @@ function AppWrapper() {
   const [openCart, setOpenCart] = useState(false);
   const [User, setUser] = useState(null);
   const [isLogin, setLogin] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
   const [category, setCategories] = useState([]);
   const [pageloader, setPageLoader] = useState(false);
-
-  const contextValues = {
-    setOpenCart,
-    alertBox,
-    setUser,
-    setLogin,
-    isLogin,
-    User,
-    setPageLoader,
-
-    category,
-  };
-  const token = localStorage.getItem("token");
-
-  const fetchCategories = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const res = await axiosInstance.get("categories", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCategories(res?.data?.data || []);
-    } catch (err) {
-      console.error("Fetch failed:", err);
-    }
-  };
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -106,12 +77,40 @@ function AppWrapper() {
     checkAuth();
   }, [isLogin]);
 
+  const contextValues = {
+    setOpenCart,
+    alertBox,
+    setUser,
+    setLogin,
+    isLogin,
+    User,
+    setPageLoader,
+    category,
+  };
+  const token = localStorage.getItem("token");
+
+  const fetchCategories = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axiosInstance.get("categories", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCategories(res?.data?.data || []);
+    } catch (err) {
+      console.error("Fetch failed:", err);
+    }
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   return (
     <MyProductContext.Provider value={contextValues}>
       <WishlistProvider>
-        <ProfileImageProvider>
-          <CartProvider>
+        <CartProvider>
+          <ProfileImageProvider>
             <Header />
+
             <main>
               <ScrollToTop />
               <Routes>
@@ -175,8 +174,8 @@ function AppWrapper() {
             {/* cart list fro checkout */}
             <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
             <Pageloader open={pageloader} />
-          </CartProvider>
-        </ProfileImageProvider>
+          </ProfileImageProvider>
+        </CartProvider>
       </WishlistProvider>
     </MyProductContext.Provider>
   );

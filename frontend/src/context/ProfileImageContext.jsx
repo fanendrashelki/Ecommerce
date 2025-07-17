@@ -1,19 +1,24 @@
 // context/ProfileImageContext.js
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { MyProductContext } from "../AppWrapper";
 
-export const ProfileImageContext = createContext();
+// Create the context
+const ProfileImageContext = createContext();
 
-export const ProfileImageProvider = ({ children }) => {
-  const [profileImg, setProfileImg] = useState([]);
-  const [loading, setLoading] = useState(false);
+// Provider component
+const ProfileImageProvider = ({ children }) => {
   const context = useContext(MyProductContext);
+  const [profileImg, setProfileImg] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  console.log(context?.User?.avatar);
+
+  // Handle image upload and validation
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate image type and size (optional)
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
       context.alertBox("error", "Only JPG, PNG, or WEBP images are allowed");
@@ -42,7 +47,12 @@ export const ProfileImageProvider = ({ children }) => {
       if (res?.data?.error) {
         context.alertBox("error", res.data.message);
       } else {
-        setProfileImg(res?.data?.imageUrl);
+        setProfileImg(res?.data?.imageUrl || []);
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("Profile Image URL:", res?.data?.imageUrl);
+        }
+
         context.alertBox("success", "Profile image updated");
       }
     } catch (err) {
@@ -52,15 +62,33 @@ export const ProfileImageProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  // Reset or update profile image when user changes
   useEffect(() => {
-    setProfileImg(context.User?.avatar);
-  }, [context.User?.avatar]);
+    setProfileImg(context?.User?.avatar || []);
+  }, [context?.User?.avatar]);
+
+  // Optional helper: Reset to original
+  const resetProfileImage = () => {
+    setProfileImg(context.User?.avatar || []);
+  };
 
   return (
     <ProfileImageContext.Provider
-      value={{ profileImg, loading, handleImageChange }}
+      value={{
+        profileImg,
+        loading,
+        handleImageChange,
+        resetProfileImage,
+      }}
     >
       {children}
     </ProfileImageContext.Provider>
   );
 };
+
+// Custom hook
+export const useProfileImage = () => useContext(ProfileImageContext);
+
+// Export provider
+export default ProfileImageProvider;

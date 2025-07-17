@@ -9,86 +9,71 @@ import { BiLogOutCircle } from "react-icons/bi";
 import { MyProductContext } from "../../AppWrapper";
 import axiosInstance from "../../utils/axiosInstance";
 import { useWishlist } from "../../context/WishlistContext";
-import { ProfileImageContext } from "../../context/ProfileImageContext";
+import { useProfileImage } from "../../context/ProfileImageContext";
 
 const ProfileSidebar = () => {
   const context = useContext(MyProductContext);
-
-  const imageContext = useContext(ProfileImageContext);
-  if (!imageContext) {
-    return <div>Image context not available</div>; // or return null;
-  }
-
-  const { profileImg, loading, handleImageChange } = imageContext;
+  const { profileImg, handleImageChange, loading } = useProfileImage();
   const navigate = useNavigate();
+  const { fetchWishlist, clearWishlist } = useWishlist();
 
   const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-
     try {
       context.setPageLoader(true);
+      const token = localStorage.getItem("token");
 
       if (token) {
         await axiosInstance.get("/user/logout", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
       }
 
-      // Clear user session even if the logout request fails
       localStorage.removeItem("token");
       context.setUser(null);
       context.setLogin(false);
-      navigate("/login");
       clearWishlist();
       context.alertBox("success", "Logout successful");
+      navigate("/login");
     } catch (error) {
-      console.error("Logout failed:", error);
       context.alertBox("error", "Logout failed. Please try again.");
     } finally {
       context.setPageLoader(false);
     }
   };
-  const { fetchWishlist, clearWishlist } = useWishlist();
+
   useEffect(() => {
-    if (context.isLogin) {
-      fetchWishlist(); // 🟢 fetch wishlist on login
-    } else {
-      clearWishlist(); // 🔴 clear wishlist on logout
-    }
+    context.isLogin ? fetchWishlist() : clearWishlist();
   }, [context.isLogin]);
 
   return (
-    <aside className="sticky top-0 w-[20%] bg-white px-4 py-6 rounded-lg shadow-lg m-6">
-      <div className="flex flex-col items-center justify-center mb-5 space-y-3">
-        {/* Avatar Upload Section */}
-        <div className="relative group w-[100px] h-[100px]">
-          {/* Avatar */}
+    <aside className="w-full sm:w-auto max-w-full sm:max-w-[280px] bg-white px-4 py-6 rounded-lg shadow-md m-2 sm:m-4">
+      <div className="flex flex-col items-center mb-6 space-y-3">
+        <div className="relative group w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] mx-auto">
           <Avatar
             alt="User Avatar"
             src={profileImg}
-            sx={{ width: 100, height: 100 }}
+            sx={{ width: "100%", height: "100%" }}
             className="w-full h-full myShadow"
           />
 
-          {/* Loading overlay */}
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 rounded-full z-20">
-              <CircularProgress size={30} className="text-gray-500" />
+              <CircularProgress
+                size={24}
+                className="text-gray-500 sm:size-[30px]"
+              />
             </div>
           )}
 
-          {/* Hover effect + upload button */}
           <label htmlFor="profile-image">
             <div className="absolute inset-0 rounded-full z-30 cursor-pointer">
               <div className="w-full h-full bg-black bg-opacity-30 opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded-full" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <IconButton
                   component="span"
-                  className="bg-gray-800 bg-opacity-80 w-[100px] h-[100px] rounded-full flex items-center justify-center"
+                  className="bg-gray-800 bg-opacity-80 w-full h-full rounded-full flex items-center justify-center"
                 >
-                  <LiaUserEditSolid className="text-[32px] text-white" />
+                  <LiaUserEditSolid className="text-[24px] sm:text-[32px] text-white" />
                 </IconButton>
               </div>
             </div>
@@ -102,49 +87,48 @@ const ProfileSidebar = () => {
           </label>
         </div>
 
-        {/* User Info */}
         <div className="text-center">
-          <h2 className="text-[18px] font-semibold text-gray-800">
+          <h2 className="text-[15px] sm:text-[17px] font-semibold text-gray-800">
             {context.User?.name}
           </h2>
-          <p className="text-[16px] text-gray-600"> {context.User?.email}</p>
+          <p className="text-[13px] sm:text-[15px] text-gray-600">
+            {context.User?.email}
+          </p>
         </div>
       </div>
 
-      <ul className="space-y-2 p-4">
+      <ul className="space-y-2">
         <li>
           <Link to="/profile">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-              <FaRegUser className="text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium link">My Profile</span>
+              <FaRegUser className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
+              <span className="text-gray-800 font-medium">My Profile</span>
             </div>
           </Link>
         </li>
         <li>
           <Link to="/wishlist">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-              <FaRegHeart className="text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium link">
-                My Wishlist
-              </span>
+              <FaRegHeart className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
+              <span className="text-gray-800 font-medium">My Wishlist</span>
             </div>
           </Link>
         </li>
         <li>
           <Link to="/order">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
-              <BsCartCheck className="text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium link">My Orders</span>
+              <BsCartCheck className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
+              <span className="text-gray-800 font-medium">My Orders</span>
             </div>
           </Link>
         </li>
         <li>
           <div
             onClick={handleLogout}
-            className="flex items-center p-3 rounded-xl hover:bg-red-50 transition cursor-pointer"
+            className=" w-[80%] mx-auto mt-4 flex items-center p-3 rounded-xl bg-red-500 hover:bg-red-700 transition cursor-pointer"
           >
-            <BiLogOutCircle className="text-[20px] text-red-600 mr-3" />
-            <span className="text-red-600 font-medium">Logout</span>
+            <BiLogOutCircle className="text-[18px] sm:text-[20px] text-white mr-3" />
+            <span className="text-white font-medium">Logout</span>
           </div>
         </li>
       </ul>

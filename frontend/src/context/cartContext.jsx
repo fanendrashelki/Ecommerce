@@ -4,7 +4,7 @@ import axiosInstance from "../utils/axiosInstance";
 const CartlistContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cartlist, setCartlist] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
+
   const token = localStorage.getItem("token");
   const fetchCartlist = async () => {
     try {
@@ -12,7 +12,6 @@ export const CartProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setCartCount(res.data.cart.length);
       setCartlist(res.data.cart);
     } catch (err) {
       console.error("Failed to load wishlist", err);
@@ -98,7 +97,7 @@ export const CartProvider = ({ children }) => {
         updateCart,
         clearCartlist,
         isCartlisted,
-        cartCount,
+        cartCount: cartlist.length,
       }}
     >
       {children}

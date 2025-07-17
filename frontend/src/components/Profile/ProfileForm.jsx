@@ -27,15 +27,13 @@ const ProfileForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     if (!profile.name.trim()) {
       context.alertBox("error", "Name is required");
       setLoading(false);
@@ -47,32 +45,31 @@ const ProfileForm = () => {
     }
 
     if (!profile.mobile) {
-      context.alertBox("error", "mobile number is required");
+      context.alertBox("error", "Mobile number is required");
       setLoading(false);
       return;
     } else if (!/^\d{10}$/.test(profile.mobile)) {
-      context.alertBox("error", "mobile must be a valid 10-digit number");
+      context.alertBox("error", "Mobile must be a valid 10-digit number");
       setLoading(false);
       return;
     }
+
     try {
       context.setPageLoader(true);
       const token = localStorage.getItem("token");
+
       const res = await axiosInstance.put("/user/update-profile", profile, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res?.data?.error) {
         context.alertBox("error", res.data.message);
       } else {
-        context.alertBox("success", res.data?.message);
+        context.alertBox("success", res.data.message);
       }
     } catch (err) {
-      const message = err.response?.data?.message || "Something went wrong";
-      context.alertBox("error", message);
-      console.error("Login error:", err);
+      const msg = err.response?.data?.message || "Something went wrong";
+      context.alertBox("error", msg);
     } finally {
       setLoading(false);
       context.setPageLoader(false);
@@ -80,28 +77,26 @@ const ProfileForm = () => {
   };
 
   return (
-    <main className="w-full md:w-[60%] bg-white p-10 rounded-lg shadow-lg m-6">
+    <main className="w-full bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-md md:shadow-lg mt-4 md:mt-0">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Profile</h1>
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+          Profile
+        </h1>
       </div>
 
       <form
-        className="grid grid-cols-2 grid-rows-3 gap-4"
         onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        {/* Name Field */}
-        <div className="w-full">
-          <TextField
-            label="Name"
-            name="name"
-            value={profile.name}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          label="Name"
+          name="name"
+          value={profile.name}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+        />
 
-        {/* Email Field with Verify Icon */}
         <div className="w-full relative">
           <TextField
             label="Email"
@@ -123,22 +118,23 @@ const ProfileForm = () => {
           )}
         </div>
 
-        {/* mobile Number */}
-        <div className="w-full">
-          <TextField
-            label="mobile Number"
-            name="mobile"
-            value={profile.mobile}
-            onChange={handleChange}
-            fullWidth
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          label="Mobile Number"
+          name="mobile"
+          value={profile.mobile}
+          onChange={handleChange}
+          fullWidth
+          variant="outlined"
+        />
 
-        {/* Submit Button */}
-        <div className=" row-start-3">
-          <Button type="submit" variant="contained" className="btn-org">
-            Update Profile
+        <div className="md:col-span-2">
+          <Button
+            type="submit"
+            variant="contained"
+            className="btn-org mt-2 w-full md:w-auto"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update Profile"}
           </Button>
         </div>
       </form>
