@@ -87,33 +87,53 @@ const getCart = asyncHandler(async (req, res) => {
 
 // Update Cart Quantity
 const updateCart = asyncHandler(async (req, res) => {
-  const { cartItemId, quantity } = req.body;
+  const { cartItemId, quantity, selectedSize, selectedRam } = req.body;
 
+  // Validate cartItemId
   if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
     return res
       .status(400)
       .json({ success: false, message: "Invalid cart item ID" });
   }
 
+  // Validate quantity
+  if (typeof quantity !== "number" || isNaN(quantity)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Quantity must be a valid number" });
+  }
+
+  // Remove item if quantity < 1
   if (quantity < 1) {
-    // Remove item if quantity is less than 1
-    await CartProductModel.findOneAndDelete({
+    const deletedItem = await CartProductModel.findOneAndDelete({
       _id: cartItemId,
       userId: req.user.id,
     });
 
-    await UserModel.findByIdAndUpdate(req.user.id, {
-      $pull: { shopping_cart: cartItemId },
-    });
+    if (deletedItem) {
+      await UserModel.findByIdAndUpdate(req.user.id, {
+        $pull: { shopping_cart: cartItemId },
+      });
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Item removed from cart" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Item removed from cart" });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart item not found" });
+    }
   }
 
+  // Prepare update fields
+  const updateFields = { quantity };
+  if (selectedSize !== undefined) updateFields.selectedSize = selectedSize;
+  if (selectedRam !== undefined) updateFields.selectedRam = selectedRam;
+
+  // Update cart item
   const cartItem = await CartProductModel.findOneAndUpdate(
     { _id: cartItemId, userId: req.user.id },
-    { quantity },
+    updateFields,
     { new: true }
   );
 
@@ -125,7 +145,6 @@ const updateCart = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, cartItem });
 });
-
 // Delete Cart Item
 const deleteCart = asyncHandler(async (req, res) => {
   const { cartItemId } = req.params.id;
