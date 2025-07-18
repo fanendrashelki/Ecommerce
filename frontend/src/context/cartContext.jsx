@@ -58,7 +58,13 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const updateCart = async (productId, quantity, userId) => {
+  const updateCart = async (
+    productId,
+    quantity,
+    userId,
+    selectedSize,
+    selectedRam
+  ) => {
     try {
       if (quantity <= 0) {
         await removeFromCartlist(productId);
@@ -67,7 +73,7 @@ export const CartProvider = ({ children }) => {
 
       const res = await axiosInstance.put(
         "/cart/update",
-        { cartItemId: productId, quantity },
+        { cartItemId: productId, quantity, selectedSize, selectedRam },
         {
           headers: { Authorization: `Bearer ${token}` },
         }

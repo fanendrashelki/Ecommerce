@@ -12,8 +12,6 @@ const ProfileImageProvider = ({ children }) => {
   const [profileImg, setProfileImg] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  console.log(context?.User?.avatar);
-
   // Handle image upload and validation
   const handleImageChange = async (e) => {
     const file = e.target.files[0];

@@ -10,7 +10,6 @@ import { MyProductContext } from "../../../AppWrapper";
 export default function MobileNav() {
   const [value, setValue] = useState(0);
   const context = useContext(MyProductContext);
-  console.log(context?.isLogin);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
