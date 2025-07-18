@@ -1,143 +1,216 @@
-import React, { useState } from "react";
-import { TextField, Button, Divider } from "@mui/material";
-
-const products = [
-  { name: "Product 1", price: 40 },
-  { name: "Product 2", price: 25 },
-  { name: "Product 3", price: 60 },
-  { name: "Product 4", price: 10 },
-  { name: "Product 5", price: 20 },
-  { name: "Product 6", price: 15 },
-];
+import React, { useState, useEffect, useContext } from "react";
+import { usecartlist } from "../context/cartContext";
+import { MyProductContext } from "../AppWrapper";
 
 const Checkout = () => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: "",
-  });
+  const [shippingMethod, setShippingMethod] = useState("standard");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const context = useContext(MyProductContext);
+  const {
+    cartlist,
+    fetchCartlist,
+    updateCart,
+    removeFromCartlist,
+    clearCartlist,
+    cartCount,
+  } = usecartlist();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // Sync cartItems with cartlist from context
+  const [cartItems, setCartItems] = useState(cartlist);
+  useEffect(() => {
+    setCartItems(cartlist);
+  }, [cartlist]);
+
+  const shippingOptions = {
+    standard: 4.99,
+    express: 9.99,
+    pickup: 0,
   };
 
-  const handleCheckout = (e) => {
-    e.preventDefault();
-    console.log("Checkout Data:", formData);
-    // Process order
-  };
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + (item.productId.price || 0) * (item.quantity || 1),
+    0
+  );
+  const shipping = shippingOptions[shippingMethod];
+  const tax = subtotal * 0.0725;
+  const total = subtotal + shipping + tax;
 
-  const totalPrice = products.reduce((total, item) => total + item.price, 0);
+  const handleCompleteOrder = () => {
+    if (!paymentMethod) {
+      context.alertBox("info", "Please select a payment method");
+
+      return;
+    }
+    if (cartItems.length === 0) {
+      context.alertBox("info", "Your cart is empty");
+      return;
+    }
+    console.log({
+      shippingMethod,
+      paymentMethod,
+      cartItems,
+      total,
+    });
+    // Call API to create an order here
+  };
 
   return (
-    <div className="w-full sm:w-[95%] max-w-6xl mx-auto mt-10 mb-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Billing Form */}
-        <div className="bg-white shadow-md rounded-md p-8">
-          <h2 className="text-center text-lg font-semibold text-black mb-6">
-            Billing Information
-          </h2>
-          <form onSubmit={handleCheckout} className="space-y-4">
-            <div className="w-full mb-5">
-              <TextField
-                label="Full Name"
-                name="fullName"
-                fullWidth
-                value={formData.fullName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="w-full mb-5">
-              <TextField
-                label="Email"
-                name="email"
-                type="email"
-                fullWidth
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="w-full mb-5">
-              <TextField
-                label="Phone"
-                name="phone"
-                type="tel"
-                fullWidth
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="w-full mb-5">
-              <TextField
-                label="Address"
-                name="address"
-                fullWidth
-                value={formData.address}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className=" w-full mb-5 grid grid-cols-2 gap-4">
-              <TextField
-                label="City"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
-              <TextField
-                label="Postal Code"
-                name="postalCode"
-                value={formData.postalCode}
-                onChange={handleChange}
-              />
-            </div>
-            <TextField
-              label="Country"
-              name="country"
-              fullWidth
-              value={formData.country}
-              onChange={handleChange}
-            />
-          </form>
-        </div>
-
-        {/* Order Summary */}
-        <div className="bg-white shadow-md rounded-md p-8">
-          <h2 className="text-center text-lg font-semibold text-black mb-6">
-            Order Summary
-          </h2>
-
-          <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto pr-2">
-            {products.map((item, index) => (
-              <div key={index} className="flex justify-between text-sm">
-                <p>{item.name}</p>
-                <p>${item.price.toFixed(2)}</p>
+    <section className="bg-gray-50 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Checkout Form */}
+          <div className="lg:w-2/3 ">
+            {/* Shipping */}
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-6">Shipping Method</h2>
+              <div className="space-y-4">
+                {Object.keys(shippingOptions).map((method) => (
+                  <label
+                    key={method}
+                    className={`p-4 border rounded-md cursor-pointer block ₹{
+                      shippingMethod === method
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        name="shipping"
+                        value={method}
+                        checked={shippingMethod === method}
+                        onChange={() => setShippingMethod(method)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      />
+                      <span className="ml-2 text-sm font-medium capitalize">
+                        {method} shipping
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {method === "standard"
+                        ? "Estimated delivery: 3-5 business days"
+                        : method === "express"
+                        ? "Estimated delivery: 1-2 business days"
+                        : "Pick up your order at our nearest store"}
+                    </p>
+                  </label>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Payment */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-6">Payment Method</h2>
+              <div className="space-y-4 mb-6">
+                {["PayPal", "Apple Pay", "Cash on Delivery"].map((method) => (
+                  <label
+                    key={method}
+                    className={`p-4 border rounded-md cursor-pointer flex items-center ₹{
+                      paymentMethod === method
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={method}
+                      checked={paymentMethod === method}
+                      onChange={() => setPaymentMethod(method)}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    />
+                    <span className="ml-2 text-sm font-medium">{method}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Summary */}
+              <div className="border-t border-gray-200 pt-6">
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Shipping</span>
+                  <span className="font-medium">₹{shipping.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Tax</span>
+                  <span className="font-medium">₹{tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 pt-4 border-t text-base">
+                  <span className="font-medium">Total</span>
+                  <span className="font-bold">₹{total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCompleteOrder}
+                className="w-full mt-6 bg-[#35ac75] hover:bg-gray-800 text-white py-3 px-4 rounded-md font-medium transition duration-200"
+              >
+                Complete Order
+              </button>
+            </div>
           </div>
 
-          <Divider />
-          <div className="flex justify-between font-semibold text-base mt-4 mb-4">
-            <p>Total</p>
-            <p>${totalPrice.toFixed(2)}</p>
-          </div>
+          {/* Order Summary */}
+          <div className="lg:w-1/3 order-first md:order-last">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+              <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
+              {cartItems.length === 0 ? (
+                <p className="text-gray-500">Your cart is empty</p>
+              ) : (
+                <div className="space-y-4 mb-6">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item._id || item.productId?._id}
+                      className="cart-item flex gap-4 py-4 "
+                    >
+                      <img
+                        src={item.productId?.images?.[0]?.url}
+                        alt={item.productId?.name}
+                        className="w-20 h-20 rounded-md object-cover"
+                      />
+                      <div className="flex-grow">
+                        <h3 className="text-sm font-medium">
+                          {item.productId?.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Quantity: {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-sm font-medium">
+                        ₹{(item.productId.price * item.quantity).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            className=" py-2 px-4 rounded-md btn-org font-[600] transition"
-            onClick={handleCheckout}
-          >
-            Place Order
-          </Button>
+              {/* Order Totals */}
+              <div className="border-t border-gray-200 pt-6">
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Shipping</span>
+                  <span className="font-medium">₹{shipping.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mb-2 text-sm text-gray-600">
+                  <span>Tax</span>
+                  <span className="font-medium">₹{tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 pt-4 border-t text-base">
+                  <span className="font-medium">Total</span>
+                  <span className="font-bold">₹{total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

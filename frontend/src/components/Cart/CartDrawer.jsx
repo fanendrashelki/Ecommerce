@@ -75,7 +75,7 @@ function CartDrawer({ open, onClose }) {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-800">
+                        <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
                           {item?.productId?.name}
                         </h3>
                         <p className="text-xs text-gray-500">
