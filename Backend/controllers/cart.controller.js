@@ -88,6 +88,7 @@ const getCart = asyncHandler(async (req, res) => {
 // Update Cart Quantity
 const updateCart = asyncHandler(async (req, res) => {
   const { cartItemId, quantity, selectedSize, selectedRam } = req.body;
+  console.log(req.body);
 
   // Validate cartItemId
   if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
