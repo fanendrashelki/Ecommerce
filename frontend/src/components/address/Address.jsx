@@ -4,7 +4,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { MyProductContext } from "../../AppWrapper";
 
 const Address = ({ open, onClose }) => {
-  const { User } = useContext(MyProductContext);
+  const { User, setOpenAddress } = useContext(MyProductContext);
 
   const [addresses, setAddresses] = useState([]);
   const [form, setForm] = useState({
@@ -28,7 +28,7 @@ const Address = ({ open, onClose }) => {
   const fetchAddresses = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axiosInstance.get(`addresses/user/${User._id}`, {
+      const res = await axiosInstance.get(`/addresses/user/${User._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAddresses(res.data || []);
@@ -49,12 +49,12 @@ const Address = ({ open, onClose }) => {
     try {
       const token = localStorage.getItem("token");
       if (editingId) {
-        await axiosInstance.put(`addresses/${editingId}`, form, {
+        await axiosInstance.put(`/addresses/${editingId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEditingId(null);
       } else {
-        await axiosInstance.post("addresses", form, {
+        await axiosInstance.post("/addresses", form, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -69,7 +69,9 @@ const Address = ({ open, onClose }) => {
         userId: User?._id || "",
       });
 
-      fetchAddresses();
+      await fetchAddresses();
+      // Close drawer after saving successfully
+      setOpenAddress(false);
     } catch (err) {
       console.error(
         "Failed to save address:",
@@ -94,7 +96,7 @@ const Address = ({ open, onClose }) => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axiosInstance.delete(`addresses/${id}`, {
+      await axiosInstance.delete(`/addresses/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchAddresses();

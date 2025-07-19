@@ -30,6 +30,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/cartContext";
 import ProfileImageProvider from "./context/ProfileImageContext";
 import Address from "./components/address/Address";
+import OrderSuccess from "./Pages/OrderSuccess";
 
 const alertBox = (type, msg) => {
   if (type === "success") {
@@ -83,6 +84,7 @@ function AppWrapper() {
   const contextValues = {
     setOpenCart,
     setOpenAddress,
+    openAddress,
     alertBox,
     setUser,
     setLogin,
@@ -167,6 +169,15 @@ function AppWrapper() {
                   element={
                     <PrivateRoute>
                       <Orders />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/order-success/:id"
+                  element={
+                    <PrivateRoute>
+                      <OrderSuccess />
                     </PrivateRoute>
                   }
                 />

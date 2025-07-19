@@ -102,7 +102,7 @@ const ProfileSidebar = () => {
           <Link to="/profile">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
               <FaRegUser className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium">My Profile</span>
+              <span className="text-gray-800 font-medium"> Profile</span>
             </div>
           </Link>
         </li>
@@ -110,7 +110,7 @@ const ProfileSidebar = () => {
           <Link to="/wishlist">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
               <FaRegHeart className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium">My Wishlist</span>
+              <span className="text-gray-800 font-medium"> Wishlist</span>
             </div>
           </Link>
         </li>
@@ -118,7 +118,7 @@ const ProfileSidebar = () => {
           <Link to="/order">
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
               <BsCartCheck className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
-              <span className="text-gray-800 font-medium">My Orders</span>
+              <span className="text-gray-800 font-medium"> Orders</span>
             </div>
           </Link>
         </li>

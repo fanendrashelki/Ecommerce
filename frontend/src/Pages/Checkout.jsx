@@ -27,52 +27,97 @@ const Checkout = () => {
     return { subtotal, shipping, tax, total: subtotal + shipping + tax };
   }, [cartlist]);
 
+  const clearCartlist = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await axiosInstance.delete("cart/clear", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.error("Fetch failed:", err);
+    }
+  };
+
   const handleCompleteOrder = async () => {
     if (!paymentMethod) {
       return context.alertBox("info", "Please select a payment method");
     }
     if (!selectedAddress) {
-      return context.alertBox("info", "Please select an address");
+      return context.alertBox("info", "Please select a delivery address");
     }
-    if (cartlist.length === 0) {
+    if (!cartlist || cartlist.length === 0) {
       return context.alertBox("info", "Your cart is empty");
     }
 
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      await axiosInstance.post(
-        "/orders",
-        {
-          addressId: selectedAddress._id,
-          paymentMethod,
-          items: cartlist,
-          total,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+      if (!token) {
+        setLoading(false);
+        return context.alertBox(
+          "error",
+          "User not authenticated. Please log in."
+        );
+      }
+
+      const orderPayload = {
+        userId: context?.User?._id,
+        items: cartlist.map((item) => ({
+          productId: item.productId?._id,
+          name: item.productId?.name,
+          image: item.productId?.images?.[0]?.url,
+          quantity: item.quantity,
+          price: item.productId?.price,
+        })),
+        delivery_address: selectedAddress._id,
+        paymentMethod,
+        subTotalAmt: subtotal,
+        totalAmt: total,
+        Shippingcharge: shipping,
+        tax,
+      };
+
+      const res = await axiosInstance.post("/orders", orderPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.data?.order?._id) {
+        throw new Error("Order ID not received from server");
+      }
+
+      if (paymentMethod !== "Cash on Delivery" && res.data.paymentUrl) {
+        window.location.href = res.data.paymentUrl;
+        return;
+      }
+
+      context.alertBox("success", "Order placed successfully!");
+      await clearCartlist();
+
+      window.location.href = `/order-success/${res.data.order._id}`;
+    } catch (error) {
+      console.error(
+        "Order creation failed:",
+        error.response?.data || error.message
       );
-      context.alertBox("success", "Order completed successfully!");
-    } catch (err) {
-      context.alertBox("error", "Failed to complete order");
+      context.alertBox("error", "Failed to place order. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-  console.log(context.User?._id);
 
   const fetchAddresses = async () => {
     try {
       const token = localStorage.getItem("token");
-      let res; // use let instead of const
-
       if (context.User?._id) {
-        res = await axiosInstance.get(`addresses/user/${context.User._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axiosInstance.get(
+          `addresses/user/${context.User._id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setAddresses(res.data || []);
-
         if (res.data?.length > 0) {
-          setSelectedAddress(res.data[0]); // auto-select first address
+          setSelectedAddress(res.data[0]);
         }
       }
     } catch (err) {
@@ -83,17 +128,18 @@ const Checkout = () => {
     }
   };
 
+  // Re-fetch addresses when user changes or address drawer closes
   useEffect(() => {
+    if (!context.User || !context.User._id) return;
     fetchAddresses();
-  }, [context.User?._id]); // rerun when user changes
+  }, [context.openAddress, context.User]);
 
   return (
     <section className="bg-gray-50 py-8">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Checkout Form */}
           <div className="lg:w-2/3">
-            {/* Shipping */}
+            {/* Billing Address */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold mb-6">Billing Address</h2>
@@ -131,7 +177,7 @@ const Checkout = () => {
                         />
                         <span className="ml-2 text-sm font-medium">
                           {addr.address_line}, {addr.city}, {addr.state} -{" "}
-                          {addr.zip}
+                          {addr.pincode}
                         </span>
                       </div>
                     </label>
@@ -140,7 +186,7 @@ const Checkout = () => {
               </div>
             </div>
 
-            {/* Payment */}
+            {/* Payment Method */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold mb-6">Payment Method</h2>
               <div className="space-y-4 mb-6">
@@ -206,7 +252,7 @@ const Checkout = () => {
               {cartlist.length === 0 ? (
                 <p className="text-gray-500">Your cart is empty</p>
               ) : (
-                <div className="space-y-4 mb-6 sha">
+                <div className="space-y-4 mb-6">
                   {cartlist.map((item) => (
                     <div
                       key={item._id || item.productId?._id}

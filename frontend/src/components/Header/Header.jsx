@@ -6,7 +6,7 @@ import { Badge } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import { MdOutlineShoppingCart } from "react-icons/md";
-
+import { GrMapLocation } from "react-icons/gr";
 import { FaRegHeart } from "react-icons/fa6";
 import Tooltip from "@mui/material/Tooltip";
 import Navigation from "./Navigation/Navigation";
@@ -198,15 +198,32 @@ function Header() {
                         to="/profile"
                         className="flex gap-2 items-center w-full"
                       >
-                        <FaRegUser /> My Profile
+                        <FaRegUser /> Profile
                       </Link>
                     </MenuItem>
                     <MenuItem>
                       <Link
-                        to="/orders"
+                        to="/wishlist"
                         className="flex gap-2 items-center w-full"
                       >
-                        <BsCartCheck /> My Orders
+                        <FaRegHeart /> Wishlist
+                      </Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <Link
+                        to="/order"
+                        className="flex gap-2 items-center w-full"
+                      >
+                        <BsCartCheck /> Orders
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link
+                        to="/address"
+                        className="flex gap-2 items-center w-full"
+                      >
+                        <GrMapLocation /> Address
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>
