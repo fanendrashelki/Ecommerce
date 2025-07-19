@@ -28,16 +28,24 @@ function Cart() {
     }
   }, [context.isLogin]);
 
-  const total = cartlist.reduce(
+  const subtotal = cartlist.reduce(
     (acc, item) => acc + item?.productId?.price * item?.quantity,
     0
   );
+
+  const shipping = subtotal > 1000 ? 0 : 100;
+  const tax = subtotal * 0.0725;
+  const total = subtotal + shipping + tax;
 
   return (
     <section className="bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-2xl font-bold mb-8 text-gray-800">
-          Your Cart ( {cartCount} items)
+          {`Your cart ${
+            cartCount === 0
+              ? "is empty"
+              : `${cartCount} item${cartCount > 1 ? "s" : ""}`
+          }`}
         </h1>
 
         {isLoading ? ( // Check if the cart is loading
@@ -173,11 +181,15 @@ function Cart() {
               </h2>
               <div className="flex justify-between mb-3 text-gray-700">
                 <span>Subtotal</span>
-                <span>₹{total.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between mb-3 text-gray-700">
                 <span>Shipping</span>
-                <span>₹0.00</span>
+                <span>₹{shipping.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mb-3 text-gray-700">
+                <span>Tax</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-semibold text-lg text-gray-900">
                 <span>Total</span>
@@ -194,7 +206,7 @@ function Cart() {
           <div className="text-center text-gray-500 text-sm py-12">
             <img
               src={shopping}
-              className="object-contain w-[50%] mx-auto space-y-10"
+              className="object-contain !w-[20%] mx-auto space-y-10"
               alt=""
             />
             <p className="text-[25px] font-bold text-black">

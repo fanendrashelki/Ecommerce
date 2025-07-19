@@ -19,6 +19,7 @@ import Checkout from "./Pages/Checkout";
 import Profile from "./Pages/Profile";
 import Wishlist from "./Pages/Wishlist";
 import Orders from "./components/Orders/Orders";
+import Addresspage from "./Pages/AddressPage";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "./utils/axiosInstance";
 import Pageloader from "./utils/Pageloader";
@@ -28,6 +29,7 @@ import ScrollToTop from "./utils/ScrollToTop";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/cartContext";
 import ProfileImageProvider from "./context/ProfileImageContext";
+import Address from "./components/address/Address";
 
 const alertBox = (type, msg) => {
   if (type === "success") {
@@ -43,6 +45,7 @@ export const MyProductContext = createContext();
 
 function AppWrapper() {
   const [openCart, setOpenCart] = useState(false);
+  const [openAddress, setOpenAddress] = useState(false);
   const [User, setUser] = useState(null);
   const [isLogin, setLogin] = useState(false);
   const [category, setCategories] = useState([]);
@@ -79,6 +82,7 @@ function AppWrapper() {
 
   const contextValues = {
     setOpenCart,
+    setOpenAddress,
     alertBox,
     setUser,
     setLogin,
@@ -166,6 +170,14 @@ function AppWrapper() {
                     </PrivateRoute>
                   }
                 />
+                <Route
+                  path="/address"
+                  element={
+                    <PrivateRoute>
+                      <Addresspage />
+                    </PrivateRoute>
+                  }
+                />
               </Routes>
             </main>
             <MobileNav />
@@ -173,6 +185,7 @@ function AppWrapper() {
             <Toaster />
             {/* cart list fro checkout */}
             <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
+            <Address open={openAddress} onClose={() => setOpenAddress(false)} />
             <Pageloader open={pageloader} />
           </ProfileImageProvider>
         </CartProvider>

@@ -40,7 +40,7 @@ function CartDrawer({ open, onClose }) {
       <div className="p-2 w-[400px]">
         <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-lg font-semibold">
-            Shopping Cart {cartlist.length > 0 && cartCount}
+            Shopping Cart ({cartlist.length > 0 && cartCount})
           </h2>
           <IconButton onClick={onClose} className="!w-[40px] !h-[40px]">
             <IoMdClose className="text-[20px] text-[rgba(0,0,0,0.7)]" />
@@ -75,7 +75,7 @@ function CartDrawer({ open, onClose }) {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
+                        <h3 className="text-sm font-medium text-gray-800 line-clamp-1">
                           {item?.productId?.name}
                         </h3>
                         <p className="text-xs text-gray-500">
@@ -132,37 +132,37 @@ function CartDrawer({ open, onClose }) {
               </>
             ))
           )}
-          {cartlist.length > 0 && (
-            <div className="mt-4 border-t pt-4 px-2">
-              <div className="flex justify-between mb-3">
-                <span className="text-base font-medium">Total</span>
-                <span className="text-base font-semibold text-[#35ac75]">
-                  ₹{total}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <button
-                  onClick={() => {
-                    navigate("/cart");
-                    onClose();
-                  }}
-                  className="w-full bg-[#fb5e5e] text-white py-2 rounded hover:bg-gray-800 transition"
-                >
-                  View Cart
-                </button>
-                <button
-                  onClick={() => {
-                    navigate("/checkout");
-                    onClose();
-                  }}
-                  className="w-full bg-[#35ac75] text-white py-2 rounded hover:bg-gray-800 transition"
-                >
-                  Checkout
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+        {cartlist.length > 0 && (
+          <div className="mt-3 mb-3 border-t pt-2 px-2">
+            <div className="flex justify-between mb-3">
+              <span className="text-base font-medium">Total</span>
+              <span className="text-base font-semibold text-[#35ac75]">
+                ₹{total}
+              </span>
+            </div>
+            <div className="flex sticky bottom-0 items-center justify-between gap-3">
+              <button
+                onClick={() => {
+                  navigate("/cart");
+                  onClose();
+                }}
+                className="w-full bg-[#fb5e5e] text-white py-2 rounded hover:bg-gray-800 transition"
+              >
+                View Cart
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/checkout");
+                  onClose();
+                }}
+                className="w-full bg-[#35ac75] text-white py-2 rounded hover:bg-gray-800 transition"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </Drawer>
   );

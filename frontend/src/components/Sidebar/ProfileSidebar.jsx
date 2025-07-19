@@ -10,7 +10,7 @@ import { MyProductContext } from "../../AppWrapper";
 import axiosInstance from "../../utils/axiosInstance";
 import { useWishlist } from "../../context/WishlistContext";
 import { useProfileImage } from "../../context/ProfileImageContext";
-
+import { GrMapLocation } from "react-icons/gr";
 const ProfileSidebar = () => {
   const context = useContext(MyProductContext);
   const { profileImg, handleImageChange, loading } = useProfileImage();
@@ -119,6 +119,14 @@ const ProfileSidebar = () => {
             <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
               <BsCartCheck className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
               <span className="text-gray-800 font-medium">My Orders</span>
+            </div>
+          </Link>
+        </li>
+        <li>
+          <Link to="/address">
+            <div className="flex items-center p-3 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+              <GrMapLocation className="text-[18px] sm:text-[20px] text-gray-700 mr-3" />
+              <span className="text-gray-800 font-medium">Address</span>
             </div>
           </Link>
         </li>
