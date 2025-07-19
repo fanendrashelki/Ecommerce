@@ -13,6 +13,7 @@ import wishlistRoutes from "./routes/wishList.route.js";
 import bannerRoutes from "./routes/Banner.route.js";
 import adsbannerRoutes from "./routes/AdsBanner.route.js";
 import ErrorMiddleware from "./middleware/ErrorHandlerMIddleware.js";
+import addressRoutes from "./routes/address.route.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/banner", bannerRoutes);
 app.use("/api/adsbanner", adsbannerRoutes);
+app.use("/api/addresses", addressRoutes);
 
 app.use(ErrorMiddleware);
 const PORT = process.env.PORT || 5000;
