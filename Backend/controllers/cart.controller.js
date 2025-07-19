@@ -167,10 +167,29 @@ const deleteCart = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, message: "Removed from cart" });
 });
+// clear cart
+const ClearAllCart = asyncHandler(async (req, res) => {
+  const userId = req.user.id; // assuming JWT middleware sets req.user
+
+  // Delete all cart items for this user
+  const deleteResult = await CartProductModel.deleteMany({ userId });
+
+  if (deleteResult.deletedCount === 0) {
+    return res
+      .status(404)
+      .json({ success: false, message: "No cart items found" });
+  }
+
+  // Clear shopping_cart array in User model
+  await UserModel.findByIdAndUpdate(userId, { $set: { shopping_cart: [] } });
+
+  res.status(200).json({ success: true, message: "Cart cleared successfully" });
+});
 
 export default {
   addToCart,
   getCart,
   updateCart,
   deleteCart,
+  ClearAllCart,
 };

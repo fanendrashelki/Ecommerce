@@ -14,7 +14,7 @@ import bannerRoutes from "./routes/Banner.route.js";
 import adsbannerRoutes from "./routes/AdsBanner.route.js";
 import ErrorMiddleware from "./middleware/ErrorHandlerMIddleware.js";
 import addressRoutes from "./routes/address.route.js";
-
+import orderRoutes from "./routes/Order.routes.js";
 dotenv.config();
 
 const app = express();
@@ -38,6 +38,7 @@ app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/banner", bannerRoutes);
 app.use("/api/adsbanner", adsbannerRoutes);
 app.use("/api/addresses", addressRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.use(ErrorMiddleware);
 const PORT = process.env.PORT || 5000;
