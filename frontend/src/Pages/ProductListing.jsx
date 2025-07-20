@@ -13,6 +13,7 @@ import Slide from "@mui/material/Slide";
 import { MdClose } from "react-icons/md";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useParams } from "react-router-dom";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -35,6 +36,10 @@ const ProductListing = () => {
     rating: "",
   });
 
+  const queryParams = new URLSearchParams(location.search);
+  const type = queryParams.get("type");
+  console.log("type", type);
+  const { id } = useParams();
   const fetchFilteredProducts = async () => {
     setLoading(true);
     try {
@@ -60,6 +65,36 @@ const ProductListing = () => {
   useEffect(() => {
     fetchFilteredProducts();
   }, [filters]);
+  const fetchProductbyCatId = async (productId) => {
+    setLoading(true);
+    setProducts([]);
+    try {
+      let res;
+      if (type === "cat") {
+        res = await axiosInstance.get(
+          `/product/getProductBycatId/${productId}`
+        );
+      } else if (type === "subcat") {
+        res = await axiosInstance.get(
+          `/product/getProductBySubcatId/${productId}`
+        );
+      } else if (type === "thirdsubcat") {
+        res = await axiosInstance.get(
+          `/product/getProductBythirdsubcatId/${productId}`
+        );
+      }
+      setProducts(res?.data?.products || []);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (id && type) {
+      fetchProductbyCatId(id);
+    }
+  }, [id, type]);
 
   return (
     <section className="bg-[#efefef] min-h-screen">
