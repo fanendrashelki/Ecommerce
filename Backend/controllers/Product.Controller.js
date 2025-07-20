@@ -438,7 +438,8 @@ const getProductBythirdSubcatName = asyncHandler(async (req, res, next) => {
 });
 
 //======================= filter Products ===========================
-const filterProducts = asyncHandler(async (req, res, next) => {
+
+const filterProducts = asyncHandler(async (req, res) => {
   const {
     catName,
     brand,
@@ -447,52 +448,47 @@ const filterProducts = asyncHandler(async (req, res, next) => {
     ram,
     size,
     keyword,
-    page = 1,
-    limit = 10,
     sort = "createdAt", // or "price", "rating"
-    price,
     rating,
     order = "desc", // "asc" or "desc"
   } = req.query;
 
   const query = {};
 
-  // Filter by category name
+  // Multi-category filter
   if (catName) {
-    query["category.catName"] = { $regex: new RegExp(catName, "i") };
+    const categories = catName.split(",").map((c) => c.trim());
+    query["category.catName"] = { $in: categories };
   }
 
-  // Filter by brand
+  // Brand filter
   if (brand) {
     query.brand = { $regex: new RegExp(brand, "i") };
   }
 
-  // Filter by price range
+  // Price range filter
   if (minPrice || maxPrice) {
     query.price = {};
     if (minPrice) query.price.$gte = Number(minPrice);
     if (maxPrice) query.price.$lte = Number(maxPrice);
   }
 
-  // Filter by product RAM
+  // RAM filter
   if (ram) {
     query.productRam = ram;
   }
-  // Filter by rating
+
+  // Rating filter
   if (rating) {
-    query.rating = rating;
-  }
-  // Filter by price
-  if (price) {
-    query.price = price;
+    query.rating = { $gte: Number(rating) };
   }
 
-  // Filter by size
+  // Size filter
   if (size) {
     query.size = size;
   }
 
-  // Search by name or description
+  // Keyword search
   if (keyword) {
     query.$or = [
       { name: { $regex: new RegExp(keyword, "i") } },
@@ -500,21 +496,13 @@ const filterProducts = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  const skip = (page - 1) * limit;
-
-  const totalProducts = await ProductModel.countDocuments(query);
-
-  const products = await ProductModel.find(query)
-    .sort({ [sort]: order === "asc" ? 1 : -1 })
-    .skip(skip)
-    .limit(Number(limit));
+  const products = await ProductModel.find(query).sort({
+    [sort]: order === "asc" ? 1 : -1,
+  });
 
   res.status(200).json({
     products,
-    total: totalProducts,
-    page: Number(page),
-    limit: Number(limit),
-    totalPages: Math.ceil(totalProducts / limit),
+    total: products.length,
     count: products.length,
   });
 });
