@@ -1,16 +1,11 @@
 import Sidebar from "../components/Sidebar/Sidebar";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
 import ProductItem from "../components/ProductItem/ProductItem";
 import ProductItemList from "../components/ProductItem/ProductItemList";
 import { Button } from "@mui/material";
 import { IoGridSharp, IoOptionsOutline } from "react-icons/io5";
 import { FiMenu } from "react-icons/fi";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useState, forwardRef } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { useLocation, useParams } from "react-router-dom";
 import ProductItemSkeleton from "../components/Skeleton/ProductItemSkeleton";
 import ProductNotFound from "../components/ProductNotFound";
 import Dialog from "@mui/material/Dialog";
@@ -24,107 +19,87 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const ProductListing = () => {
-  const { id } = useParams();
   const [itemView, setItemView] = useState("grid");
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [productByCat, setProductByCat] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const location = useLocation();
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const queryParams = new URLSearchParams(location.search);
-  const type = queryParams.get("type");
+  const [filters, setFilters] = useState({
+    categories: [],
+    minPrice: 0,
+    maxPrice: 5000,
+    keyword: "",
+    rating: "",
+  });
 
-  const fetchProductbyCatId = async (productId) => {
+  const fetchFilteredProducts = async () => {
     setLoading(true);
-    setProductByCat([]);
     try {
-      let res;
-      if (type === "cat") {
-        res = await axiosInstance.get(
-          `/product/getProductBycatId/${productId}`
-        );
-      } else if (type === "subcat") {
-        res = await axiosInstance.get(
-          `/product/getProductBySubcatId/${productId}`
-        );
-      } else if (type === "thirdsubcat") {
-        res = await axiosInstance.get(
-          `/product/getProductBythirdsubcatId/${productId}`
-        );
-      }
-      setProductByCat(res?.data?.products || []);
-    } catch (error) {
-      console.error("Error fetching product details:", error);
+      const query = new URLSearchParams();
+      if (filters.categories.length)
+        query.append("catName", filters.categories.join(","));
+      if (filters.minPrice) query.append("minPrice", filters.minPrice);
+      if (filters.maxPrice) query.append("maxPrice", filters.maxPrice);
+      if (filters.keyword) query.append("keyword", filters.keyword);
+      if (filters.rating) query.append("rating", filters.rating);
+
+      const res = await axiosInstance.get(
+        `/product/filter?${query.toString()}`
+      );
+      setProducts(res.data.products);
+    } catch (err) {
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (id && type) {
-      fetchProductbyCatId(id);
-    }
-  }, [id, type]);
-
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    fetchFilteredProducts();
+  }, [filters]);
 
   return (
-    <section className=" bg-[#efefef] min-h-screen">
+    <section className="bg-[#efefef] min-h-screen">
       <div className="bg-white p-2 mt-4">
         <div className="container mx-auto px-3 sm:px-4 flex flex-col lg:flex-row gap-3">
           {/* Desktop Sidebar */}
           <div className="hidden lg:block w-full lg:w-[20%]">
-            <Sidebar />
+            <Sidebar filters={filters} setFilters={setFilters} />
           </div>
 
-          {/* Product Area */}
+          {/* Products */}
           <div className="w-full lg:w-[80%]">
-            {/* Header Controls */}
-            <div className="bg-[#f1f1f1] p-4 rounded-md mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              {/* Left: View toggle + count */}
-              <div className="flex items-center flex-wrap gap-2">
-                {/* List View */}
+            <div className="bg-[#f1f1f1] p-4 rounded-md mb-4 flex flex-wrap gap-2 items-center justify-between">
+              <div className="flex items-center gap-2">
                 <Button
-                  className={`!w-[36px] !h-[36px] !min-w-[36px] !rounded-full shadow ${
+                  className={`!w-[36px] !h-[36px] !rounded-full shadow ${
                     itemView === "list"
                       ? "!bg-[#35ac75] !text-white"
                       : "!bg-gray-200 !text-black"
                   }`}
                   onClick={() => setItemView("list")}
                 >
-                  <FiMenu className="text-[16px]" />
+                  <FiMenu />
                 </Button>
-
-                {/* Grid View */}
                 <Button
-                  className={`!w-[36px] !h-[36px] !min-w-[36px] !rounded-full shadow ${
+                  className={`!w-[36px] !h-[36px] !rounded-full shadow ${
                     itemView === "grid"
                       ? "!bg-[#35ac75] !text-white"
                       : "!bg-gray-200 !text-black"
                   }`}
                   onClick={() => setItemView("grid")}
                 >
-                  <IoGridSharp className="text-[16px]" />
+                  <IoGridSharp />
                 </Button>
-
-                {/* Product count */}
-                <span className="text-sm text-[rgba(0,0,0,0.7)] font-medium ml-2">
-                  {productByCat?.length ?? 0} products found
+                <span className="text-sm ml-2">
+                  {products.length} products found
                 </span>
               </div>
             </div>
 
-            {/* Product List/Grid */}
             <div
               className={`grid gap-4 ${
                 itemView === "list"
@@ -133,16 +108,14 @@ const ProductListing = () => {
               }`}
             >
               {loading ? (
-                [...Array(8)].map((_, index) => (
-                  <ProductItemSkeleton key={index} />
-                ))
-              ) : productByCat?.length > 0 ? (
+                [...Array(8)].map((_, i) => <ProductItemSkeleton key={i} />)
+              ) : products.length > 0 ? (
                 itemView === "grid" ? (
-                  productByCat.map((item) => (
+                  products.map((item) => (
                     <ProductItem key={item._id} product={item} />
                   ))
                 ) : (
-                  productByCat.map((item) => (
+                  products.map((item) => (
                     <ProductItemList key={item._id} product={item} />
                   ))
                 )
@@ -155,17 +128,15 @@ const ProductListing = () => {
           </div>
         </div>
       </div>
-      <div>
-        <button
-          onClick={() => setFilterOpen(true)}
-          className="lg:hidden fixed bottom-[80px] right-4 z-50 bg-[#35ac75] text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2"
-        >
-          <IoOptionsOutline size={18} />
-          Filter
-        </button>
-      </div>
 
-      {/* Mobile Filter Drawer */}
+      {/* Mobile Filter */}
+      <button
+        onClick={() => setFilterOpen(true)}
+        className="lg:hidden fixed bottom-[80px] right-4 z-50 bg-[#35ac75] text-white px-4 py-2 rounded-full text-sm shadow-lg flex items-center gap-2"
+      >
+        <IoOptionsOutline size={18} /> Filter
+      </button>
+
       <Dialog
         fullScreen={fullScreen}
         open={filterOpen}
@@ -173,16 +144,19 @@ const ProductListing = () => {
         TransitionComponent={Transition}
       >
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Filters</h2>
+          <h2 className="text-lg font-semibold">Filters1</h2>
           <Button
             onClick={() => setFilterOpen(false)}
-            className="!min-w-[auto] !p-1 !text-black"
+            className="!p-1 !text-black"
           >
-            <MdClose size={24} />
+            <MdClose className="text-black rounded-full" size={24} />
           </Button>
         </div>
         <div className="p-4">
-          <Sidebar />
+          <Sidebar filters={filters} setFilters={setFilters} />
+          <Button className="btn-org " onClick={() => setFilterOpen(false)}>
+            Apply
+          </Button>
         </div>
       </Dialog>
     </section>

@@ -4,151 +4,74 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import { Collapse } from "react-collapse";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
-
-import "../Sidebar/style.css";
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { MyProductContext } from "../../AppWrapper";
 
-const Sidebar = () => {
-  const [isOpenCategory, SetIsOpenCategory] = useState(true);
-  const [isOpenAvailable, SetIsOpenAvailable] = useState(true);
-  const [isOpenSize, SetIsOpenSize] = useState(true);
+const Sidebar = ({ filters, setFilters }) => {
+  const [isOpenCategory, setIsOpenCategory] = useState(true);
+  const context = useContext(MyProductContext);
+
+  const handleCategoryChange = (name) => {
+    setFilters((prev) => {
+      const categories = prev.categories.includes(name)
+        ? prev.categories.filter((cat) => cat !== name)
+        : [...prev.categories, name];
+      return { ...prev, categories };
+    });
+  };
+
+  const handlePriceChange = (range) => {
+    setFilters((prev) => ({ ...prev, minPrice: range[0], maxPrice: range[1] }));
+  };
+
   return (
     <aside className="sidebar py-5">
-      <div className="box flex justify-center flex-col ">
-        <h3
-          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
-          onClick={() => SetIsOpenCategory(!isOpenCategory)}
-        >
+      <div className="box flex flex-col">
+        <h3 className="mb-3 text-[16px] font-[600] flex items-center">
           Shop by Category
           <Button
-            className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
-            onClick={() => SetIsOpenCategory(!isOpenCategory)}
+            className="!ml-auto !w-[30px] !h-[30px]"
+            onClick={() => setIsOpenCategory(!isOpenCategory)}
           >
-            {isOpenCategory === true ? <FaAngleUp /> : <FaAngleDown />}
+            {isOpenCategory ? <FaAngleUp /> : <FaAngleDown />}
           </Button>
         </h3>
         <Collapse isOpened={isOpenCategory}>
           <div className="scroll relative px-3 -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Fashion"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Electronics"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Bags"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Footware"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Groceries"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Beuty"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Wellness"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Jewellery"
-              className="w-full"
-            />
+            {context.category.map((item) => (
+              <FormControlLabel
+                key={item._id}
+                className="w-full"
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={filters.categories.includes(item.name)}
+                    onChange={() => handleCategoryChange(item.name)}
+                  />
+                }
+                label={item.name}
+              />
+            ))}
           </div>
         </Collapse>
       </div>
-      <div className="box mt-3 flex justify-center flex-col ">
-        <h3
-          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
-          onClick={() => SetIsOpenAvailable(!isOpenAvailable)}
-        >
-          Availability
-          <Button
-            className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
-            onClick={() => SetIsOpenAvailable(!isOpenAvailable)}
-          >
-            {isOpenAvailable === true ? <FaAngleUp /> : <FaAngleDown />}
-          </Button>
-        </h3>
-        <Collapse isOpened={isOpenAvailable}>
-          <div className="scroll relative px-3 -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Available (18)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label=" Not Available (10)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="In Stock (1)"
-              className="w-full"
-            />
-          </div>
-        </Collapse>
-      </div>
-      <div className="box mt-3 flex justify-center flex-col ">
-        <h3
-          className="mb-3 text-[16] font-[600] capitalize flex items-center pr-5"
-          onClick={() => SetIsOpenSize(!isOpenSize)}
-        >
-          Size
-          <Button
-            className="!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]"
-            onClick={() => SetIsOpenSize(!isOpenSize)}
-          >
-            {isOpenSize === true ? <FaAngleUp /> : <FaAngleDown />}
-          </Button>
-        </h3>
-        <Collapse isOpened={isOpenSize}>
-          <div className="scroll relative px-3 -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Small (18)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label=" Medium (10)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Large (1)"
-              className="w-full"
-            />
-          </div>
-        </Collapse>
-      </div>
-      <div className="box flex mt-3 justify-center flex-col ">
-        <h3 className="mb-5 text-[16] font-[600] capitalize flex items-center pr-5">
-          Filter By Price
-        </h3>
-        <RangeSlider />
+
+      <div className="box mt-3 flex flex-col">
+        <h3 className="mb-5 text-[16px] font-[600]">Filter By Price1</h3>
+        <RangeSlider
+          min={0}
+          max={5000}
+          step={50}
+          defaultValue={[filters.minPrice, filters.maxPrice]}
+          onInput={handlePriceChange}
+        />
         <div className="flex pt-4 pb-2 priceRange">
           <span className="text-[13px]">
-            From : <strong className="text-black">Rs:{100}</strong>
+            From: <strong>₹{filters.minPrice}</strong>
           </span>
-          <span className=" ml-auto text-[13px]">
-            From : <strong className="text-black">Rs:{5000}</strong>
+          <span className="ml-auto text-[13px]">
+            To: <strong>₹{filters.maxPrice}</strong>
           </span>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { GoRocket } from "react-icons/go";
 import CategoryPanel from "./CategoryPanel";
 import { MyProductContext } from "../../../AppWrapper";
-
+import { MdOutlineCategory } from "react-icons/md";
 const Navigation = () => {
   const [isopenCatPanel, setIsOpenCatPanel] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -28,11 +28,11 @@ const Navigation = () => {
         <div className="container flex items-center justify-end gap-5">
           <div className="col_1 w-[20%]">
             <Button
-              className="!text-black gap-2 w-full"
+              className="!text-black gap-2 w-full !capitalize"
               onClick={toggleDrawer(true)}
             >
-              <RiMenu2Line className="text-[18px]" />
-              Shop By Categories
+              <MdOutlineCategory className="text-[18px] gap-2" />
+              Categories
               <TfiAngleDown className="text-[13px] ml-auto font-bold" />
             </Button>
           </div>
