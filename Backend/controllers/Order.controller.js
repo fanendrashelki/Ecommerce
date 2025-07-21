@@ -1,6 +1,7 @@
 import OrderModel from "../models/order.model.js";
 import crypto from "crypto";
 
+// Create a new order
 export const createOrder = async (req, res) => {
   try {
     const {
@@ -26,6 +27,7 @@ export const createOrder = async (req, res) => {
       .toString("hex")
       .toUpperCase()}`;
 
+    // Create new order (deliveryDate auto-calculated in model)
     const newOrder = new OrderModel({
       userId,
       orderId,
@@ -34,11 +36,12 @@ export const createOrder = async (req, res) => {
       payment_status: "Pending",
       subTotalAmt,
       totalAmt,
-      orderStatus: "Pending",
+      orderStatus: "Pending", // enum handled by schema
       paymentMethod,
       tax,
       Shippingcharge,
-      orderDate: new Date(), // add orderDate if your schema requires it
+      orderDate: new Date(), // required for deliveryDate calculation
+      cancelled: false, // default
     });
 
     await newOrder.save();
@@ -54,33 +57,78 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// Get all orders of a user
 export const getUserOrders = async (req, res) => {
   try {
     const { userId } = req.params;
+
     const orders = await OrderModel.find({ userId })
       .populate("items.productId")
-      .populate("delivery_address");
+      .populate("delivery_address")
+      .sort({ createdAt: -1 });
 
-    return res.status(200).json(orders);
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
   } catch (error) {
     console.error("Error fetching orders:", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
+// Get a single order by ID
 export const getOrderById = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const order = await OrderModel.findById(id)
-    .populate("delivery_address")
-    .populate("userId");
+    const order = await OrderModel.findById(id)
+      .populate("delivery_address")
+      .populate("userId")
+      .populate("items.productId");
 
-  if (!order) {
-    return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order retrieved successfully",
+      order,
+    });
+  } catch (error) {
+    console.error("Error fetching order:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-  res.status(200).json({
-    message: "Order ",
-    success: true,
-    order,
-  });
+};
+
+// Cancel an order
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await OrderModel.findById(id);
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // Mark order as cancelled
+    order.orderStatus = "Cancelled";
+    order.cancelled = true;
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      order,
+    });
+  } catch (error) {
+    console.error("Error cancelling order:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 };

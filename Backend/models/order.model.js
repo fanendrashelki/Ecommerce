@@ -61,11 +61,24 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
     orderDate: {
       type: Date,
       default: Date.now,
+    },
+    deliveryDate: {
+      type: Date,
+      default: () => {
+        const date = new Date();
+        date.setDate(date.getDate() + 4);
+        return date;
+      },
+    },
+    cancelled: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
