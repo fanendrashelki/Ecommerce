@@ -163,21 +163,21 @@ const OrderSuccess = () => {
               <div class="space-y-4">
                 <div class="flex justify-between">
                   <p class="text-sm text-gray-500">Subtotal</p>
-                  <p class="text-sm text-gray-900">{order.subTotalAmt}</p>
+                  <p class="text-sm text-gray-900"> ₹ {order.subTotalAmt}</p>
                 </div>
                 <div class="flex justify-between">
                   <p class="text-sm text-gray-500">Shipping</p>
                   <p class="text-sm text-gray-900">
-                    {order.Shippingcharge > 0 ? order.Shippingcharge : "Free"}
+                    ₹ {order.Shippingcharge > 0 ? order.Shippingcharge : "Free"}
                   </p>
                 </div>
                 <div class="flex justify-between">
                   <p class="text-sm text-gray-500">Tax</p>
-                  <p class="text-sm text-gray-900">{order.tax.toFixed(2)}</p>
+                  <p class="text-sm text-gray-900"> ₹ {order.tax.toFixed(2)}</p>
                 </div>
                 <div class="flex justify-between text-base font-medium text-gray-900 border-t border-gray-200 pt-4 mt-4">
                   <p>Total</p>
-                  <p>{order.totalAmt}</p>
+                  <p> ₹ {order.totalAmt}</p>
                 </div>
               </div>
             </div>

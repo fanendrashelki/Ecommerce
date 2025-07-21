@@ -1,228 +1,229 @@
-import React from "react";
-import { Button, Tooltip, Chip } from "@mui/material";
-import { FaFileInvoice, FaTimes } from "react-icons/fa";
+import React, { useState, useEffect, useContext } from "react";
 import ProfileSidebar from "../Sidebar/ProfileSidebar";
+import { MyProductContext } from "../../AppWrapper";
+import axiosInstance from "../../utils/axiosInstance";
+import { Link } from "react-router-dom";
 
-const orders = [
-  {
-    id: "ORDER-1001",
-    date: "2025-05-15",
-    status: "Shipped",
-    address: "123 MG Road, Bengaluru, Karnataka, India",
-    paymentMethod: "Credit Card",
-    shippingMethod: "Standard Delivery",
-    products: [
-      {
-        title: "The Great Gatsby",
-        price: 499,
-        image: "https://picsum.photos/id/1015/80/100",
-      },
-      {
-        title: "1984",
-        price: 399,
-        image: "https://picsum.photos/id/1016/80/100",
-      },
-    ],
-  },
-  {
-    id: "ORDER-1002",
-    date: "2025-05-17",
-    status: "Delivered",
-    address: "456 Park Avenue, Delhi, India",
-    paymentMethod: "Cash on Delivery",
-    shippingMethod: "Express Delivery",
-    products: [
-      {
-        title: "Atomic Habits",
-        price: 699,
-        image: "https://picsum.photos/id/1019/80/100",
-      },
-    ],
-  },
-];
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case "Delivered":
-      return "success";
-    case "Shipped":
-      return "info";
-    case "Cancelled":
-      return "error";
-    default:
-      return "default";
-  }
-};
-
-const statusSteps = [
-  "Placed",
-  "Confirmed",
-  "Shipped",
-  "Out for Delivery",
-  "Delivered",
-];
-const getStatusIndex = (status) => statusSteps.indexOf(status);
-
-const OrderProgressBar = ({ currentStatus }) => {
-  const currentIndex = getStatusIndex(currentStatus);
-  return (
-    <div className="flex items-center justify-between mt-4 mb-2 relative">
-      {statusSteps.map((step, index) => (
-        <div
-          key={index}
-          className="flex flex-col items-center text-center flex-1"
-        >
-          <div
-            className={`w-4 h-4 rounded-full z-10 ${
-              index <= currentIndex ? "bg-[#35ac75]" : "bg-gray-300"
-            }`}
-          ></div>
-          <span
-            className={`text-xs mt-1 ${
-              index <= currentIndex ? "text-[#35ac75]" : "text-gray-400"
-            }`}
-          >
-            {step}
-          </span>
-        </div>
-      ))}
-      <div className="absolute top-1.5 left-2 right-2 h-[2px] bg-gray-300 z-0" />
-      <div
-        className="absolute top-1.5 left-2 h-[2px] bg-[#35ac75] z-10"
-        style={{
-          width: `${(currentIndex / (statusSteps.length - 1)) * 100}%`,
-        }}
-      />
-    </div>
-  );
-};
+const steps = ["Order Placed", "Processing", "Shipped", "Delivered"];
 
 const MyOrders = () => {
-  const handleCancel = (id) => {
-    alert(`Cancel order: ${id}`);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const context = useContext(MyProductContext);
+
+  const token = localStorage.getItem("token");
+
+  const fetchUserOrder = async (userid) => {
+    if (!userid) return;
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get(`orders/${userid}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(res.data?.orders);
+      console.log(res.data);
+    } catch (error) {
+      console.error(
+        "Failed to fetch orders:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleInvoice = (id) => {
-    alert(`Download invoice for order: ${id}`);
-  };
+  useEffect(() => {
+    if (context.User?._id) {
+      fetchUserOrder(context.User._id);
+    }
+  }, [context.User?._id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-600 text-lg">Loading your orders...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex  ">
+    <div className="flex">
       <div className="hidden lg:block w-full lg:w-[300px]">
         <ProfileSidebar />
       </div>
+
       <div className="w-[80%] bg-white p-10 rounded-lg shadow-lg m-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">My Orders</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
         </div>
 
-        <div className="space-y-6">
-          {orders.map((order) => {
-            const total = order.products.reduce(
-              (sum, item) => sum + item.price,
-              0
+        {orders.length > 0 ? (
+          orders.map((order) => {
+            const activeStep = Math.max(
+              0,
+              steps.indexOf(order.orderStatus) + 1
             );
+
             return (
               <div
-                key={order.id}
-                className="bg-white border border-gray-200 rounded-xl shadow p-5"
+                key={order.orderId}
+                className="bg-white rounded-lg shadow-md overflow-hidden mb-6 transition-transform hover:-translate-y-1 hover:shadow-lg"
               >
-                {/* Order Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                   <div>
-                    <p className="text-lg font-semibold text-gray-800">
-                      Order ID:
-                      <span className="text-gray-600">{order.id}</span>
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Order Date: {order.date}
-                    </p>
+                    <p className="text-gray-500 text-sm">{order.orderId}</p>
                   </div>
-                  <div className="mt-3 sm:mt-0 flex gap-3 items-center">
-                    <Chip
-                      label={order.status}
-                      color={getStatusColor(order.status)}
-                      variant="outlined"
-                      className="capitalize"
-                    />
-                    <Tooltip title="Download Invoice">
-                      <Button
-                        onClick={() => handleInvoice(order.id)}
-                        className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000]"
-                      >
-                        <FaFileInvoice className="text-[rgba(0,0,0,0.7)] !text-[20px]" />
-                      </Button>
-                    </Tooltip>
-                    {order.status !== "Delivered" &&
-                      order.status !== "Cancelled" && (
-                        <Tooltip title="Cancel Order">
-                          <Button
-                            onClick={() => handleCancel(order.id)}
-                            className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000]"
-                          >
-                            <FaTimes className="text-[rgba(0,0,0,0.7)] !text-[20px]" />
-                          </Button>
-                        </Tooltip>
-                      )}
-                  </div>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                    {order.orderStatus}
+                  </span>
                 </div>
 
-                {/* Progress Bar */}
-                <OrderProgressBar currentStatus={order.status} />
-
-                {/* Product List */}
-                <div className="overflow-x-auto flex gap-4 pb-2 mt-4">
-                  {order.products.map((product, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 border p-3 rounded-md min-w-[220px]"
-                    >
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-[60px] h-[80px] object-cover rounded"
-                      />
-                      <div>
-                        <p className="font-medium text-gray-800">
-                          {product.title}
-                        </p>
-                        <p className="text-sm text-[#35ac75] font-semibold mt-1">
-                          ${product.price}
+                {/* Progress Tracker */}
+                <div className="px-6 pt-4 pb-6">
+                  <div className="flex justify-between relative mb-10">
+                    {steps.map((step, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center z-10"
+                      >
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold mb-2 ${
+                            index < activeStep
+                              ? "bg-green-500 text-white"
+                              : "bg-gray-300 text-gray-600"
+                          }`}
+                        >
+                          {index + 1}
+                        </div>
+                        <p
+                          className={`text-xs font-medium ${
+                            index < activeStep
+                              ? "text-green-500"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {step}
                         </p>
                       </div>
+                    ))}
+                    <div className="absolute top-4 left-0 w-full h-1 bg-gray-200">
+                      <div
+                        className="h-1 bg-[#35ac75]"
+                        style={{
+                          width: `${(activeStep / steps.length) * 100}%`,
+                        }}
+                      ></div>
                     </div>
-                  ))}
+                  </div>
                 </div>
 
-                {/* Additional Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-5 text-sm text-gray-700">
-                  <p>
-                    <span className="font-semibold">Delivery Address:</span>
-                    {order.address}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Payment Method:</span>
-                    {order.paymentMethod}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Shipping Method:</span>
-                    {order.shippingMethod}
-                  </p>
-                  <p>
-                    <span className="font-semibold">Total Items:</span>
-                    {order.products.length}
-                  </p>
+                {/* Order Items */}
+                {order.items.map((item) => (
+                  <div key={item._id} className="bg-gray-50 px-6 py-4">
+                    <div className="flex flex-wrap -mx-4">
+                      {/* Image */}
+                      <div className="w-full md:w-1/6 px-4 mb-4 md:mb-0">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="rounded-md w-[50%] h-auto object-contain"
+                        />
+                      </div>
+
+                      {/* Product details */}
+                      <div className="w-full md:w-3/6 px-4 mb-4 md:mb-0 flex flex-col justify-between">
+                        <div>
+                          <p className="text-gray-500 text-sm line-clamp-1">
+                            {item.name}
+                          </p>
+                          <p className="text-gray-700">Qty: {item.quantity}</p>
+                        </div>
+                        <Link to={`/product-details/${item.productId._id}`}>
+                          <button className="mt-2 text-[#35ac75] hover:underline text-sm font-medium">
+                            View product details
+                          </button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Order Summary */}
+                <div className="mt-3 p-6">
+                  <h2 className="font-semibold text-lg">Summary</h2>
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>₹{order.subTotalAmt.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Shipping:</span>
+                    <span>₹{order.Shippingcharge.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax:</span>
+                    <span>₹{order.tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex font-bold justify-between">
+                    <span>Total:</span>
+                    <span>₹{order.totalAmt.toFixed(2)}</span>
+                  </div>
                 </div>
 
-                {/* Total */}
-                <div className="text-right mt-4">
-                  <p className="text-sm text-gray-500">Total Amount</p>
-                  <p className="text-xl font-bold text-[#35ac75]">${total}</p>
+                {/* Order Dates */}
+                <div className="px-6 py-4 border-t border-gray-200">
+                  <div className="flex flex-wrap justify-between items-center gap-4">
+                    <div className="flex flex-col sm:flex-row sm:gap-8">
+                      <p className="text-gray-600 text-sm">
+                        <span className="font-medium">Order placed:</span>{" "}
+                        {order?.orderDate
+                          ? new Date(order.orderDate).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : "N/A"}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        <span className="font-medium">Delivered:</span>{" "}
+                        {order?.deliveryDate
+                          ? new Date(order.deliveryDate).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : "Pending"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             );
-          })}
-        </div>
+          })
+        ) : (
+          <div className="bg-white rounded-lg shadow-md text-center py-16">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <h3 className="mt-2 text-lg font-medium text-gray-900">
+              No orders yet
+            </h3>
+            <p className="mt-1 text-gray-500">
+              You haven't placed any orders yet.
+            </p>
+            <div className="mt-6">
+              <button className="px-4 py-2 bg-[#35ac75] rounded-md text-white hover:bg-indigo-700 transition-colors">
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

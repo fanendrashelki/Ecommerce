@@ -249,7 +249,7 @@ const AddressPage = () => {
               {addresses.map((addr) => (
                 <li
                   key={addr._id}
-                  className="p-4 border rounded-md flex justify-between items-start"
+                  className="p-4 shadow rounded-md flex justify-between items-start"
                 >
                   <div>
                     <p className="font-semibold">{addr.address_line}</p>
