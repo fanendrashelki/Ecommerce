@@ -1,7 +1,10 @@
-import OrderModel from "../models/order.model.js";
+import Stripe from "stripe";
 import crypto from "crypto";
+import OrderModel from "../models/order.model.js";
+import CartModel from "../models/cartproduct.model.js";
 
-// Create a new order
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 export const createOrder = async (req, res) => {
   try {
     const {
@@ -15,20 +18,24 @@ export const createOrder = async (req, res) => {
       Shippingcharge,
     } = req.body;
 
-    if (!userId || !items || !Array.isArray(items) || items.length === 0) {
+    if (!userId || !Array.isArray(items) || items.length === 0) {
       return res
         .status(400)
-        .json({ message: "User ID and items are required" });
+        .json({ success: false, message: "User ID and items are required" });
     }
 
-    // Generate unique order ID
+    if (totalAmt <= 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid total amount" });
+    }
+
     const orderId = `ORD-${crypto
       .randomBytes(6)
       .toString("hex")
       .toUpperCase()}`;
 
-    // Create new order (deliveryDate auto-calculated in model)
-    const newOrder = new OrderModel({
+    const newOrder = await OrderModel.create({
       userId,
       orderId,
       items,
@@ -36,24 +43,56 @@ export const createOrder = async (req, res) => {
       payment_status: "Pending",
       subTotalAmt,
       totalAmt,
-      orderStatus: "Pending", // enum handled by schema
+      orderStatus: "Pending",
       paymentMethod,
       tax,
       Shippingcharge,
-      orderDate: new Date(), // required for deliveryDate calculation
-      cancelled: false, // default
+      orderDate: new Date(),
+      cancelled: false,
     });
 
-    await newOrder.save();
+    // Clear the user's cart
+    await CartModel.findOneAndDelete({ userId });
 
-    return res.status(201).json({
+    let paymentUrl = null;
+    if (paymentMethod !== "Cash on Delivery") {
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"], // future: add 'upi', 'netbanking'
+        mode: "payment",
+        customer_email: newOrder.email,
+        customer: undefined, // or create a customer object first if you want
+        customer_creation: "always",
+        shipping_address_collection: {
+          allowed_countries: ["IN"], // can add more if exporting globally
+        },
+        line_items: items.map((item) => ({
+          price_data: {
+            currency: "inr",
+            product_data: { name: item.name },
+            unit_amount: Math.round(item.price * 100),
+          },
+          quantity: item.quantity,
+        })),
+        success_url: `${process.env.CLIENT_URL}order-success/${newOrder._id}`,
+        cancel_url: `${process.env.CLIENT_URL}checkout`,
+        metadata: { orderId: newOrder.orderId, userId: userId.toString() },
+      });
+      paymentUrl = session.url;
+    }
+
+    res.status(201).json({
       success: true,
       message: "Order created successfully",
       order: newOrder,
+      paymentUrl,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("Error creating order:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create order",
+      error: error.message,
+    });
   }
 };
 
