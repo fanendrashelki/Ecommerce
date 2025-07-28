@@ -14,8 +14,10 @@ import { TfiLayoutSliderAlt } from "react-icons/tfi";
 import Banner from "./pages/dashboard/Banner";
 import AdsBanner from "./pages/dashboard/AdsBanner";
 
-const iconClass = "w-5 h-5 text-inherit";
+import Orders from "./pages/dashboard/Orders";
 
+const iconClass = "w-5 h-5 text-inherit";
+import { BsCartCheck } from "react-icons/bs";
 export const routes = [
   {
     layout: "dashboard",
@@ -74,6 +76,12 @@ export const routes = [
         name: "AdsBanner",
         path: "/AdsBanner",
         element: <AdsBanner/>,
+      },
+       {
+        icon: <BsCartCheck  className={iconClass} />,
+        name: "Orders",
+        path: "/orders",
+        element: <Orders/>,
       },
       
     ],

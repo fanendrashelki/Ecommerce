@@ -17,6 +17,7 @@ import {
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
 import { useEffect, useState } from "react";
 import { TfiLayoutSliderAlt } from "react-icons/tfi";
+import { BsCartCheck } from "react-icons/bs";
 
 export function Sidenav({ brandImg, brandName }) {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -315,6 +316,29 @@ export function Sidenav({ brandImg, brandName }) {
                     <Typography color="inherit" className="font-medium capitalize">
                       Users
                     </Typography>
+                  </Button>
+                )}
+              </NavLink>
+            </li>
+
+             <li>
+              <NavLink to="/dashboard/orders" onClick={handleLinkClick}>
+                {({ isActive }) => (
+                  <Button
+                    variant={isActive ? "gradient" : "text"}
+                    color={
+                      isActive
+                        ? sidenavColor
+                        : sidenavType === "gray"
+                        ? "white"
+                        : "blue-gray"
+                    }
+                    className="flex items-center gap-4 px-4 capitalize"
+                    fullWidth
+                  >
+                    <BsCartCheck className="h-5 w-5" />
+                    <Typography color="inherit" className="font-medium capitalize">
+Orders                    </Typography>
                   </Button>
                 )}
               </NavLink>
