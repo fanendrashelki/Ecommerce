@@ -31,46 +31,39 @@ app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
   async (req, res) => {
-    const sig = req.headers["stripe-signature"];
-    console.log("logs", req.headers);
-
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      const sig = req.headers["stripe-signature"];
+      event = stripe.webhooks.constructEvent(
+        req.body, // <-- use req.body here
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
     } catch (err) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
+      console.error("Webhook signature verification failed.", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle Stripe events
-    switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object;
-        console.log(`PaymentIntent for ${paymentIntent.amount} succeeded`);
+    // Handle successful payment
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
 
-        // Update order in DB using metadata.orderId
-        if (paymentIntent.metadata && paymentIntent.metadata.orderId) {
-          const orderId = paymentIntent.metadata.orderId;
-          try {
-            await OrderModel.findByIdAndUpdate(orderId, {
-              paymentStatus: "Paid",
-              stripePaymentId: paymentIntent.id,
-            });
-            console.log(`Order ${orderId} marked as Paid`);
-          } catch (dbErr) {
-            console.error(`Failed to update order ${orderId}:`, dbErr);
-          }
-        }
-        break;
-      }
+      const { orderId, userId } = session.metadata;
 
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+      // Update order in DB
+      await OrderModel.findOneAndUpdate(
+        { orderId, userId },
+        {
+          payment_status: "Paid",
+          orderStatus: "Confirmed",
+          paymentIntentId: session.payment_intent,
+        },
+        { new: true }
+      );
     }
 
-    // Send OK to Stripe
-    res.sendStatus(200);
+    res.status(200).json({ received: true });
   }
 );
 
