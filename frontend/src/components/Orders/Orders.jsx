@@ -3,6 +3,7 @@ import ProfileSidebar from "../Sidebar/ProfileSidebar";
 import { MyProductContext } from "../../AppWrapper";
 import axiosInstance from "../../utils/axiosInstance";
 import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const steps = ["Order Placed", "Processing", "Shipped", "Delivered"];
 
@@ -28,6 +29,22 @@ const MyOrders = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelled = async (id) => {
+    try {
+      const res = await axiosInstance.put(
+        `orders/cancelled/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      context.alertBox("success", "Order cancelled Successfully");
+      fetchUserOrder(context.User._id);
+    } catch (error) {
+      console.error("Failed to Cancelled orders:");
     }
   };
 
@@ -72,49 +89,58 @@ const MyOrders = () => {
                   <div>
                     <p className="text-gray-500 text-sm">{order.orderId}</p>
                   </div>
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+
+                  <span
+                    className={`px-2 py-1 ${
+                      order.cancelled
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }  text-xs font-medium rounded-full`}
+                  >
                     {order.orderStatus}
                   </span>
                 </div>
 
                 {/* Progress Tracker */}
-                <div className="px-6 pt-4 pb-6">
-                  <div className="flex justify-between relative mb-10">
-                    {steps.map((step, index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col items-center z-10"
-                      >
+                {order.cancelled || (
+                  <div className="px-6 pt-4 pb-6">
+                    <div className="flex justify-between relative mb-10">
+                      {steps.map((step, index) => (
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold mb-2 ${
-                            index < activeStep
-                              ? "bg-green-500 text-white"
-                              : "bg-gray-300 text-gray-600"
-                          }`}
+                          key={index}
+                          className="flex flex-col items-center z-10"
                         >
-                          {index + 1}
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold mb-2 ${
+                              index < activeStep
+                                ? "bg-green-500 text-white"
+                                : "bg-gray-300 text-gray-600"
+                            }`}
+                          >
+                            {index + 1}
+                          </div>
+                          <p
+                            className={`text-xs font-medium ${
+                              index < activeStep
+                                ? "text-green-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            {step}
+                          </p>
                         </div>
-                        <p
-                          className={`text-xs font-medium ${
-                            index < activeStep
-                              ? "text-green-500"
-                              : "text-gray-400"
-                          }`}
-                        >
-                          {step}
-                        </p>
+                      ))}
+                      <div className="absolute top-4 left-0 w-full h-1 bg-gray-200">
+                        <div
+                          className="h-1 bg-[#35ac75]"
+                          style={{
+                            width: `${(activeStep / steps.length) * 100}%`,
+                          }}
+                        ></div>
                       </div>
-                    ))}
-                    <div className="absolute top-4 left-0 w-full h-1 bg-gray-200">
-                      <div
-                        className="h-1 bg-[#35ac75]"
-                        style={{
-                          width: `${(activeStep / steps.length) * 100}%`,
-                        }}
-                      ></div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Order Items */}
                 {order.items.map((item) => (
@@ -207,26 +233,42 @@ const MyOrders = () => {
                 </div>
 
                 {/* Order Dates */}
-                <div className="px-6 py-4 border-t border-gray-200">
-                  <div className="flex flex-wrap justify-between items-center gap-4">
-                    <div className="flex flex-col sm:flex-row sm:gap-8">
-                      <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Order placed:</span>{" "}
-                        {order?.orderDate
-                          ? new Date(order.orderDate).toLocaleDateString(
-                              "en-GB"
-                            )
-                          : "N/A"}
-                      </p>
-                      <p className="text-gray-600 text-sm">
-                        <span className="font-medium">Delivered:</span>{" "}
-                        {order?.deliveryDate
-                          ? new Date(order.deliveryDate).toLocaleDateString(
-                              "en-GB"
-                            )
-                          : "Pending"}
-                      </p>
+                <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+                  <div className="flex flex-wrap justify-between items-center gap-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-10 text-sm text-gray-700">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900">
+                          Order Placed
+                        </span>
+                        <span>
+                          {order?.orderDate
+                            ? new Date(order.orderDate).toLocaleDateString(
+                                "en-GB"
+                              )
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-900">
+                          Delivered
+                        </span>
+                        <span>
+                          {order?.deliveryDate
+                            ? new Date(order.deliveryDate).toLocaleDateString(
+                                "en-GB"
+                              )
+                            : "Pending"}
+                        </span>
+                      </div>
                     </div>
+                    {order.cancelled || (
+                      <Button
+                        className="rounded-full border-2 !bg-red-500  !border-red-500 !text-white  !capitalize"
+                        onClick={() => handleCancelled(order._id)}
+                      >
+                        Cancel
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
