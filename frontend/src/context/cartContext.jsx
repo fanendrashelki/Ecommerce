@@ -46,8 +46,6 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCartlist = async (productId) => {
-    console.log(productId);
-
     try {
       await axiosInstance.delete(`/cart/remove/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },

@@ -39,7 +39,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 function Header() {
   const context = useContext(MyProductContext);
   const { profileImg, handleImageChange, loading } = useProfileImage();
-  // console.log("Prof  ileImageContext:", profileImg);
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);

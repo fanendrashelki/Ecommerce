@@ -79,15 +79,6 @@ const WishlistBox = () => {
                 {/* Actions */}
                 <td className="px-4 py-3 text-center">
                   <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-                    <Button
-                      variant="contained"
-                      className="!bg-[#35ac75] hover:!bg-[#2e9b66] !text-white !rounded-md !py-1.5 sm:!py-2 !px-4 text-xs sm:text-sm !capitalize"
-                      aria-label="Add to Cart"
-                      onClick={() => context.addToCart(item)}
-                    >
-                      Add to Cart
-                    </Button>
-
                     <Tooltip title="Remove from wishlist" arrow>
                       <Button
                         onClick={() => handleRemove(item._id)}

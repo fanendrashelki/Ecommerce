@@ -38,7 +38,7 @@ const ProductListing = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get("type");
-  console.log("type", type);
+
   const { id } = useParams();
   const fetchFilteredProducts = async () => {
     setLoading(true);

@@ -5,7 +5,7 @@ import { GrLocationPin } from "react-icons/gr";
 import { Button } from "@mui/material";
 import axiosInstance from "../utils/axiosInstance";
 
-const PAYMENT_METHODS = ["PayPal", "Apple Pay", "Cash on Delivery"];
+const PAYMENT_METHODS = ["card", "Cash on Delivery"];
 
 const Checkout = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -37,28 +37,18 @@ const Checkout = () => {
       console.error("Fetch failed:", err);
     }
   };
-
   const handleCompleteOrder = async () => {
-    if (!paymentMethod) {
+    if (!paymentMethod)
       return context.alertBox("info", "Please select a payment method");
-    }
-    if (!selectedAddress) {
+    if (!selectedAddress)
       return context.alertBox("info", "Please select a delivery address");
-    }
-    if (!cartlist || cartlist.length === 0) {
+    if (cartlist.length === 0)
       return context.alertBox("info", "Your cart is empty");
-    }
 
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        setLoading(false);
-        return context.alertBox(
-          "error",
-          "User not authenticated. Please log in."
-        );
-      }
+      if (!token) throw new Error("Please log in.");
 
       const orderPayload = {
         userId: context?.User?._id,
@@ -77,29 +67,27 @@ const Checkout = () => {
         tax,
       };
 
-      const res = await axiosInstance.post("/orders", orderPayload, {
+      const { data } = await axiosInstance.post("/orders", orderPayload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.data?.order?._id) {
-        throw new Error("Order ID not received from server");
-      }
-
-      if (paymentMethod !== "Cash on Delivery" && res.data.paymentUrl) {
-        window.location.href = res.data.paymentUrl;
-        return;
+      if (paymentMethod !== "Cash on Delivery" && data.paymentUrl) {
+        return (window.location.href = data.paymentUrl); // Stripe Checkout
       }
 
       context.alertBox("success", "Order placed successfully!");
       await clearCartlist();
-
-      window.location.href = `/order-success/${res.data.order._id}`;
-    } catch (error) {
+      window.location.href = `/order-success/${data.order._id}`;
+    } catch (err) {
       console.error(
         "Order creation failed:",
-        error.response?.data || error.message
+        err.response?.data || err.message
       );
-      context.alertBox("error", "Failed to place order. Please try again.");
+      context.alertBox(
+        "error",
+        err.response?.data?.message ||
+          "Failed to place order. Please try again."
+      );
     } finally {
       setLoading(false);
     }

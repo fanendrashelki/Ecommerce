@@ -47,9 +47,9 @@ const ProfileImageProvider = ({ children }) => {
       } else {
         setProfileImg(res?.data?.imageUrl || []);
 
-        if (process.env.NODE_ENV === "development") {
-          console.log("Profile Image URL:", res?.data?.imageUrl);
-        }
+        // if (process.env.NODE_ENV === "development") {
+        //   console.log("Profile Image URL:", res?.data?.imageUrl);
+        // }
 
         context.alertBox("success", "Profile image updated");
       }

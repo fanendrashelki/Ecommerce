@@ -6,7 +6,6 @@ const OrderSuccess = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-  console.log(order);
 
   useEffect(() => {
     const fetchOrder = async () => {

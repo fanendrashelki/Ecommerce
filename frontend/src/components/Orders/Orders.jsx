@@ -21,7 +21,6 @@ const MyOrders = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data?.orders);
-      console.log(res.data);
     } catch (error) {
       console.error(
         "Failed to fetch orders:",
@@ -167,6 +166,44 @@ const MyOrders = () => {
                     <span>Total:</span>
                     <span>₹{order.totalAmt.toFixed(2)}</span>
                   </div>
+                </div>
+                <div className="mt-3 p-6 border-t border-gray-200">
+                  <h2 className="font-semibold text-lg">Payment Information</h2>
+                  <div className="flex justify-between">
+                    <span>Payment Method:</span>
+                    <span>{order.paymentMethod || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Payment Status:</span>
+                    <span
+                      className={
+                        order.payment_status === "Paid"
+                          ? "text-green-600 font-semibold"
+                          : "text-red-600"
+                      }
+                    >
+                      {order.payment_status}
+                    </span>
+                  </div>
+                  {order.paymentId && (
+                    <div className="flex justify-between">
+                      <span>Transaction ID:</span>
+                      <span className="text-gray-600">{order.paymentId}</span>
+                    </div>
+                  )}
+                  {order.invoice_receipt && (
+                    <div className="flex justify-between">
+                      <span>Invoice:</span>
+                      <a
+                        href={order.invoice_receipt}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Download Receipt
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Order Dates */}
