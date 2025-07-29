@@ -6,7 +6,7 @@ It provides a fully functional online store with **authentication, product manag
 ---
 ## Live Demo
 
-- **Frontend (Storefront):** [https://frontend-tau-three-80.vercel.app/](https://frontend-tau-three-80.vercel.app/)
+- **Frontend:** [https://frontend-tau-three-80.vercel.app/](https://frontend-tau-three-80.vercel.app/)
 - **Admin Panel:** [https://admin-ecommerce-rouge.vercel.app/](https://admin-ecommerce-rouge.vercel.app/)
 
 ---
