@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import ProfileSidebar from "../Sidebar/ProfileSidebar";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
@@ -91,11 +91,10 @@ const MyOrders = () => {
                   </div>
 
                   <span
-                    className={`px-2 py-1 ${
-                      order.cancelled
-                        ? "bg-red-100 text-red-800"
-                        : "bg-green-100 text-green-800"
-                    }  text-xs font-medium rounded-full`}
+                    className={`px-2 py-1 ${order.cancelled
+                      ? "bg-red-100 text-red-800"
+                      : "bg-green-100 text-green-800"
+                      }  text-xs font-medium rounded-full`}
                   >
                     {order.orderStatus}
                   </span>
@@ -111,20 +110,18 @@ const MyOrders = () => {
                           className="flex flex-col items-center z-10"
                         >
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold mb-2 ${
-                              index < activeStep
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-300 text-gray-600"
-                            }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold mb-2 ${index < activeStep
+                              ? "bg-green-500 text-white"
+                              : "bg-gray-300 text-gray-600"
+                              }`}
                           >
                             {index + 1}
                           </div>
                           <p
-                            className={`text-xs font-medium ${
-                              index < activeStep
-                                ? "text-green-500"
-                                : "text-gray-400"
-                            }`}
+                            className={`text-xs font-medium ${index < activeStep
+                              ? "text-green-500"
+                              : "text-gray-400"
+                              }`}
                           >
                             {step}
                           </p>
@@ -243,8 +240,8 @@ const MyOrders = () => {
                         <span>
                           {order?.orderDate
                             ? new Date(order.orderDate).toLocaleDateString(
-                                "en-GB"
-                              )
+                              "en-GB"
+                            )
                             : "N/A"}
                         </span>
                       </div>
@@ -255,8 +252,8 @@ const MyOrders = () => {
                         <span>
                           {order?.deliveryDate
                             ? new Date(order.deliveryDate).toLocaleDateString(
-                                "en-GB"
-                              )
+                              "en-GB"
+                            )
                             : "Pending"}
                         </span>
                       </div>

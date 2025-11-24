@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa6";
 import { FaTruck, FaExchangeAlt } from "react-icons/fa";
 import { Button } from "@mui/material";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { usecartlist } from "../../context/cartContext";
 
@@ -79,8 +79,7 @@ const ProductDetailsBox = ({ productDetails }) => {
     if ((hasSize && !selectedSize) || (hasRam && !selectedRam)) {
       context.alertBox(
         "error",
-        `Please select ${hasSize && !selectedSize ? "Size" : ""}${
-          hasSize && hasRam ? " and " : ""
+        `Please select ${hasSize && !selectedSize ? "Size" : ""}${hasSize && hasRam ? " and " : ""
         }${hasRam && !selectedRam ? "RAM" : ""} to continue.`
       );
       return;
@@ -172,11 +171,10 @@ const ProductDetailsBox = ({ productDetails }) => {
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
-                className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${
-                  selectedSize === size
-                    ? "bg-[#35ac75] text-white border-[#35ac75]"
-                    : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
-                }`}
+                className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${selectedSize === size
+                  ? "bg-[#35ac75] text-white border-[#35ac75]"
+                  : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
+                  }`}
               >
                 {size}
               </button>
@@ -195,11 +193,10 @@ const ProductDetailsBox = ({ productDetails }) => {
               <button
                 key={ram}
                 onClick={() => setSelectedRam(ram)}
-                className={`px-4 py-2 border rounded-md text-sm font-medium transition-all ${
-                  selectedRam === ram
-                    ? "bg-[#35ac75] text-white border-[#35ac75]"
-                    : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
-                }`}
+                className={`px-4 py-2 border rounded-md text-sm font-medium transition-all ${selectedRam === ram
+                  ? "bg-[#35ac75] text-white border-[#35ac75]"
+                  : "border-gray-300 hover:border-[#35ac75] hover:text-[#35ac75]"
+                  }`}
               >
                 {ram} GB
               </button>

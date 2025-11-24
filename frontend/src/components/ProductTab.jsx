@@ -7,7 +7,7 @@ import ProductsSlider from "./ProductsSlider/ProductsSlider";
 import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 import axiosInstance from "../utils/axiosInstance";
 import ProductItemSkeleton from "./Skeleton/ProductItemSkeleton";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 import ProductNotFound from "./ProductNotFound";
 const ProductTab = () => {
   const [selectedCatId, setSelectedCatId] = useState("");

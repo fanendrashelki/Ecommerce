@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegHeart } from "react-icons/fa6";
 import { BsCartCheck } from "react-icons/bs";
 import { BiLogOutCircle } from "react-icons/bi";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
 import { useWishlist } from "../../context/WishlistContext";
 import { useProfileImage } from "../../context/ProfileImageContext";

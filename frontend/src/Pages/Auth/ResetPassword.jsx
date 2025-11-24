@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import Password from "../../components/Input/Password";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
 import CircularProgress from "@mui/material/CircularProgress";
 const ResetPassword = () => {

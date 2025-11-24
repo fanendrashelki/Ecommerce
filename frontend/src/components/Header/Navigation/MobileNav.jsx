@@ -5,7 +5,7 @@ import { BiLogInCircle } from "react-icons/bi";
 import { FaRegHeart, FaRegUser } from "react-icons/fa";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom"; // ✅ import Link
-import { MyProductContext } from "../../../AppWrapper";
+import { MyProductContext } from "../../../context/AppContext";
 
 export default function MobileNav() {
   const [value, setValue] = useState(0);

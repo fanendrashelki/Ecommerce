@@ -7,7 +7,7 @@ import { FaRegHeart, FaPlus, FaMinus } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import { MdZoomOutMap } from "react-icons/md";
 import { IoCartOutline } from "react-icons/io5";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import ProductDetailsDialog from "./ProductDetailsDialog";
 import { useWishlist } from "../../context/WishlistContext";
 import { usecartlist } from "../../context/cartContext";
@@ -66,8 +66,7 @@ const ProductItem = ({ product }) => {
       setOpenvariant(true);
       context.alertBox(
         "error",
-        `Please select product ${hasSize && !selectedSize ? "size" : ""}${
-          hasSize && hasRam ? " and " : ""
+        `Please select product ${hasSize && !selectedSize ? "size" : ""}${hasSize && hasRam ? " and " : ""
         }${hasRam && !selectedRam ? "RAM" : ""} before adding to cart.`
       );
       return;
@@ -156,11 +155,10 @@ const ProductItem = ({ product }) => {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${
-                          selectedSize === size
-                            ? "bg-white text-[#35ac75] border-white"
-                            : "text-white border-white hover:bg-white hover:text-[#35ac75]"
-                        }`}
+                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${selectedSize === size
+                          ? "bg-white text-[#35ac75] border-white"
+                          : "text-white border-white hover:bg-white hover:text-[#35ac75]"
+                          }`}
                       >
                         {size}
                       </button>
@@ -180,11 +178,10 @@ const ProductItem = ({ product }) => {
                       <button
                         key={ram}
                         onClick={() => setSelectedRam(ram)}
-                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${
-                          selectedRam === ram
-                            ? "bg-white text-[#35ac75] border-white"
-                            : "text-white border-white hover:bg-white hover:text-[#35ac75]"
-                        }`}
+                        className={`px-4 py-1 border rounded-md text-sm font-medium w-[64px] sm:w-auto transition-all ${selectedRam === ram
+                          ? "bg-white text-[#35ac75] border-white"
+                          : "text-white border-white hover:bg-white hover:text-[#35ac75]"
+                          }`}
                       >
                         {ram} GB
                       </button>

@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { usecartlist } from "../../context/cartContext";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import { useContext, useEffect, useMemo } from "react";
 import shopping from "../../assets/shopping.png";
 

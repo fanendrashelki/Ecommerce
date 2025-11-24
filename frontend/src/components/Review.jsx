@@ -1,6 +1,6 @@
 import { Button, Rating, TextField } from "@mui/material";
 import React, { useEffect, useState, useContext } from "react";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 import axiosInstance from "../utils/axiosInstance";
 
 const Review = ({ productId, userId }) => {

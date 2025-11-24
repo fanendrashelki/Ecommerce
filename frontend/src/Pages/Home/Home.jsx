@@ -6,9 +6,7 @@ import AdsBannerSlider from "../../components/AdsBannerSlider/AdsBannerSlider";
 
 import "swiper/css";
 import "swiper/css/navigation";
-
 import ProductTab from "../../components/ProductTab";
-import Bloglist from "../../components/Blogs/Bloglist";
 import Feature from "../../components/Feature";
 import Latest from "../../components/Latest";
 import AdsSection from "../../components/AdsSection";

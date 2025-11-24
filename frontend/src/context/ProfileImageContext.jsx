@@ -1,7 +1,7 @@
 // context/ProfileImageContext.js
 import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 
 // Create the context
 const ProfileImageContext = createContext();
@@ -46,11 +46,6 @@ const ProfileImageProvider = ({ children }) => {
         context.alertBox("error", res.data.message);
       } else {
         setProfileImg(res?.data?.imageUrl || []);
-
-        // if (process.env.NODE_ENV === "development") {
-        //   console.log("Profile Image URL:", res?.data?.imageUrl);
-        // }
-
         context.alertBox("success", "Profile image updated");
       }
     } catch (err) {

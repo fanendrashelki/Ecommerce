@@ -7,7 +7,7 @@ import { FaHeart } from "react-icons/fa6";
 
 import { MdZoomOutMap } from "react-icons/md";
 import { useContext, useMemo, useState } from "react";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import ProductDetailsDialog from "./ProductDetailsDialog";
 import { useWishlist } from "../../context/WishlistContext";
 import { usecartlist } from "../../context/cartContext";

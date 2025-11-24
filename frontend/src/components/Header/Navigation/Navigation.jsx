@@ -5,7 +5,7 @@ import { TfiAngleDown } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import { GoRocket } from "react-icons/go";
 import CategoryPanel from "./CategoryPanel";
-import { MyProductContext } from "../../../AppWrapper";
+import { MyProductContext } from "../../../context/AppContext";
 import { MdOutlineCategory } from "react-icons/md";
 const Navigation = () => {
   const [isopenCatPanel, setIsOpenCatPanel] = useState(false);

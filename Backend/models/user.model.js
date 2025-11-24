@@ -4,16 +4,19 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Provide name"],
+      // required: [true, "Provide name"],
     },
     email: {
       type: String,
       required: [true, "Provide Email"],
       unique: true,
     },
+    googleId: {
+      type: String
+    },
     password: {
       type: String,
-      required: [true, "Provide password"],
+      // required: [true, "Provide password"],
     },
 
     pendingEmail: {

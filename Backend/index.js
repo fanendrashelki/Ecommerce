@@ -15,8 +15,9 @@ import adsbannerRoutes from "./routes/AdsBanner.route.js";
 import ErrorMiddleware from "./middleware/ErrorHandlerMIddleware.js";
 import addressRoutes from "./routes/address.route.js";
 import orderRoutes from "./routes/Order.routes.js";
+import authRoute from './routes/authRoute.js'
 import OrderModel from "./models/order.model.js"; // adjust path if needed
-
+import "./config/passport.js"
 import Stripe from "stripe";
 dotenv.config();
 
@@ -80,6 +81,7 @@ app.get("/", (req, res) => {
 });
 
 // 4. API routes
+app.use("/auth", authRoute)
 app.use("/api/user", userRoute);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/product", productRoutes);

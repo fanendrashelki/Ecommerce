@@ -10,7 +10,8 @@ import { GrMapLocation } from "react-icons/gr";
 import { FaRegHeart } from "react-icons/fa6";
 import Tooltip from "@mui/material/Tooltip";
 import Navigation from "./Navigation/Navigation";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
+
 import { Menu, MenuItem, Avatar } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import { BsCartCheck } from "react-icons/bs";
@@ -37,8 +38,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function Header() {
+
   const context = useContext(MyProductContext);
-  const { profileImg, handleImageChange, loading } = useProfileImage();
+  const { profileImg } = useProfileImage();
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -98,6 +100,7 @@ function Header() {
     }
   }, [context.isLogin]);
 
+
   return (
     <header className="bg-white w-full">
       {/* Top Strip - Hidden on small devices */}
@@ -112,12 +115,12 @@ function Header() {
             <div className="flex items-center justify-end">
               <ul className="flex items-center gap-4 text-sm font-medium">
                 <li>
-                  <Link to="/" className="hover:underline">
+                  <Link to="/#" className="hover:underline">
                     Help Center
                   </Link>
                 </li>
                 <li>
-                  <Link to="/help-center" className="hover:underline">
+                  <Link to="/order" className="hover:underline">
                     Order Tracking
                   </Link>
                 </li>
@@ -168,10 +171,12 @@ function Header() {
                       <IconButton className="!p-0">
                         <Avatar
                           alt="User"
-                          src={profileImg}
+                          src={profileImg ? `${profileImg}&sz=200` : ""}
                           className="w-10 h-10 sm:w-[50px] sm:h-[50px] border border-gray-300"
                         />
+
                       </IconButton>
+
                       <div className="hidden sm:block text-left">
                         <h1 className="text-sm font-semibold text-gray-800">
                           {context.User?.name}

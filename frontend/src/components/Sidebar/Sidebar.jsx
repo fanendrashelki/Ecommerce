@@ -6,7 +6,7 @@ import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 
 const Sidebar = ({ filters, setFilters }) => {
   const [isOpenCategory, setIsOpenCategory] = useState(true);

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 import { usecartlist } from "../context/cartContext";
 import shopping from "../assets/shopping.png";
 import { Link } from "react-router-dom";
@@ -41,11 +41,10 @@ function Cart() {
     <section className="bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-2xl font-bold mb-8 text-gray-800">
-          {`Your cart ${
-            cartCount === 0
-              ? "is empty"
-              : `${cartCount} item${cartCount > 1 ? "s" : ""}`
-          }`}
+          {`Your cart ${cartCount === 0
+            ? "is empty"
+            : `${cartCount} item${cartCount > 1 ? "s" : ""}`
+            }`}
         </h1>
 
         {isLoading ? ( // Check if the cart is loading

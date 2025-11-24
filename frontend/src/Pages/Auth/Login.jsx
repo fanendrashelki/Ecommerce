@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import Password from "../../components/Input/Password";
 import axiosInstance from "../../utils/axiosInstance";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -151,6 +151,7 @@ const Login = () => {
           <Button
             fullWidth
             className="!flex !gap-3 !p-3 !font-[700] !bg-[#f1f1f1] !text-black"
+            onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, "_self")}
           >
             <FcGoogle className="text-[20px]" /> Login with Google
           </Button>

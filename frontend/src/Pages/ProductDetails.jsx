@@ -8,7 +8,7 @@ import ProductDetailsBox from "../components/ProductItem/ProductDetailsBox";
 import ZoomImage from "../components/ZoomImage/ZoomImage";
 import ProductDetailsSkeleton from "../components/Skeleton/ProductDetailsSkeleton";
 import Review from "../components/Review";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 
 // Static tab labels
 const TABS = ["Product Description", "Specifications", "Reviews"];
@@ -68,9 +68,8 @@ const ProductDetails = () => {
               <span
                 key={index}
                 onClick={() => setActiveTab(index)}
-                className={`cursor-pointer text-[16px] font-[500] transition ${
-                  activeTab === index ? "text-[#35ac75]" : "text-gray-800"
-                }`}
+                className={`cursor-pointer text-[16px] font-[500] transition ${activeTab === index ? "text-[#35ac75]" : "text-gray-800"
+                  }`}
               >
                 {label}
               </span>

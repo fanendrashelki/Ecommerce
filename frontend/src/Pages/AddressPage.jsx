@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import ProfileSidebar from "../components/Sidebar/ProfileSidebar";
 import { Button, TextField } from "@mui/material";
 import axiosInstance from "../utils/axiosInstance";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 
 const AddressPage = () => {
   const { User } = useContext(MyProductContext);
@@ -234,8 +234,8 @@ const AddressPage = () => {
               {loading
                 ? "Saving..."
                 : editingId
-                ? "Update Address"
-                : "Add Address"}
+                  ? "Update Address"
+                  : "Add Address"}
             </Button>
           </div>
         </form>

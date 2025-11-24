@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { BsCheckCircle } from "react-icons/bs";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
 
 const ProfileForm = () => {

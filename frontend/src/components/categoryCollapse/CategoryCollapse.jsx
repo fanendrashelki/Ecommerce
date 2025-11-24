@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { FaRegPlusSquare, FaRegMinusSquare } from "react-icons/fa";
 import { BiLogOutCircle } from "react-icons/bi";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance"; // make sure this exists
 
 const CategoryCollapse = () => {

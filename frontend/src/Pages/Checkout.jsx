@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { usecartlist } from "../context/cartContext";
-import { MyProductContext } from "../AppWrapper";
+import { MyProductContext } from "../context/AppContext";
 import { GrLocationPin } from "react-icons/gr";
 import { Button } from "@mui/material";
 import axiosInstance from "../utils/axiosInstance";
@@ -86,7 +86,7 @@ const Checkout = () => {
       context.alertBox(
         "error",
         err.response?.data?.message ||
-          "Failed to place order. Please try again."
+        "Failed to place order. Please try again."
       );
     } finally {
       setLoading(false);
@@ -148,11 +148,10 @@ const Checkout = () => {
                   addresses.map((addr) => (
                     <label
                       key={addr._id}
-                      className={`p-4 border rounded-md cursor-pointer block transition duration-200 ${
-                        selectedAddress?._id === addr._id
-                          ? "border-[#35ac75] bg-green-50"
-                          : "border-gray-300 hover:border-green-300"
-                      }`}
+                      className={`p-4 border rounded-md cursor-pointer block transition duration-200 ${selectedAddress?._id === addr._id
+                        ? "border-[#35ac75] bg-green-50"
+                        : "border-gray-300 hover:border-green-300"
+                        }`}
                     >
                       <div className="flex items-center">
                         <input
@@ -181,11 +180,10 @@ const Checkout = () => {
                 {PAYMENT_METHODS.map((method) => (
                   <label
                     key={method}
-                    className={`p-4 border rounded-md cursor-pointer flex items-center transition duration-200 ${
-                      paymentMethod === method
-                        ? "border-[#35ac75] bg-green-50"
-                        : "border-gray-300 hover:border-green-300"
-                    }`}
+                    className={`p-4 border rounded-md cursor-pointer flex items-center transition duration-200 ${paymentMethod === method
+                      ? "border-[#35ac75] bg-green-50"
+                      : "border-gray-300 hover:border-green-300"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -224,9 +222,8 @@ const Checkout = () => {
               <button
                 onClick={handleCompleteOrder}
                 disabled={loading}
-                className={`w-full mt-6 ${
-                  loading ? "bg-gray-400" : "bg-[#35ac75] hover:bg-green-600"
-                } text-white py-3 px-4 rounded-md font-medium transition duration-200`}
+                className={`w-full mt-6 ${loading ? "bg-gray-400" : "bg-[#35ac75] hover:bg-green-600"
+                  } text-white py-3 px-4 rounded-md font-medium transition duration-200`}
               >
                 {loading ? "Processing..." : "Complete Order"}
               </button>

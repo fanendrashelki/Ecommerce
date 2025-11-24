@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import axiosInstance from "../../utils/axiosInstance";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 
 const Address = ({ open, onClose }) => {
   const { User, setOpenAddress } = useContext(MyProductContext);

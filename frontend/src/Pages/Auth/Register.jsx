@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import axiosInstance from "../../utils/axiosInstance";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Password from "../../components/Input/Password";
 
@@ -144,7 +144,8 @@ const Register = () => {
             Or continue with social account
           </p>
 
-          <Button className="w-full !flex !gap-3 !p-3 !font-[700] !bg-[#f1f1f1] btn-lg !text-black">
+          <Button className="w-full !flex !gap-3 !p-3 !font-[700] !bg-[#f1f1f1] btn-lg !text-black"
+            onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL}/auth/google`, "_self")}>
             <FcGoogle className="text-[20px]" /> Sign Up with Google
           </Button>
         </form>

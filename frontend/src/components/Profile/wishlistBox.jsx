@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useWishlist } from "../../context/WishlistContext";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import { Button, Tooltip } from "@mui/material";
 
 const WishlistBox = () => {

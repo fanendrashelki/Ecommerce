@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext } from "react";
 import { Button } from "@mui/material";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";

@@ -4,7 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { useContext, useEffect, useState } from "react";
-import { MyProductContext } from "../../AppWrapper";
+import { MyProductContext } from "../../context/AppContext";
 
 const HomeCatSlider = () => {
   const [catList, setCatList] = useState([]);
