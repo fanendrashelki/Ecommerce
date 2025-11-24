@@ -1,6 +1,5 @@
 import express from 'express'
 import passport from 'passport'
-import jwt from 'jsonwebtoken'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import { Callback, Me } from '../controllers/OAuth.Controller.js'
 

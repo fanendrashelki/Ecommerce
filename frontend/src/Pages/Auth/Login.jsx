@@ -79,6 +79,8 @@ const Login = () => {
     }
   };
 
+  console.log(`${import.meta.env.VITE_API_BASE_URL}/auth/google`);
+
   return (
     <div className="w-full sm:w-[400px] mx-auto mt-10 mb-10 shadow-md">
       <div className="bg-white shadow-md rounded-md p-8">
