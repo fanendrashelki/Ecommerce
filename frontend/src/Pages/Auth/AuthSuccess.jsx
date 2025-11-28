@@ -3,6 +3,7 @@ import { MyProductContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
 const AuthSuccess = () => {
   const { isLogin, setUser, setLogin, checkAuth } =
     useContext(MyProductContext);
@@ -19,7 +20,7 @@ const AuthSuccess = () => {
         localStorage.setItem("token", token);
 
         try {
-          const res = await axios.get("http://localhost:8000/auth/me", {
+          const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

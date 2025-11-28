@@ -1,0 +1,20 @@
+{
+  "name": "myshop",
+  "version": "1.0.0",
+  "description": "A complete **E-Commerce platform** built with the **MERN Stack** (**MongoDB, Express.js, React.js, Node.js**) featuring **frontend, backend, and admin panel**.  \r It provides a fully functional online store with **authentication, product management, orders, and payments**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fanendrashelki/Ecommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fanendrashelki/Ecommerce/issues"
+  },
+  "homepage": "https://github.com/fanendrashelki/Ecommerce#readme"
+}
