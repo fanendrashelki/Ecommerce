@@ -36,7 +36,7 @@ function CartDrawer({ open, onClose }) {
   );
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
+    <Drawer anchor="right" open={context.openCart} onClose={() => context.setOpenCart(false)}>
       <div className="p-2 w-[400px]">
         <div className="flex justify-between items-center mb-4 px-2">
           <h2 className="text-lg font-semibold">

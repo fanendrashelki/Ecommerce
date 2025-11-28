@@ -70,7 +70,7 @@ app.post(
 
 // 2. Now apply other middleware for all remaining routes
 app.use(cors());
-
+app.enable("trust proxy");
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(helmet({ crossOriginResourcePolicy: false }));

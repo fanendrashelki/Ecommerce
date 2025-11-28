@@ -9,6 +9,7 @@ export default function AppContextProvider({ children }) {
   const [openCart, setOpenCart] = useState(false);
   const [openAddress, setOpenAddress] = useState(false);
   const [pageloader, setPageLoader] = useState(false);
+  console.log("openCart", openCart);
 
   const { User, setUser, isLogin, setLogin, checkAuth } = useAuth();
   const { category } = useCategories();
