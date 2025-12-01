@@ -1,5 +1,5 @@
 import React from "react";
-import {Typography,} from "@material-tailwind/react";
+import { Typography, } from "@material-tailwind/react";
 
 import { StatisticsCard } from "@/widgets/cards";
 import { StatisticsChart } from "@/widgets/charts";

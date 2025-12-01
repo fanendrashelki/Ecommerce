@@ -40,6 +40,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 function Header() {
 
   const context = useContext(MyProductContext);
+
+
   const { profileImg } = useProfileImage();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -171,7 +173,7 @@ function Header() {
                       <IconButton className="!p-0">
                         <Avatar
                           alt="User"
-                          src={profileImg ? `${profileImg}&sz=200` : ""}
+                          src={profileImg}
                           className="w-10 h-10 sm:w-[50px] sm:h-[50px] border border-gray-300"
                         />
 

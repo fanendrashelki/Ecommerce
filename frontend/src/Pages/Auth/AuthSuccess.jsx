@@ -2,11 +2,12 @@ import React, { useEffect, useContext } from "react";
 import { MyProductContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AuthSuccess.css"; // <<< add CSS file
+
 
 const AuthSuccess = () => {
   const { isLogin, setUser, setLogin, checkAuth } =
     useContext(MyProductContext);
+
 
   const navigate = useNavigate();
 
@@ -28,7 +29,7 @@ const AuthSuccess = () => {
           setLogin(true);
 
           if (res.data.success) {
-            setUser(res.data.user);
+            setUser(res.data.user); // Save user globally
             navigate("/");
           }
         } catch (error) {
@@ -46,9 +47,8 @@ const AuthSuccess = () => {
   }, [isLogin]);
 
   return (
-    <div className="auth-loading-container">
-      <div className="loader"></div>
-      <h2 className="loading-text">Logging you in...</h2>
+    <div>
+      <h2>Logging in...</h2>
     </div>
   );
 };
