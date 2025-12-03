@@ -42,18 +42,7 @@ const register = asyncHandler(async (req, res, next) => {
     { otp, otp_expiry }
   );
 
-  // const Token = getToken.generateToken(user);
 
-  // // Set cookie
-  // setAuthCookies(res, Token);
-
-  // Send OTP to new email
-  // await sendMail({
-  //   name: user.name,
-  //   email,
-  //   otpExpireTime: process.env.OTP_EXPIRY_MINUTES,
-  //   type: "welcome",
-  // });
 
   await sendMail({
     name: user.name,
@@ -88,7 +77,7 @@ const login = asyncHandler(async (req, res, next) => {
     return next(new ErrorHandle("Invalid credentials", 400));
   }
   if (!existingUser.password) {
-    return next(new ErrorHandle("User password not found", 500));
+    return next(new ErrorHandle("This account was created using Google Login. Please continue with Google to sign in.", 400));
   }
 
   const isMatch = await bcrypt.compare(password, existingUser.password);
@@ -107,9 +96,8 @@ const login = asyncHandler(async (req, res, next) => {
   setAuthCookies(res, token);
 
   res.status(200).json({
-    message: `${
-      existingUser.role === "Admin" ? "Admin" : "User"
-    } logged in successfully`,
+    message: `${existingUser.role === "Admin" ? "Admin" : "User"
+      } logged in successfully`,
     error: false,
     success: true,
 
@@ -246,7 +234,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   const isExpired =
     !otpVerifiedAt ||
     Date.now() - new Date(otpVerifiedAt).getTime() >
-      process.env.OTP_EXPIRY_MINUTES * 60 * 1000;
+    process.env.OTP_EXPIRY_MINUTES * 60 * 1000;
 
   if (!isExpired) {
     return next(
