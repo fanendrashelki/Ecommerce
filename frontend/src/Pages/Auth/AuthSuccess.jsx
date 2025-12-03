@@ -5,7 +5,7 @@ import axios from "axios";
 
 
 const AuthSuccess = () => {
-  const { isLogin, setUser, setLogin, checkAuth } =
+  const { isLogin, setUser, setLogin, checkAuth, setPageLoader } =
     useContext(MyProductContext);
 
 
@@ -25,16 +25,21 @@ const AuthSuccess = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-
+          setPageLoader(true);
           setLogin(true);
 
           if (res.data.success) {
             setUser(res.data.user); // Save user globally
             navigate("/");
+            setTimeout(() => {
+              setPageLoader(false);
+            }, 2000);
+
           }
         } catch (error) {
           console.error("Error fetching user:", error);
           setLogin(false);
+          setPageLoader(false);
         }
       }
     };
@@ -46,11 +51,7 @@ const AuthSuccess = () => {
     checkAuth();
   }, [isLogin]);
 
-  return (
-    <div>
-      <h2>Logging in...</h2>
-    </div>
-  );
+
 };
 
 export default AuthSuccess;
