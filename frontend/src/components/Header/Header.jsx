@@ -106,7 +106,7 @@ function Header() {
   return (
     <header className="bg-white w-full">
       {/* Top Strip - Hidden on small devices */}
-      <div className="top-strip py-2 border-t border-b border-gray-200 hidden md:block">
+      {/* <div className="top-strip py-2 border-t border-b border-gray-200 hidden md:block">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="w-1/2">
@@ -130,7 +130,7 @@ function Header() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Header */}
       <div className="py-4 border-b border-gray-200">

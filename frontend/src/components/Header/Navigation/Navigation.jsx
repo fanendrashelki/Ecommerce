@@ -24,8 +24,8 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className="max-sm:hidden max-lg:hidden bg-white">
-        <div className="container flex items-center justify-end gap-5">
+      <nav className="max-sm:hidden max-lg:hidden bg-white ">
+        <div className="container flex items-center justify-end gap-5 ">
           <div className="col_1 w-[20%]">
             <Button
               className="!text-black gap-2 w-full !capitalize"

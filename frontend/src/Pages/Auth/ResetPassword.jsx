@@ -6,9 +6,9 @@ import { FcGoogle } from "react-icons/fc";
 import Password from "../../components/Input/Password";
 import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
-import CircularProgress from "@mui/material/CircularProgress";
+
 const ResetPassword = () => {
-  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: localStorage.getItem("email"),
     newPassword: "",
@@ -27,21 +27,21 @@ const ResetPassword = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
 
     if (formData.newPassword === "") {
       context.alertBox("error", "Please enter password");
-      setLoading(false);
+
       return;
     }
     if (formData.confirmPassword === "") {
       context.alertBox("error", "Please enter Confirm Password");
-      setLoading(false);
+
       return;
     }
     if (formData.confirmPassword !== formData.newPassword) {
       context.alertBox("error", "Passwords do not match");
-      setLoading(false);
+
       return;
     }
 
@@ -64,7 +64,7 @@ const ResetPassword = () => {
       context.alertBox("error", message);
       console.error("Login error:", err);
     } finally {
-      setLoading(false);
+
       context.setPageLoader(false);
     }
   };
@@ -100,14 +100,7 @@ const ResetPassword = () => {
             fullWidth
             className="!mt-3 !mb-3 !text-[18px] py-2 px-4 rounded-md btn-org font-[600] transition"
           >
-            {loading ? (
-              <CircularProgress
-                className="!w-[30px] !h-[30px]"
-                color="inherit"
-              />
-            ) : (
-              "Update Password"
-            )}
+            Update Password
           </Button>
         </form>
       </div>

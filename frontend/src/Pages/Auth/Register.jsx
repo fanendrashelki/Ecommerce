@@ -7,11 +7,11 @@ import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import axiosInstance from "../../utils/axiosInstance";
 import { MyProductContext } from "../../context/AppContext";
-import CircularProgress from "@mui/material/CircularProgress";
+
 import Password from "../../components/Input/Password";
 
 const Register = () => {
-  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -37,24 +37,24 @@ const Register = () => {
 
     if (formData.name === "") {
       context.alertBox("error", "Please enter name");
-      setLoading(false);
+
       return;
     }
     if (formData.email === "") {
       context.alertBox("error", "Please enter email");
-      setLoading(false);
+
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.email)) {
       context.alertBox("error", "Please enter a valid email address");
-      setLoading(false);
+
       return;
     }
     if (formData.password === "") {
       context.alertBox("error", "Please enter password");
-      setLoading(false);
+
       return;
     }
 
@@ -124,11 +124,7 @@ const Register = () => {
             type="submit"
             className="w-full btn-org font-[600] !mt-3 !mb-3  py-2 px-4 rounded-md  transition"
           >
-            {loading == true ? (
-              <CircularProgress color="inherit" />
-            ) : (
-              "Register"
-            )}
+            Register
           </Button>
 
           <p className="text-center">

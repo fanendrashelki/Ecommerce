@@ -5,11 +5,11 @@ import { Button } from "@mui/material";
 import axiosInstance from "../../utils/axiosInstance";
 import { MyProductContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
+
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const context = useContext(MyProductContext);
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -18,18 +18,18 @@ const ForgetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+
 
     if (email === "") {
       context.alertBox("error", "Please enter email");
-      setLoading(false);
+
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       context.alertBox("error", "Please enter a valid email address");
-      setLoading(false);
+
       return;
     }
 
@@ -52,7 +52,7 @@ const ForgetPassword = () => {
       context.alertBox("error", message);
       console.error("Login error:", err);
     } finally {
-      setLoading(false);
+
       context.setPageLoader(false);
     }
   };
@@ -79,19 +79,7 @@ const ForgetPassword = () => {
           <Button
             type="submit"
             className="w-full btn-org font-[600] !mt-3 !mb-3 !text-[18px] py-2 px-4 rounded-md  transition gap-5"
-          >
-            {loading ? (
-              <>
-                Sending
-                <CircularProgress
-                  className=" !w-[30px] !h-[30px]"
-                  color="inherit"
-                />
-              </>
-            ) : (
-              "Reset Password"
-            )}
-          </Button>
+          >Reset Password</Button>
         </form>
       </div>
     </div>

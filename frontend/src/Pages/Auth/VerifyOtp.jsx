@@ -2,13 +2,12 @@ import React, { useState, useRef, useContext } from "react";
 import { Button } from "@mui/material";
 import { MyProductContext } from "../../context/AppContext";
 import axiosInstance from "../../utils/axiosInstance";
-import CircularProgress from "@mui/material/CircularProgress";
+
 import { useNavigate } from "react-router-dom";
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
-  const [loading, setLoading] = useState(false);
   const context = useContext(MyProductContext);
   const navigate = useNavigate();
   const handleChange = (e, index) => {
@@ -81,6 +80,7 @@ const VerifyOtp = () => {
         // Store in localStorage
         localStorage.setItem("token", token);
 
+
         context.setLogin(true);
         if (localStorage.getItem("Action-type") == "emailVerify") {
           navigate("/");
@@ -95,7 +95,7 @@ const VerifyOtp = () => {
     } finally {
       // localStorage.removeItem("email");
       localStorage.removeItem("Action-type");
-      setLoading(false);
+
       context.setPageLoader(false);
     }
   };
@@ -126,14 +126,7 @@ const VerifyOtp = () => {
             type="submit"
             className="w-full btn-org font-[600] !mt-3 !mb-3 !text-[18px] py-2 px-4 rounded-md transition"
           >
-            {loading ? (
-              <CircularProgress
-                className="!w-[30px] !h-[30px]"
-                color="inherit"
-              />
-            ) : (
-              "Verify"
-            )}
+            Verify
           </Button>
         </form>
       </div>
