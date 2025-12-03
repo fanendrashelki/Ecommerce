@@ -4,24 +4,32 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
+      trim: true,
       // required: [true, "Provide name"],
     },
     email: {
       type: String,
       required: [true, "Provide Email"],
       unique: true,
+      lowercase: true,
+      trim: true,
+      index: true
     },
     googleId: {
-      type: String
+      type: String,
+      default: null,
     },
     password: {
       type: String,
+      select: false,
       // required: [true, "Provide password"],
     },
 
     pendingEmail: {
       type: String,
       default: "",
+      lowercase: true,
+      trim: true,
     },
     avatar: {
       type: String,
@@ -41,7 +49,7 @@ const userSchema = mongoose.Schema(
     },
     last_login_date: {
       type: Date,
-      default: "",
+      default: null,
     },
     status: {
       type: String,
@@ -94,6 +102,6 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
+userSchema.index({ email: 1 });
 const UserModel = mongoose.model("User", userSchema);
 export default UserModel;
