@@ -6,12 +6,10 @@ import { FcGoogle } from "react-icons/fc";
 import { MyProductContext } from "../../context/AppContext";
 import Password from "../../components/Input/Password";
 import axiosInstance from "../../utils/axiosInstance";
-import CircularProgress from "@mui/material/CircularProgress";
+
 
 const Login = () => {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,23 +28,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
     if (formData.email === "") {
       context.alertBox("error", "Please enter email");
-      setLoading(false);
       return;
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.email)) {
       context.alertBox("error", "Please enter a valid email address");
-      setLoading(false);
       return;
     }
     if (formData.password === "") {
       context.alertBox("error", "Please enter password");
-      setLoading(false);
+
       return;
     }
 
@@ -74,7 +68,7 @@ const Login = () => {
       context.alertBox("error", message);
       console.error("Login error:", err);
     } finally {
-      setLoading(false);
+
       context.setPageLoader(false);
     }
   };
@@ -125,16 +119,7 @@ const Login = () => {
             color="primary"
             fullWidth
             className="!mt-3 !mb-3  py-2 px-4 rounded-md btn-org font-[600] transition"
-          >
-            {loading ? (
-              <CircularProgress
-                className="!w-[30px] !h-[30px]"
-                color="inherit"
-              />
-            ) : (
-              "Login"
-            )}
-          </Button>
+          >Login</Button>
 
           <p className="text-center text-sm font-medium">
             Not Registered?

@@ -27,7 +27,8 @@ export default function AppContextProvider({ children }) {
     setPageLoader,
     category,
     checkAuth,
-    openCart
+    openCart,
+    pageloader
   };
 
   useEffect(() => {
