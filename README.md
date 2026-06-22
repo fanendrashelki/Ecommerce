@@ -4,12 +4,6 @@ A complete **E-Commerce platform** built with the **MERN Stack** (**MongoDB, Exp
 It provides a fully functional online store with **authentication, product management, orders, and payments**.
 
 ---
-## Live Demo
-
-- **Frontend:** [https://frontend-tau-three-80.vercel.app/](https://frontend-tau-three-80.vercel.app/)
-- **Admin Panel:** [https://admin-ecommerce-rouge.vercel.app/](https://admin-ecommerce-rouge.vercel.app/)
-
----
 ## Features
 
 ### **Frontend (User Storefront)**
